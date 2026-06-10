@@ -3,6 +3,7 @@ title: 长文排版测试
 date: 2026-06-10 22:32:00
 categories: 测试
 tags: [typography, demo]
+cover: cover.png
 ---
 
 ## 山居秋暝

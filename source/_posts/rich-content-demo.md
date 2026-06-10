@@ -3,6 +3,7 @@ title: 富文本综合演示
 date: 2026-06-10 22:44:00
 categories: [测试, 综合]
 tags: [demo, formatting]
+cover: cover.png
 ---
 
 这篇文章综合测试主题的各种富文本渲染能力。

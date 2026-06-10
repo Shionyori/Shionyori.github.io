@@ -4,6 +4,7 @@ date: 2026-06-10 22:33:00
 categories: [测试, 主题]
 tags: [shion, features]
 math: true
+cover: cover.png
 ---
 
 ## 搜索

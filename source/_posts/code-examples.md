@@ -3,6 +3,7 @@ title: 代码示例
 date: 2026-06-10 22:31:00
 categories: 测试
 tags: [code, demo]
+cover: cover.png
 ---
 
 ## HTML

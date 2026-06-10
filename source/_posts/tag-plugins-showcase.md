@@ -3,6 +3,7 @@ title: 标签组件展示
 date: 2026-06-10 22:42:00
 categories: [测试, 组件]
 tags: [tag-plugins, demo]
+cover: cover.png
 ---
 
 本文展示 hexo-theme-shion 内置的所有标签组件。
