@@ -2,7 +2,7 @@
 title: 代码示例
 date: 2026-06-10 22:31:00
 categories: 前端
-tags: [code, html, css, javascript, typescript, shell]
+tags: [JavaScript, TypeScript, CSS, HTML, Shell, 代码高亮]
 cover: cover.png
 ---
 
