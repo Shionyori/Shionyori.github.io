@@ -1,0 +1,3 @@
+[submodule "themes/shion"]
+	path = themes/shion
+	url = https://github.com/Shionyori/hexo-theme-shion.git
