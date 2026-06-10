@@ -1,0 +1,44 @@
+title: Shion
+home: Home
+archives: Archives
+tags: Tags
+categories: Categories
+about: About
+search: Search
+search_placeholder: Type to search...
+nav_menu: Menu
+close: Close
+search_empty: No results found.
+search_found: 'Found {count} result(s) for «{query}»'
+search_not_found: 'No results found for «{query}»'
+read_more: Read more
+prev: Previous
+next: Next
+posts: posts
+toc: Table of Contents
+no_toc: No headings found
+comment: Comments
+copyright: '&copy; %s %s. All rights reserved.'
+powered_by: 'Powered by %s'
+theme_by: 'Theme by %s'
+page_not_found: 'This page is as empty as my wallet...'
+back_to_home: Back to Home
+dark_mode: Dark Mode
+light_mode: Light Mode
+no_tags: No tags yet.
+no_categories: No categories yet.
+share: Share
+share_on: 'Share on %s'
+copy_link: Copy link
+link_copied: Link copied!
+outdate_warning: 'This post was published %s days ago and may be outdated.'
+recent_posts: Recent Posts
+category_list: Categories
+tag_list: Tags
+tagcloud: Tag Cloud
+archive_list: Archives
+page: Page
+posts_count: '%s posts'
+pagination:
+  prev: Prev
+  next: Next

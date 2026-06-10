@@ -1,0 +1,80 @@
+<% var even = (typeof index !== 'undefined') ? (index % 2 === 0) : true; %>
+<% var direction = even ? 'left' : 'right'; %>
+<div class="post-card-wrapper">
+  <article class="post-card post-card-<%= direction %>">
+    <a class="post-card-link" href="<%= url_for(post.path) %>" aria-label="<%= post.title %>"></a>
+
+    <div class="post-card-cover <%= direction %>">
+      <%
+        var coverSrc;
+        var coverEnabled = !theme.post || !theme.post.cover || theme.post.cover.enable !== false;
+        if (coverEnabled) {
+          if (post.cover) {
+            coverSrc = (post.cover.startsWith('/') || post.cover.startsWith('http')) ? url_for(post.cover) : url_for(post.path + post.cover);
+          } else if (theme.post.cover && theme.post.cover.default) {
+            coverSrc = url_for(theme.post.cover.default);
+          }
+        }
+      %>
+      <% if (coverSrc) { %>
+      <img src="<%= coverSrc %>" alt="<%= post.title %>" loading="lazy">
+      <% } else { %>
+      <div class="cover-placeholder"></div>
+      <% } %>
+    </div>
+
+    <div class="post-card-body">
+      <div class="post-card-meta-top">
+        <% if (post.date) { %>
+        <time datetime="<%= date(post.date, 'YYYY-MM-DDTHH:mm:ssZ') %>">
+          <%= date(post.date, theme.post.date_format || 'YYYY-MM-DD') %>
+        </time>
+        <% } %>
+        <% if (theme.post.word_count && post.content) { %>
+        <span class="meta-sep">·</span>
+        <span><%= word_count(post.content) %></span>
+        <% } %>
+        <% if (theme.post.reading_time && post.content) { %>
+        <span class="meta-sep">·</span>
+        <span><%= reading_time(post.content) %></span>
+        <% } %>
+      </div>
+
+      <h2 class="post-card-title">
+        <a href="<%= url_for(post.path) %>"><%= post.title %></a>
+      </h2>
+
+      <% if (post.tags && post.tags.length) { %>
+      <div class="post-card-tags">
+        <% post.tags.forEach(function(tag) { %>
+          <a class="tag-link" href="<%= url_for(tag.path) %>"><%= tag.name %></a>
+        <% }) %>
+      </div>
+      <% } %>
+
+      <% if (theme.home.display_excerpt) { %>
+      <div class="post-card-excerpt">
+        <%
+          var maxLen = theme.home.excerpt_length || 280;
+          var text = '';
+
+          if (post.description) {
+            text = post.description;
+          } else if (post.excerpt) {
+            text = strip_html(post.excerpt);
+          } else {
+            var pMatch = post.content.match(/<p[^>]*>([\s\S]*?)<\/p>/);
+            if (pMatch) {
+              text = strip_html(pMatch[1]);
+            } else {
+              text = strip_html(post.content);
+            }
+          }
+
+          if (text.length > maxLen) text = text.substring(0, maxLen) + '...';
+        %><%= text %>
+      </div>
+      <% } %>
+    </div>
+  </article>
+</div>

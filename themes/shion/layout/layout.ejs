@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="<%= config.language %>">
+<head>
+  <%- partial('_partial/head') %>
+</head>
+<body>
+  <%- partial('_partial/header') %>
+
+  <%- partial('_partial/reading-progress') %>
+
+  <% // Full-width page-top background — outside container, edge-to-edge %>
+  <%
+    var coverEnabled = !theme.post || !theme.post.cover || theme.post.cover.enable !== false;
+    var pageCover = coverEnabled ? (page.cover || (theme.post.cover && theme.post.cover.default)) : null;
+    var hasCover = (pageCover && page.layout === 'post');
+  %>
+  <% if (hasCover) { %>
+  <div class="page-bg">
+  <% var coverUrl = (pageCover.startsWith('/') || pageCover.startsWith('http')) ? url_for(pageCover) : url_for(page.path + pageCover); %>
+    <img src="<%= coverUrl %>" alt="">
+  </div>
+  <% } else if (theme.shion && theme.shion.background_image) { %>
+  <div class="page-bg">
+    <img src="<%= url_for(theme.shion.background_image) %>" alt="">
+  </div>
+  <% } %>
+
+  <% // Hero area — above content, outside flex layout so sidebar sits below it %>
+  <% if (is_post()) { %>
+  <section class="page-hero">
+    <h1 class="hero-title"><%= page.title %></h1>
+    <div class="hero-subtitle">
+      <%- partial('_partial/post-meta', { post: page }) %>
+    </div>
+  </section>
+  <% } else if (is_archive()) { %>
+  <section class="page-hero">
+    <h1 class="hero-title"><%= __('archives') %></h1>
+  </section>
+  <% } else if (is_category() || is_tag()) { %>
+  <section class="page-hero">
+    <h1 class="hero-title"><%= page.category || page.tag || '' %></h1>
+  </section>
+  <% } else if (is_home() && theme.shion.hero_enable) { %>
+  <section class="page-hero">
+    <h1 class="hero-title"><%= config.title %></h1>
+    <% if (config.description) { %>
+    <p class="hero-subtitle"><%= config.description %></p>
+    <% } %>
+  </section>
+  <% } else { %>
+  <section class="page-hero">
+    <h1 class="hero-title"><%= page.title || '' %></h1>
+  </section>
+  <% } %>
+
+  <div class="container">
+    <div class="content-wrapper">
+      <% if (theme.sidebar.enable && theme.sidebar.position === 'left') { %>
+      <%- partial('_partial/sidebar') %>
+      <% } %>
+
+      <main class="site-main">
+        <%- body %>
+      </main>
+
+      <% if (theme.sidebar.enable && theme.sidebar.position !== 'left') { %>
+      <%- partial('_partial/sidebar') %>
+      <% } %>
+    </div>
+  </div>
+
+  <%- partial('_partial/mobile-nav') %>
+  <%- partial('_partial/footer') %>
+  <%- partial('_partial/search') %>
+
+  <script src="<%= url_for('/js/main.js') %>"></script>
+  <%- partial('_partial/math') %>
+</body>
+</html>

@@ -1,0 +1,7 @@
+<section class="post-list">
+  <% page.posts.forEach(function(post, i) { %>
+    <%- partial('_partial/post-card', { post: post, index: i }) %>
+  <% }) %>
+</section>
+
+<%- partial('_partial/pagination') %>
