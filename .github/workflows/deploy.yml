@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -31,6 +33,12 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Build theme
+        run: |
+          cd themes/shion
+          npm install
+          npm run build
 
       - name: Generate static files
         run: pnpm run build
