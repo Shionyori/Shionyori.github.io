@@ -6,7 +6,9 @@ tags: [tag-plugins, demo]
 cover: cover.png
 ---
 
-本文展示 hexo-theme-shion 内置的所有标签组件。
+Shion 主题内置了七种 Nunjucks 标签组件，无需编写 HTML 即可在文章中插入丰富的交互元素。本文逐一展示 Note、Details、Tabs、Quote、LinkCard 和 PostLinkCard 的用法与效果。
+
+---
 
 ## Note 提示框
 
