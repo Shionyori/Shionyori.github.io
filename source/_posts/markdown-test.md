@@ -1,8 +1,13 @@
 ---
 title: Markdown 渲染测试
 date: 2026-06-10 22:30:00
-categories: 写作
-tags: [Markdown, 排版]
+categories:
+ - [Theme]
+ - [Test]
+tags:
+ - [Markdown]
+ - [Demo]
+ - [Feature]
 cover: cover.png
 ---
 

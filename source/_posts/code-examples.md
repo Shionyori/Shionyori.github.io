@@ -1,8 +1,14 @@
 ---
-title: 代码示例
+title: 代码高亮测试
 date: 2026-06-10 22:31:00
-categories: 前端
-tags: [JavaScript, TypeScript, CSS, HTML, Shell, 代码高亮]
+categories:
+ - [Theme]
+tags:
+ - [JavaScript]
+ - [TypeScript]
+ - [CSS]
+ - [HTML]
+ - [Shell]
 cover: cover.png
 ---
 

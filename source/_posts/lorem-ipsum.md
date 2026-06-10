@@ -1,8 +1,10 @@
 ---
 title: 长文排版测试
 date: 2026-06-10 22:32:00
-categories: 写作
-tags: [Typography, 排版, i18n]
+categories:
+ - [Test]
+tags:
+ - [Typography]
 cover: cover.png
 ---
 

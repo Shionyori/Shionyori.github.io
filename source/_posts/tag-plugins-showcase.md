@@ -1,8 +1,13 @@
 ---
 title: 标签组件展示
 date: 2026-06-10 22:42:00
-categories: [主题, 组件]
-tags: [Nunjucks, Hexo, 组件]
+categories:
+ - [Theme]
+ - [Tutorial]
+tags:
+ - [Markdown]
+ - [标签组件]
+ - [Nunjucks]
 cover: cover.png
 ---
 

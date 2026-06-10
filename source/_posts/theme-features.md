@@ -1,8 +1,15 @@
 ---
 title: 主题功能一览
 date: 2026-06-10 22:33:00
-categories: 主题
-tags: [Hexo, 响应式设计, KaTeX, 全文搜索]
+categories:
+ - [Theme]
+ - [Tutorial]
+tags:
+ - [Feature]
+ - [Katex]
+ - [Search]
+ - [Dark Mode]
+ - [Progress Bar]
 math: true
 cover: cover.png
 ---

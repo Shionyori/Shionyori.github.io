@@ -1,8 +1,13 @@
 ---
 title: 图片插入测试
 date: 2026-06-10 22:43:00
-categories: [主题, 组件]
-tags: [Markdown, 图片, 排版]
+categories:
+ - [Theme]
+ - [Test]
+tags:
+ - [Demo]
+ - [Feature]
+ - [Image]
 cover: cover.png
 ---
 

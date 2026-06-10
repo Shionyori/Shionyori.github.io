@@ -1,8 +1,14 @@
 ---
 title: 富文本综合演示
 date: 2026-06-10 22:44:00
-categories: 综合
-tags: [REST API, 架构, Markdown, 文档]
+categories:
+ - [Test]
+ - [Theme]
+tags:
+ - [Demo]
+ - [Feature]
+ - [API]
+ - [Documentation]
 cover: cover.png
 ---
 
