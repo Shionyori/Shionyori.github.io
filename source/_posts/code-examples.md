@@ -1,8 +1,8 @@
 ---
 title: 代码示例
 date: 2026-06-10 22:31:00
-categories: 测试
-tags: [code, demo]
+categories: [前端, 测试]
+tags: [code, html, css, javascript, typescript, shell]
 cover: cover.png
 ---
 

@@ -1,8 +1,8 @@
 ---
 title: 主题功能一览
 date: 2026-06-10 22:33:00
-categories: [测试, 主题]
-tags: [shion, features]
+categories: [主题, 测试]
+tags: [shion, features, 功能, 搜索, 暗色模式]
 math: true
 cover: cover.png
 ---

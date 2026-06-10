@@ -1,8 +1,8 @@
 ---
 title: 富文本综合演示
 date: 2026-06-10 22:44:00
-categories: [测试, 综合]
-tags: [demo, formatting]
+categories: [前端, 综合]
+tags: [demo, formatting, api, 架构, 文档]
 cover: cover.png
 ---
 

@@ -1,8 +1,8 @@
 ---
 title: 图片插入测试
 date: 2026-06-10 22:43:00
-categories: [测试, 组件]
-tags: [images, demo]
+categories: [主题, 组件]
+tags: [images, shion, 排版]
 cover: cover.png
 ---
 
