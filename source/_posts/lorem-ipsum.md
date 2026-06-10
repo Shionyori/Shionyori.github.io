@@ -1,7 +1,7 @@
 ---
 title: 长文排版测试
 date: 2026-06-10 22:32:00
-categories: [写作, 测试]
+categories: 写作
 tags: [typography, 排版, 中文]
 cover: cover.png
 ---
