@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Shionyori&#39;s Blog</title>
+
+
+<meta name="description" content="Gorgeous blooming flowers will eventually elegantly scattered.">
+
+
+<meta property="og:title" content="Shionyori&#39;s Blog">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://shionyori.github.io/index.html">
+<meta property="og:site_name" content="Shionyori&#39;s Blog">
+
+
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Shionyori&#39;s Blog">
+
+
+<link rel="canonical" href="https://shionyori.github.io/index.html">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Shionyori&#39;s Blog",
+  "url": "https://shionyori.github.io/index.html"
+}
+</script>
+
+<meta name="theme-color" content="#6b7eb5">
+<link rel="icon" type="image/png" href="/images/shion/favicon.png">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+
+
+<script>
+  (function() {
+    var mode = 'auto';
+    var saved = localStorage.getItem('shion-theme');
+    if (saved) { mode = saved; }
+    else if (mode === 'auto') {
+      mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    if (mode === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+    (function() {
+      var fonts = {"heading":"'Noto Serif SC', 'Source Han Serif SC', Georgia, serif","body":"'Noto Sans SC', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif","code":"'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace","size_root":"15px"};
+      var legacySize = '';
+      var sizeRoot = fonts.size_root || legacySize;
+
+      if (fonts.heading) {
+        document.documentElement.style.setProperty('--font-heading', fonts.heading);
+      }
+      if (fonts.body) {
+        document.documentElement.style.setProperty('--font-body', fonts.body);
+      }
+      if (fonts.code) {
+        document.documentElement.style.setProperty('--font-code', fonts.code);
+      }
+      if (sizeRoot) {
+        document.documentElement.style.setProperty('--font-size-root', sizeRoot);
+      }
+    })();
+  })();
+</script>
+
+
+<noscript>
+  <style>
+    .sidebar-inner,
+    .content-card,
+    .post,
+    .page,
+    .archive-item,
+    .category-item,
+    .pagination,
+    .comments,
+    .not-found-content,
+    .widget,
+    .tag-cloud-item,
+    .post-card-wrapper,
+    .post-content,
+    .post-tags-footer,
+    .post-share,
+    .post-copyright,
+    .post-nav {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  </style>
+</noscript>
+
+  <script>
+    window.__shionConfig = {
+      katexCDN: 'https://cdn.jsdelivr.net/npm/katex@0',
+      katexDelimiters: [{"left":"$$","right":"$$","display":true},{"left":"$","right":"$","display":false}]
+    };
+  </script>
+<meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a class="site-logo" href="/">
+      
+        <span class="logo-text">Shionyori&#39;s Blog</span>
+      
+    </a>
+
+    <nav class="site-nav" id="site-nav">
+      
+        <a class="nav-item" href="/">首页</a>
+      
+        <a class="nav-item" href="/archives/">归档</a>
+      
+        <a class="nav-item" href="/tags/">标签</a>
+      
+        <a class="nav-item" href="/categories/">分类</a>
+      
+        <a class="nav-item" href="/about/">关于</a>
+      
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn-icon search-toggle" id="search-toggle" aria-label="搜索">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon theme-toggle" id="theme-toggle" aria-label="深色模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon sidebar-toggle" id="sidebar-toggle" aria-label="sidebar_toggle">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+
+  
+<div class="reading-progress" id="reading-progress">
+  <div class="reading-progress-bar" id="reading-progress-bar"></div>
+</div>
+
+
+
+<div id="pjax-container">
+  
+  
+  
+  <div class="page-bg">
+    <img src="/images/shion/bg.png" alt="">
+  </div>
+  
+
+  
+  
+  
+  <section class="page-hero">
+    <h1 class="hero-title">Shionyori&#39;s Blog</h1>
+    
+    <p class="hero-subtitle">Gorgeous blooming flowers will eventually elegantly scattered.</p>
+    
+  </section>
+  
+  
+
+  <div class="container">
+    <div class="content-wrapper">
+      
+      
+<aside class="site-sidebar" id="site-sidebar" data-position="left">
+
+  
+  
+
+  
+  <div class="sidebar-inner sidebar-profile">
+    
+    <div class="sidebar-avatar">
+      <img src="/images/avatar.png" alt="Shionyori" width="96" height="96">
+    </div>
+    
+    
+    <div class="sidebar-author">Shionyori</div>
+    
+    
+    <div class="sidebar-bio">Gorgeous blooming flowers will eventually elegantly scattered.</div>
+    
+    
+    <div class="sidebar-social">
+      
+        <a class="social-icon" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+  </div>
+  
+
+  
+  <div class="sidebar-sticky-group">
+    
+<div class="music-player" data-playlist='[{"name":"奏穹のラプソディア (狂想曲)","artist":"瑶山百霊","url":"/music/瑶山百霊 - 奏穹のラプソディア (狂想曲).ogg","cover":"/music/covers/soukyuu-no-rhapsody.jpg"},{"name":"over the moon","artist":"Forest306","url":"/music/Forest306 - over the moon.ogg","cover":"/music/covers/over-the-moon.jpg"},{"name":"その唄の名は…","artist":"yukina / GET IN THE RING","url":"/music/yukina _ GET IN THE RING - その唄の名は….ogg","cover":"/music/covers/sono-uta-no-na-wa.jpg"},{"name":"Onisan Dochira!","artist":"狐の工作室","url":"/music/狐の工作室 - Onisan Dochira!.ogg","cover":"/music/covers/onisan-dochira.jpg"},{"name":"Skip in the byway","artist":"神乃木製作所","url":"/music/神乃木製作所 - Skip in the byway.ogg","cover":"/music/covers/skip-in-the-byway.jpg"},{"name":"Graveyard Memory","artist":"GET IN THE RING","url":"/music/GET IN THE RING - Graveyard Memory.ogg","cover":"/music/covers/graveyard-memory.jpg"},{"name":"21時の探しモノ (21时寻找的东西)","artist":"minimum electric design","url":"/music/minimum electric design - 21時の探しモノ (21时寻找的东西).ogg","cover":"/music/covers/21ji-no-sagashimono.jpg"},{"name":"Freak Report 01 ~他愛も無い二人の博物誌~","artist":"凛","url":"/music/凛 - Freak Report 01 ~他愛も無い二人の博物誌~.ogg","cover":"/music/covers/freak-report-01.jpg"}]'>
+  
+  <div class="music-body">
+    <div class="music-cover">
+      
+      
+      <img src="/music/covers/soukyuu-no-rhapsody.jpg" alt="cover" class="music-cover-img" onerror="if(!this.dataset.failed){this.dataset.failed='1';this.src='/images/shion/404.png'}">
+      
+    </div>
+    <div class="music-info">
+      <div class="music-title-row">
+        <span class="music-title">奏穹のラプソディア (狂想曲)</span>
+        <span class="music-counter">1 / 8</span>
+      </div>
+      <span class="music-artist">瑶山百霊</span>
+      <div class="music-progress">
+        <div class="music-progress-bar">
+          <div class="music-progress-fill"></div>
+        </div>
+        <div class="music-time">
+          <span class="music-time-current">0:00</span>
+          <span class="music-time-total">0:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="music-controls">
+    <button class="music-btn music-btn-mode" aria-label="Play mode" data-mode="sequential" title="Sequential">
+      <svg class="music-mode-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+    <button class="music-btn music-btn-prev" aria-label="Previous track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+    </button>
+    <button class="music-btn music-btn-play" aria-label="Play">
+      <svg class="music-icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <svg class="music-icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="6" height="16"/><rect x="14" y="4" width="6" height="16"/></svg>
+    </button>
+    <button class="music-btn music-btn-next" aria-label="Next track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+    </button>
+    <button class="music-btn music-btn-list" aria-label="Playlist">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="music-playlist">
+    
+    <button class="music-playlist-item active" data-index="0">
+      <span class="music-playlist-name">奏穹のラプソディア (狂想曲)</span>
+      <span class="music-playlist-artist">瑶山百霊</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="1">
+      <span class="music-playlist-name">over the moon</span>
+      <span class="music-playlist-artist">Forest306</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="2">
+      <span class="music-playlist-name">その唄の名は…</span>
+      <span class="music-playlist-artist">yukina / GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="3">
+      <span class="music-playlist-name">Onisan Dochira!</span>
+      <span class="music-playlist-artist">狐の工作室</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="4">
+      <span class="music-playlist-name">Skip in the byway</span>
+      <span class="music-playlist-artist">神乃木製作所</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="5">
+      <span class="music-playlist-name">Graveyard Memory</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="6">
+      <span class="music-playlist-name">21時の探しモノ (21时寻找的东西)</span>
+      <span class="music-playlist-artist">minimum electric design</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="7">
+      <span class="music-playlist-name">Freak Report 01 ~他愛も無い二人の博物誌~</span>
+      <span class="music-playlist-artist">凛</span>
+    </button>
+    
+  </div>
+  
+</div>
+
+    
+    <div class="sidebar-inner sidebar-widgets">
+      
+        <div class="widget">
+  <h4 class="widget-title">最新文章</h4>
+  <ul class="widget-list">
+    
+    
+      <li class="widget-item">
+        <a href="/2026/06/10/rich-content-demo/">富文本综合演示</a>
+        <span class="widget-date">06-10</span>
+      </li>
+    
+      <li class="widget-item">
+        <a href="/2026/06/10/image-gallery/">图片插入测试</a>
+        <span class="widget-date">06-10</span>
+      </li>
+    
+      <li class="widget-item">
+        <a href="/2026/06/10/tag-plugins-showcase/">标签组件展示</a>
+        <span class="widget-date">06-10</span>
+      </li>
+    
+      <li class="widget-item">
+        <a href="/2026/06/10/theme-features/">主题功能一览</a>
+        <span class="widget-date">06-10</span>
+      </li>
+    
+      <li class="widget-item">
+        <a href="/2026/06/10/lorem-ipsum/">长文排版测试</a>
+        <span class="widget-date">06-10</span>
+      </li>
+    
+  </ul>
+</div>
+
+      
+        <div class="widget">
+  <h4 class="widget-title">分类</h4>
+  <ul class="widget-list">
+    
+    
+      <li class="widget-item">
+        <a href="/categories/Theme/">Theme</a>
+        <span class="widget-count">6</span>
+      </li>
+    
+      <li class="widget-item">
+        <a href="/categories/Test/">Test</a>
+        <span class="widget-count">4</span>
+      </li>
+    
+      <li class="widget-item">
+        <a href="/categories/Tutorial/">Tutorial</a>
+        <span class="widget-count">2</span>
+      </li>
+    
+      <li class="widget-item">
+        <a href="/categories/General/">General</a>
+        <span class="widget-count">1</span>
+      </li>
+    
+  </ul>
+  
+  
+</div>
+
+      
+        <div class="widget">
+  <h4 class="widget-title">标签</h4>
+  
+  <div class="widget-tagcloud">
+    
+      <a class="tag-link" href="/tags/Feature/">Feature</a>
+    
+      <a class="tag-link" href="/tags/Demo/">Demo</a>
+    
+      <a class="tag-link" href="/tags/Markdown/">Markdown</a>
+    
+      <a class="tag-link" href="/tags/Progress-Bar/">Progress Bar</a>
+    
+      <a class="tag-link" href="/tags/Dark-Mode/">Dark Mode</a>
+    
+      <a class="tag-link" href="/tags/Search/">Search</a>
+    
+      <a class="tag-link" href="/tags/Katex/">Katex</a>
+    
+      <a class="tag-link" href="/tags/Nunjucks/">Nunjucks</a>
+    
+      <a class="tag-link" href="/tags/%E6%A0%87%E7%AD%BE%E7%BB%84%E4%BB%B6/">标签组件</a>
+    
+  </div>
+  
+  
+  <div class="widget-expand">
+    <input type="checkbox" id="expand-tags" class="expand-toggle">
+    <div class="widget-tagcloud widget-hidden">
+      
+        <a class="tag-link" href="/tags/Typography/">Typography</a>
+      
+        <a class="tag-link" href="/tags/Documentation/">Documentation</a>
+      
+        <a class="tag-link" href="/tags/API/">API</a>
+      
+        <a class="tag-link" href="/tags/Shell/">Shell</a>
+      
+        <a class="tag-link" href="/tags/HTML/">HTML</a>
+      
+        <a class="tag-link" href="/tags/CSS/">CSS</a>
+      
+        <a class="tag-link" href="/tags/TypeScript/">TypeScript</a>
+      
+        <a class="tag-link" href="/tags/JavaScript/">JavaScript</a>
+      
+        <a class="tag-link" href="/tags/Image/">Image</a>
+      
+        <a class="tag-link" href="/tags/Hexo/">Hexo</a>
+      
+    </div>
+    <label for="expand-tags" class="expand-btn">
+      <span class="expand-more">+ 10 more</span>
+      <span class="expand-less">collapse</span>
+    </label>
+  </div>
+  
+</div>
+
+      
+    </div>
+    
+  </div>
+  
+
+  
+</aside>
+
+      
+
+      <main class="site-main">
+        <section class="post-list">
+  
+    
+
+<div class="post-card-wrapper">
+  <article class="post-card post-card-left">
+    <a class="post-card-link" href="/2026/06/10/rich-content-demo/" aria-label="富文本综合演示"></a>
+
+    <div class="post-card-cover left">
+      
+      
+      <img src="/2026/06/10/rich-content-demo/cover.png" alt="富文本综合演示" loading="lazy">
+      
+    </div>
+
+    <div class="post-card-body">
+      <div class="post-card-meta-top">
+        
+        <time datetime="2026-06-10T22:44:00+00:00">
+          2026-06-10
+        </time>
+        
+        
+        <span class="meta-sep">·</span>
+        <span>456 words</span>
+        
+        
+        <span class="meta-sep">·</span>
+        <span>2 min read</span>
+        
+      </div>
+
+      <h2 class="post-card-title">
+        <a href="/2026/06/10/rich-content-demo/">富文本综合演示</a>
+      </h2>
+
+      
+      <div class="post-card-tags">
+        
+          <a class="tag-link" href="/tags/Demo/">Demo</a>
+        
+          <a class="tag-link" href="/tags/Feature/">Feature</a>
+        
+          <a class="tag-link" href="/tags/API/">API</a>
+        
+          <a class="tag-link" href="/tags/Documentation/">Documentation</a>
+        
+      </div>
+      
+
+      
+      <div class="post-card-excerpt">
+        本文模拟一篇真正的技术文档——包含 API 接口说明、参数表、代码架构对比、任务清单和框架选型对比，综合测试主题在各种内容形态下的渲染表现。
+      </div>
+      
+    </div>
+  </article>
+</div>
+
+  
+    
+
+<div class="post-card-wrapper">
+  <article class="post-card post-card-right">
+    <a class="post-card-link" href="/2026/06/10/image-gallery/" aria-label="图片插入测试"></a>
+
+    <div class="post-card-cover right">
+      
+      
+      <img src="/2026/06/10/image-gallery/cover.png" alt="图片插入测试" loading="lazy">
+      
+    </div>
+
+    <div class="post-card-body">
+      <div class="post-card-meta-top">
+        
+        <time datetime="2026-06-10T22:43:00+00:00">
+          2026-06-10
+        </time>
+        
+        
+        <span class="meta-sep">·</span>
+        <span>164 words</span>
+        
+        
+        <span class="meta-sep">·</span>
+        <span>1 min read</span>
+        
+      </div>
+
+      <h2 class="post-card-title">
+        <a href="/2026/06/10/image-gallery/">图片插入测试</a>
+      </h2>
+
+      
+      <div class="post-card-tags">
+        
+          <a class="tag-link" href="/tags/Demo/">Demo</a>
+        
+          <a class="tag-link" href="/tags/Feature/">Feature</a>
+        
+          <a class="tag-link" href="/tags/Image/">Image</a>
+        
+      </div>
+      
+
+      
+      <div class="post-card-excerpt">
+        本文测试 Shion 主题图片标签（{% image %}）的各种用法：基础插入、尺寸控制、对齐方式、禁用缩放、内联展示和并排对比，覆盖图片排版的主要场景。
+      </div>
+      
+    </div>
+  </article>
+</div>
+
+  
+    
+
+<div class="post-card-wrapper">
+  <article class="post-card post-card-left">
+    <a class="post-card-link" href="/2026/06/10/tag-plugins-showcase/" aria-label="标签组件展示"></a>
+
+    <div class="post-card-cover left">
+      
+      
+      <img src="/2026/06/10/tag-plugins-showcase/cover.png" alt="标签组件展示" loading="lazy">
+      
+    </div>
+
+    <div class="post-card-body">
+      <div class="post-card-meta-top">
+        
+        <time datetime="2026-06-10T22:42:00+00:00">
+          2026-06-10
+        </time>
+        
+        
+        <span class="meta-sep">·</span>
+        <span>346 words</span>
+        
+        
+        <span class="meta-sep">·</span>
+        <span>2 min read</span>
+        
+      </div>
+
+      <h2 class="post-card-title">
+        <a href="/2026/06/10/tag-plugins-showcase/">标签组件展示</a>
+      </h2>
+
+      
+      <div class="post-card-tags">
+        
+          <a class="tag-link" href="/tags/Markdown/">Markdown</a>
+        
+          <a class="tag-link" href="/tags/%E6%A0%87%E7%AD%BE%E7%BB%84%E4%BB%B6/">标签组件</a>
+        
+          <a class="tag-link" href="/tags/Nunjucks/">Nunjucks</a>
+        
+      </div>
+      
+
+      
+      <div class="post-card-excerpt">
+        Shion 主题内置了七种 Nunjucks 标签组件，无需编写 HTML 即可在文章中插入丰富的交互元素。本文逐一展示 Note、Details、Tabs、Quote、LinkCard 和 PostLinkCard 的用法与效果。
+      </div>
+      
+    </div>
+  </article>
+</div>
+
+  
+    
+
+<div class="post-card-wrapper">
+  <article class="post-card post-card-right">
+    <a class="post-card-link" href="/2026/06/10/theme-features/" aria-label="主题功能一览"></a>
+
+    <div class="post-card-cover right">
+      
+      
+      <img src="/2026/06/10/theme-features/cover.png" alt="主题功能一览" loading="lazy">
+      
+    </div>
+
+    <div class="post-card-body">
+      <div class="post-card-meta-top">
+        
+        <time datetime="2026-06-10T22:33:00+00:00">
+          2026-06-10
+        </time>
+        
+        
+        <span class="meta-sep">·</span>
+        <span>254 words</span>
+        
+        
+        <span class="meta-sep">·</span>
+        <span>1 min read</span>
+        
+      </div>
+
+      <h2 class="post-card-title">
+        <a href="/2026/06/10/theme-features/">主题功能一览</a>
+      </h2>
+
+      
+      <div class="post-card-tags">
+        
+          <a class="tag-link" href="/tags/Feature/">Feature</a>
+        
+          <a class="tag-link" href="/tags/Katex/">Katex</a>
+        
+          <a class="tag-link" href="/tags/Search/">Search</a>
+        
+          <a class="tag-link" href="/tags/Dark-Mode/">Dark Mode</a>
+        
+          <a class="tag-link" href="/tags/Progress-Bar/">Progress Bar</a>
+        
+      </div>
+      
+
+      
+      <div class="post-card-excerpt">
+        本文汇总 Shion 主题的核心功能点，包括搜索、暗色模式、数学公式渲染、代码块特性、阅读进度条和响应式布局，方便快速验证主题的各项能力是否正常工作。
+      </div>
+      
+    </div>
+  </article>
+</div>
+
+  
+    
+
+<div class="post-card-wrapper">
+  <article class="post-card post-card-left">
+    <a class="post-card-link" href="/2026/06/10/lorem-ipsum/" aria-label="长文排版测试"></a>
+
+    <div class="post-card-cover left">
+      
+      
+      <img src="/2026/06/10/lorem-ipsum/cover.png" alt="长文排版测试" loading="lazy">
+      
+    </div>
+
+    <div class="post-card-body">
+      <div class="post-card-meta-top">
+        
+        <time datetime="2026-06-10T22:32:00+00:00">
+          2026-06-10
+        </time>
+        
+        
+        <span class="meta-sep">·</span>
+        <span>612 words</span>
+        
+        
+        <span class="meta-sep">·</span>
+        <span>3 min read</span>
+        
+      </div>
+
+      <h2 class="post-card-title">
+        <a href="/2026/06/10/lorem-ipsum/">长文排版测试</a>
+      </h2>
+
+      
+      <div class="post-card-tags">
+        
+          <a class="tag-link" href="/tags/Typography/">Typography</a>
+        
+      </div>
+      
+
+      
+      <div class="post-card-excerpt">
+        本文测试中文长文排版效果，包括古典诗词、文言散文、英文段落和列表的综合混排，验证字体、行距、间距在中西文混排场景下的阅读体验。
+      </div>
+      
+    </div>
+  </article>
+</div>
+
+  
+    
+
+<div class="post-card-wrapper">
+  <article class="post-card post-card-right">
+    <a class="post-card-link" href="/2026/06/10/code-examples/" aria-label="代码高亮测试"></a>
+
+    <div class="post-card-cover right">
+      
+      
+      <img src="/2026/06/10/code-examples/cover.png" alt="代码高亮测试" loading="lazy">
+      
+    </div>
+
+    <div class="post-card-body">
+      <div class="post-card-meta-top">
+        
+        <time datetime="2026-06-10T22:31:00+00:00">
+          2026-06-10
+        </time>
+        
+        
+        <span class="meta-sep">·</span>
+        <span>391 words</span>
+        
+        
+        <span class="meta-sep">·</span>
+        <span>2 min read</span>
+        
+      </div>
+
+      <h2 class="post-card-title">
+        <a href="/2026/06/10/code-examples/">代码高亮测试</a>
+      </h2>
+
+      
+      <div class="post-card-tags">
+        
+          <a class="tag-link" href="/tags/JavaScript/">JavaScript</a>
+        
+          <a class="tag-link" href="/tags/TypeScript/">TypeScript</a>
+        
+          <a class="tag-link" href="/tags/CSS/">CSS</a>
+        
+          <a class="tag-link" href="/tags/HTML/">HTML</a>
+        
+          <a class="tag-link" href="/tags/Shell/">Shell</a>
+        
+      </div>
+      
+
+      
+      <div class="post-card-excerpt">
+        主题内置 highlight.js 语法高亮，支持 190+ 种语言。本文逐一展示前端开发中最常用的几种语言代码块渲染效果，涵盖行号、高亮主题、一键复制等功能。
+      </div>
+      
+    </div>
+  </article>
+</div>
+
+  
+    
+
+<div class="post-card-wrapper">
+  <article class="post-card post-card-left">
+    <a class="post-card-link" href="/2026/06/10/markdown-test/" aria-label="Markdown 渲染测试"></a>
+
+    <div class="post-card-cover left">
+      
+      
+      <img src="/2026/06/10/markdown-test/cover.png" alt="Markdown 渲染测试" loading="lazy">
+      
+    </div>
+
+    <div class="post-card-body">
+      <div class="post-card-meta-top">
+        
+        <time datetime="2026-06-10T22:30:00+00:00">
+          2026-06-10
+        </time>
+        
+        
+        <span class="meta-sep">·</span>
+        <span>378 words</span>
+        
+        
+        <span class="meta-sep">·</span>
+        <span>2 min read</span>
+        
+      </div>
+
+      <h2 class="post-card-title">
+        <a href="/2026/06/10/markdown-test/">Markdown 渲染测试</a>
+      </h2>
+
+      
+      <div class="post-card-tags">
+        
+          <a class="tag-link" href="/tags/Markdown/">Markdown</a>
+        
+          <a class="tag-link" href="/tags/Demo/">Demo</a>
+        
+          <a class="tag-link" href="/tags/Feature/">Feature</a>
+        
+      </div>
+      
+
+      
+      <div class="post-card-excerpt">
+        本文逐一测试主题对 Markdown 各元素的渲染效果——从标题层级、文本样式、列表、表格到脚注，覆盖技术写作中的常见语法，方便后续写文章时参考。
+      </div>
+      
+    </div>
+  </article>
+</div>
+
+  
+    
+
+<div class="post-card-wrapper">
+  <article class="post-card post-card-right">
+    <a class="post-card-link" href="/2026/06/10/hello-world/" aria-label="Hello World"></a>
+
+    <div class="post-card-cover right">
+      
+      
+      <img src="/images/shion/default-cover.png" alt="Hello World" loading="lazy">
+      
+    </div>
+
+    <div class="post-card-body">
+      <div class="post-card-meta-top">
+        
+        <time datetime="2026-06-10T19:31:00+00:00">
+          2026-06-10
+        </time>
+        
+        
+        <span class="meta-sep">·</span>
+        <span>73 words</span>
+        
+        
+        <span class="meta-sep">·</span>
+        <span>1 min read</span>
+        
+      </div>
+
+      <h2 class="post-card-title">
+        <a href="/2026/06/10/hello-world/">Hello World</a>
+      </h2>
+
+      
+      <div class="post-card-tags">
+        
+          <a class="tag-link" href="/tags/Hexo/">Hexo</a>
+        
+      </div>
+      
+
+      
+      <div class="post-card-excerpt">
+        Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
+      </div>
+      
+    </div>
+  </article>
+</div>
+
+  
+</section>
+
+
+
+
+      </main>
+
+      
+    </div>
+  </div>
+</div>
+
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+
+<nav class="mobile-nav" id="mobile-nav">
+  <div class="mobile-nav-inner">
+    <div class="mobile-nav-header">
+      <span class="mobile-nav-title">首页</span>
+      <button class="btn-icon mobile-nav-close" id="mobile-nav-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <ul class="mobile-nav-menu">
+      
+        <li>
+          <a class="mobile-nav-link" href="/">首页</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/archives/">归档</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/tags/">标签</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/categories/">分类</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/about/">关于</a>
+        </li>
+      
+    </ul>
+
+    
+    <div class="mobile-nav-social">
+      
+        <a class="social-icon" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+  </div>
+</nav>
+
+  <footer class="site-footer">
+  <div class="footer-inner">
+    
+    <div class="footer-social">
+      
+        <a class="social-link" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+
+    <div class="footer-info">
+      <span class="copyright">
+        &copy;
+        
+        2026
+        Shionyori
+      </span>
+
+      
+        <span class="powered-by">由 <a href="https://hexo.io/" target="_blank">Hexo</a> 驱动</span>
+      
+
+      
+        <span class="theme-by">主题 Shion</span>
+      
+
+      
+    </div>
+
+    
+
+  </div>
+</footer>
+
+
+
+  
+<div class="search-overlay" id="search-overlay"
+     data-i18n-found="关于「{query}」，找到了 {count} 条记录"
+     data-i18n-not-found="关于「{query}」，没有找到任何记录呢">
+  <div class="search-container">
+    <img class="search-decoration" src="/images/shion/search.png" alt="">
+    <div class="search-header">
+      <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" class="search-input" id="search-input" placeholder="输入关键词搜索..." autocomplete="off">
+      <button class="search-close" id="search-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="search-info" id="search-info"></div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+
+
+  <script src="/js/main.js"></script>
+  
+
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/contrib/auto-render.min.js"></script>
+<script>
+  (function() {
+    if (typeof renderMathInElement !== 'function') return;
+    var targets = document.querySelectorAll('.post-content, .page-content');
+    if (!targets.length) return;
+    targets.forEach(function(el) {
+      // Pre-process: Hexo's markdown renderer inserts <br> for newlines,
+      // which breaks KaTeX's delimiter matching for multi-line formulas.
+      // Replace <br> tags between math delimiters with literal newlines.
+      var html = el.innerHTML;
+      html = html.replace(/(\$\$)([\s\S]*?)(\$\$)/g, function(m, open, body, close) {
+        return open + body.replace(/<br\s*\/?>/gi, '\n') + close;
+      });
+      html = html.replace(/(\\\[)([\s\S]*?)(\\\])/g, function(m, open, body, close) {
+        return open + body.replace(/<br\s*\/?>/gi, '\n') + close;
+      });
+      el.innerHTML = html;
+
+      renderMathInElement(el, {
+        delimiters: [{"left":"$$","right":"$$","display":true},{"left":"$","right":"$","display":false}],
+        ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+        throwOnError: false
+      });
+    });
+  })();
+</script>
+
+
+</body>
+</html>
