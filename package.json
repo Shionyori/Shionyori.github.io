@@ -3,6 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "prebuild": "npm run build --prefix themes/shion",
+    "preserver": "npm run build --prefix themes/shion",
     "build": "hexo generate",
     "clean": "hexo clean",
     "deploy": "hexo deploy",
