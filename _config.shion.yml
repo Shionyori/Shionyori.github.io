@@ -12,6 +12,10 @@ sidebar:
     image: /images/avatar.png
   social:
     GitHub: https://github.com/Shionyori
+  widgets:
+    - recent-posts
+    - categories-widget
+    - tags-widget
 
 # --- Music Player ---
 music:
