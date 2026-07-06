@@ -1,7 +1,7 @@
 ---
 title: hexo-theme-shion 组件演示
 date: 2026-07-05
-updated: 2026-07-05
+updated: 2026-07-06
 cover: cover.png
 categories: Hexo
 tags:
@@ -14,8 +14,6 @@ math: true
 ---
 
 逐一演示 hexo-theme-shion 内置的标签组件和主要功能特性。
-
-<!-- more -->
 
 ---
 
@@ -352,3 +350,51 @@ outdate:
 appearance:
   reading_progress: true
 ```
+
+---
+
+## 友链页面
+
+主题内置友链页面（`layout: friends`），以双列卡片网格展示外部链接。每张卡片包含头像、名称和简介，加载时带有依次浮现的入场动画。
+
+创建 `source/friends/index.md`：
+
+```yaml
+---
+title: 友链
+layout: friends
+friends:
+  - name: Example Blog
+    url: https://example.com
+    avatar: https://example.com/avatar.jpg
+    description: A great tech blog
+---
+```
+
+头像加载失败时自动回落为首字母占位图标。未填写 URL 的卡片变为静态展示（无悬浮效果、不可点击）。
+
+---
+
+## 侧边栏按页配置
+
+侧边栏组件（个人信息、音乐、小部件）可以按页面类型独立配置。在 `_config.shion.yml` 的 `sidebar.layouts` 中统一管理：
+
+```yaml
+sidebar:
+  widgets:                    # 全局默认
+    - recent-posts
+  layouts:
+    index:                    # 主页
+    archive:                  # 归档
+      widgets: []
+    friends:                  # 友链
+      widgets: []
+    tags:                     # 标签
+      widgets: []
+    categories:               # 分类
+      widgets: []
+    about:                    # 关于
+      widgets: []
+```
+
+每个 layout 支持 `enable`、`profile`、`music`、`widgets` 四个键，未设自动沿用全局值。主页和归档页由 Hexo 自动生成，只能通过 `layouts` 配置。

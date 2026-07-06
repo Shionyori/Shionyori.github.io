@@ -6,10 +6,10 @@
 title: Shionyori's Blog
 subtitle: ''
 description: 'Gorgeous blooming flowers will eventually elegantly scattered.'
-keywords:
+keywords: C++,编程,技术博客,Shionyori
 author: Shionyori
 language: zh-CN
-timezone: ''
+timezone: 'Asia/Shanghai'
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'

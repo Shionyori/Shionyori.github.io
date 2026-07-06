@@ -1,7 +1,7 @@
 ---
 title: hexo-theme-shion 配置指南
 date: 2026-07-05
-updated: 2026-07-05
+updated: 2026-07-06
 cover: cover.png
 categories: Hexo
 tags:
@@ -189,6 +189,8 @@ logo:
 
 ## 导航菜单
 
+导航栏采用三等分布局，菜单项居中于页面中轴，左侧为站点 Logo，右侧为搜索和主题切换按钮。
+
 ```yaml
 menu:
   Home: /
@@ -254,6 +256,8 @@ post:
 
 ## 侧边栏
 
+侧边栏由个人信息卡片、音乐播放器和若干小部件（widget）组成。全局配置定义默认行为：
+
 ```yaml
 sidebar:
   enable: true
@@ -264,14 +268,44 @@ sidebar:
   social:
     GitHub: https://github.com/your-username
     Bilibili: https://space.bilibili.com/your-id
-  widgets:                   # 小部件及显示顺序
+  widgets:                   # 全局默认小部件
     - recent-posts
     - categories-widget
-    - tagcloud
+    - tags-widget
   recent_posts_count: 5
   tagcloud_min_font: 1.2
   tagcloud_max_font: 2.8
 ```
+
+### 按页面配置
+
+每个页面的侧边栏可以独立定制。通过 `layouts` 字段按页面类型覆盖，**所有页面统一在这里管理**：
+
+```yaml
+sidebar:
+  widgets:                          # 全局默认
+    - recent-posts
+    - categories-widget
+    - tags-widget
+  layouts:                          # 按页面覆盖
+    index:                          # 主页 /
+    archive:                        # 归档 /archives/
+      widgets: []
+    friends:                        # 友链 /friends/
+      widgets: []
+    tags:                           # 标签 /tags/
+      widgets: []
+    categories:                     # 分类 /categories/
+      widgets: []
+    about:                          # 关于 /about/
+      widgets: []
+```
+
+每个 layout 支持四个键：`enable`（开关侧边栏）、`profile`（个人信息）、`music`（音乐播放器）、`widgets`（小部件列表）。未设置的键自动沿用全局默认值。
+
+> 主页和归档页是 Hexo 自动生成的，没有 `.md` 源文件，只能通过 `layouts` 配置。友链、关于、分类、标签页除了 `layouts` 外，也可在各自的 `.md` frontmatter 中写 `sidebar:` 做一次性覆盖。
+
+### 社交图标与小部件
 
 支持的社交平台键名：`GitHub`, `Twitter`, `Facebook`, `Instagram`, `YouTube`, `Bilibili`, `Email`, `RSS`, `Steam`, `Discord`, `Telegram`, `LinkedIn`, `Weibo`, `Zhihu`, `Douban`, `NPM`, `Patreon`, `Reddit`, `Twitch`, `Spotify`, `Medium`, `CodePen`, `GitLab`, `StackOverflow`, `Mastodon`。
 
@@ -409,7 +443,7 @@ hexo new page friends
 | 分类 | `categories` |
 | 标签 | `tags` |
 
-友链页面需要在 frontmatter 中填写 `friends` 数据：
+友链页面使用 `layout: friends`，在 frontmatter 中填写 `friends` 数据。卡片采用双列网格布局，带有浮现入场动画：
 
 ```yaml
 ---
@@ -422,6 +456,15 @@ friends:
     description: A great tech blog
 ---
 ```
+
+| 字段 | 必填 | 说明 |
+|------|------|------|
+| `name` | 是 | 显示名称 |
+| `url` | 是 | 链接地址 |
+| `avatar` | 否 | 头像 URL，失败时回落为首字母图标 |
+| `description` | 否 | 一行简介 |
+
+如需调整友链页的侧边栏组件，在 `_config.shion.yml` 的 `sidebar.layouts.friends` 中配置即可。
 
 ---
 

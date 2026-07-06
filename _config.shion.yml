@@ -4,18 +4,32 @@
 # ============================================
 
 # --- Site Identity ---
-favicon: /images/shion/favicon.png
-
 # --- Sidebar ---
 sidebar:
   avatar:
     image: /images/avatar.png
   social:
     GitHub: https://github.com/Shionyori
-  widgets:
+  widgets:  # 全局默认（所有页面未单独配置时使用）
     - recent-posts
     - categories-widget
     - tags-widget
+  layouts:
+    # index: 主页，未设置时使用全局默认
+    archive:
+      widgets: []
+    friends:
+      widgets: []
+    tags:
+      widgets: []
+    categories:
+      widgets: []
+    about:
+      widgets: []
+
+# --- Footer ---
+footer:
+  since: 2025
 
 # --- Music Player ---
 music:
