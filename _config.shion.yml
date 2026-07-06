@@ -35,36 +35,51 @@ footer:
 music:
   enable: true
   playlist:
+    # ── 瑶山百霊 ──
     - name: "奏穹のラプソディア (狂想曲)"
       artist: "瑶山百霊"
       url: "/music/瑶山百霊 - 奏穹のラプソディア (狂想曲).ogg"
       cover: "/music/covers/soukyuu-no-rhapsody.jpg"
-    - name: "over the moon"
-      artist: "Forest306"
-      url: "/music/Forest306 - over the moon.ogg"
-      cover: "/music/covers/over-the-moon.jpg"
-    - name: "その唄の名は…"
-      artist: "yukina / GET IN THE RING"
-      url: "/music/yukina _ GET IN THE RING - その唄の名は….ogg"
-      cover: "/music/covers/sono-uta-no-na-wa.jpg"
-    - name: "Onisan Dochira!"
-      artist: "狐の工作室"
-      url: "/music/狐の工作室 - Onisan Dochira!.ogg"
-      cover: "/music/covers/onisan-dochira.jpg"
-    - name: "Skip in the byway"
-      artist: "神乃木製作所"
-      url: "/music/神乃木製作所 - Skip in the byway.ogg"
-      cover: "/music/covers/skip-in-the-byway.jpg"
+    # ── GET IN THE RING ──
     - name: "Graveyard Memory"
       artist: "GET IN THE RING"
       url: "/music/GET IN THE RING - Graveyard Memory.ogg"
       cover: "/music/covers/graveyard-memory.jpg"
+    - name: "ポラリス (北极星)"
+      artist: "GET IN THE RING"
+      url: "/music/GET IN THE RING - ポラリス (北极星).ogg"
+      cover: "/music/covers/polaris.jpg"
+    - name: "その唄の名は…"
+      artist: "yukina / GET IN THE RING"
+      url: "/music/yukina _ GET IN THE RING - その唄の名は….ogg"
+      cover: "/music/covers/sono-uta-no-na-wa.jpg"
+    # ── Forest306 ──
+    - name: "over the moon"
+      artist: "Forest306"
+      url: "/music/Forest306 - over the moon.ogg"
+      cover: "/music/covers/over-the-moon.jpg"
+    # ── minimum electric design ──
     - name: "21時の探しモノ (21时寻找的东西)"
       artist: "minimum electric design"
       url: "/music/minimum electric design - 21時の探しモノ (21时寻找的东西).ogg"
       cover: "/music/covers/21ji-no-sagashimono.jpg"
+    # ── 凛 ──
     - name: "Freak Report 01 ~他愛も無い二人の博物誌~"
       artist: "凛"
       url: "/music/凛 - Freak Report 01 ~他愛も無い二人の博物誌~.ogg"
       cover: "/music/covers/freak-report-01.jpg"
-  
+    # ── 森羅万象 ──
+    - name: "かぜのいろ (カゼノイロ)"
+      artist: "森羅万象"
+      url: "/music/森羅万象 - かぜのいろ (カゼノイロ).ogg"
+      cover: "/music/covers/kaze-no-iro.jpg"
+    # ── 狐の工作室 ──
+    - name: "Onisan Dochira!"
+      artist: "狐の工作室"
+      url: "/music/狐の工作室 - Onisan Dochira!.ogg"
+      cover: "/music/covers/onisan-dochira.jpg"
+    # ── 神乃木製作所 ──
+    - name: "Skip in the byway"
+      artist: "神乃木製作所"
+      url: "/music/神乃木製作所 - Skip in the byway.ogg"
+      cover: "/music/covers/skip-in-the-byway.jpg"
