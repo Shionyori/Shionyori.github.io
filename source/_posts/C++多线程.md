@@ -1,5 +1,5 @@
 ---
-title: C++ 多线程编程
+title: C++ 多线程
 date: 2025-03-04
 updated: 2026-07-05
 cover: cover.png
@@ -53,7 +53,8 @@ std::thread t4(Callable(), 42)
 ## 1.2 生命周期管理
 
 1. `join()`
-阻塞当前线程，等待目标线程结束
+- 阻塞主线程，等待目标线程结束
+- 目标线程结束后，**主线程调用内核 API 回收线程资源**（栈空间、线程描述符等）
 ```cpp
 int main() {
 	thread t(foo);
@@ -63,7 +64,8 @@ int main() {
 ```
 
 2. `detach()`
-分离线程，后台独立运行
+- 分离目标线程，主线程不等待
+- 目标线程结束后，**系统自动回收线程资源**
 ```cpp
 int main() {
 	thread t(foo);
