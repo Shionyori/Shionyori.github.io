@@ -13,7 +13,7 @@ tags:
   - 线程池
 ---
 
-多线程编程的核心在于两件事：创建线程去干活，协调它们不打架。从 std::thread 的启动与回收，到互斥量和条件变量的同步，再到原子操作与线程池。
+多线程编程的核心在于两件事：创建线程去干活，协调它们不打架。从 `std::thread` 的启动与回收，到互斥量和条件变量的同步，再到原子操作与线程池。
 
 ---
 # 1. 线程的创建与管理
@@ -74,7 +74,7 @@ int main() {
 }
 ```
 
-# 2. 互斥量
+# 2. std::mutex
 
 互斥锁 `std::mutex` 是一种同步原语，用于防止多个线程同时访问共享资源。当一个线程需要访问共享资源时，它首先要对互斥锁进行锁定 `lock()` ；如果互斥锁已经被其他线程锁定，那么请求锁定的线程将被阻塞，直到互斥锁被解锁 `unlock()`。
 
@@ -98,7 +98,10 @@ int main() {
 }
 ```
 
+C++ 还提供了 RAII 风格的锁管理类，在对象生命周期结束时会自动释放锁，省去了手动管理的麻烦与风险。
+
 **2. `std::lock_guard<T>`：自动释放**
+
 ```cpp
 void increment() {
     std::lock_guard<std::mutex> lock(mtx); // 自动锁定互斥锁
@@ -108,9 +111,10 @@ void increment() {
 ```
 
 **3. `std::unique_lock<T>`：自动/手动**
-核心特性：
-- 可手动解锁：对象析构时会自动释放，但同时也提供了 `unlock()` 方法以手动释放
-- 所有权转移：`unique_lock` 之间可以转移 `mutex` 的所有权
+
+`std::unique_lock` 是一个更灵活的互斥锁管理类：
+- 对象析构时会自动释放，但同时提供 `lock()` / `unlock()` 以允许手动控制生命周期（而这正是 `std::condition_variable` 所需要的）
+- `std::unique_lock` 之间允许使用 `std::move` 来转移 `mutex` 的所有权
 ```cpp
 void increment() {
 	std::unique_lock<std::mutex> lock(mtx)
@@ -121,7 +125,7 @@ void increment() {
 }
 ```
 
-# 3. `std::condition_varibale`
+# 3. std::condition_variable
 
 条件变量用于线程间的协调，允许一个或多个线程等待某个条件的发生。它通常与互斥锁一起使用，以实现线程间的同步。它**本质上是通知系统 + 条件判断，用于决定某个线程是否继续向下执行**；而互斥锁则是为了保证判断准确性的手段，防止 `bool` 值再判断过程中被更改。
 
@@ -135,9 +139,8 @@ bool ready = false; // 条件值
 2. 信号接收端（消费者）：
 ```cpp
 std::unique_lock<std::mutex> lock(mtx);
-cv.wait(lock, []{ return ready == true; }); // 等待条件满足，每当线程被唤醒时进行一次条件检查
-
-// 条件满足后执行，若不满足则重新等待
+cv.wait(lock, []{ return ready == true; }); // 立即进行一次条件检查，如果不满足就挂起
+// 之后每当线程被唤醒时进行一次条件检查，条件满足后执行，若不满足则重新等待
 ```
 
 3. 条件信号的发送端（生产者）：
@@ -171,7 +174,46 @@ void mainThread() {
 }
 ```
 
-# 4. `std::atomic`
+# 4 std::shared_mutex
+
+`std::mutex` 将所有线程一视同仁，这在写操作时是必须的，但在**大量读、少量写**的场景（如缓存服务、DNS 解析、配置加载），多个读线程串行执行会严重浪费 CPU 缓存和性能。因此 C++17 引入了 `std::shared_mutex`，它允许多个线程同时读取共享资源，但在写操作时是互斥的。
+
+- 独占锁（`std::unique_lock<std::shared_mutex>`）：用于写操作，会阻塞所有其他读线程和写线程
+- 共享锁（`std::shared_lock<std::shared_mutex>`）：用于读操作，仅当有线程持有独占锁时才阻塞；若只有共享锁，可并发进入
+
+```cpp
+class Cache {
+private:
+    std::unordered_map<int, int> data_;
+    mutable std::shared_mutex rw_mutex_; // mutable 让 const 方法也能加锁
+
+public:
+    // 读操作：多个线程可以同时进入此函数，不会互相阻塞
+    int get(int key) const {
+        std::shared_lock<std::shared_mutex> lock(rw_mutex_);
+        auto it = data_.find(key);
+        return (it != data_.end()) ? it->second : -1;
+    }
+
+    // 写操作：唯一进入，进入时会阻塞所有正在读的线程
+    void set(int key, int value) {
+        std::unique_lock<std::shared_mutex> lock(rw_mutex_);
+        data_[key] = value;
+    }
+
+    // 批量更新：为了性能，手动加锁一次，避免反复加解锁开销
+    void batch_update(const std::vector<std::pair<int, int>>& updates) {
+        std::unique_lock<std::shared_mutex> lock(rw_mutex_);
+        for (auto& [k, v] : updates) {
+            data_[k] = v;
+        }
+    }
+};
+```
+
+`mutable` 关键字的作用是**允许变量在 `const` 成员函数中被修改**。在多线程编程中，`mutable` 常用于修饰共享资源的互斥锁，使得即使在 `const` 成员函数中，也可以对互斥锁进行加锁和解锁操作，从而保证线程安全。
+
+# 5. std::atomic
 
 原子操作是指不可中断的一个或一系列操作。在多线程环境下，对原子变量的读写保证了数据竞争不会发生，无需配合互斥锁（`std::mutex`）即可实现线程安全，所以它是实现无锁编程的基础。在 C++ 中它是通过原子变量 `std::atomic<T>` 实现的，其中 `T` 必须是平凡可复制类型（例如 `int`、`bool`、指针等）。
 
@@ -183,7 +225,7 @@ void mainThread() {
 - `fetch_add / fetch_sub`：原子加减，返回旧值
 - `++, --, +=, -=`：方便使用，本质调用 `fetch` 操作
 
-# 5. 线程池
+# 6. 线程池
 
 线程池是一种多线程处理形式，简单来说，就是预先创建好一组线程，放在池子里备用。当有新任务来时，直接从池子中拿一个空闲线程去执行。由于频繁地创建和销毁线程开销非常大，执行完成的线程不会销毁，而是回到池子中继续等待下一个任务。
 
