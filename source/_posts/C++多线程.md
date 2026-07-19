@@ -223,7 +223,9 @@ public:
 - `store()`：写入
 - `load()`：读取
 - `exchange()`：交换
-- `compare_exchange_weak/strong(exp, des)`：若当前值等于 `exp` 则更新为 `des`，否则更新 `exp` 为当前值
+- `compare_exchange_weak/strong(exp, des)`：如果当前值符合预期（等于 `exp`）则将其替换为目标值 `des`，返回成功；否则将预期值 `exp` 更新为当前值，返回失败
+    - `compare_exchange_weak`：可能出现伪失败（硬件干扰导致的写入失败，同样会更新预期值），适合在循环中使用（失败就自动重试）
+    - `compare_exchange_strong`：不会出现伪失败，但是性能开销更大，适合单次使用
 - `fetch_add / fetch_sub`：原子加减，返回旧值
 - `++, --, +=, -=`：方便使用，本质调用 `fetch` 操作
 
@@ -252,6 +254,7 @@ public:
 ## 5.3 自旋锁
 
 所谓自旋锁，是指线程在等待锁的过程中不会被挂起，而是不断地循环检查锁是否可用。其优点在于可以避免线程切换的开销，而缺点是如果锁被其他线程长时间占用，该线程就会长期占用 CPU 资源，从而导致 CPU 空转。所以自旋锁只适用于锁持有时间非常短的场景（比如简单计数器）。
+
 ```cpp
 class SpinLock {
     std::atomic_flag flag = ATOMIC_FLAG_INIT;
@@ -271,6 +274,12 @@ public:
     }
 };
 ```
+
+`std::atomic_flag` 是 C++11 提供的原子标志类型，它提供了以下方法：
+- `test_and_set()`: 原子地将标志设置为 `true` 并返回之前的值
+- `clear()`: 原子地将标志清除为 `false`
+
+`ATOMIC_FLAG_INIT` 是一个宏，用于初始化 `std::atomic_flag` 对象为 `false`。其他原子类型也有这样的初始化宏（如 `ATOMIC_VAR_INIT(value)`），但从 C++20 开始，它们已经被逐渐弃用，现在更推荐的做法是使用构造函数（如 `std::atomic<int> a(0)`）。
 
 # 6. 线程池
 
