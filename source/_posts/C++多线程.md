@@ -1,15 +1,17 @@
 ---
 title: C++ 多线程
 date: 2025-03-04
-updated: 2026-07-19
+updated: 2026-07-20
 cover: cover.png
 categories: C++
 tags:
   - C++
   - 多线程
-  - 互斥量
+  - 并发
+  - 互斥锁
   - 条件变量
   - 原子操作
+  - CAS
   - 线程池
 ---
 
@@ -223,13 +225,34 @@ public:
 - `store()`：写入
 - `load()`：读取
 - `exchange()`：交换
-- `compare_exchange_weak/strong(exp, des)`：如果当前值符合预期（等于 `exp`）则将其替换为目标值 `des`，返回成功；否则将预期值 `exp` 更新为当前值，返回失败
-    - `compare_exchange_weak`：可能出现伪失败（硬件干扰导致的写入失败，同样会更新预期值），适合在循环中使用（失败就自动重试）
-    - `compare_exchange_strong`：不会出现伪失败，但是性能开销更大，适合单次使用
+- `compare_exchange_weak/strong(exp, des)`：CAS
+    - 如果当前值符合预期（等于 `exp`）则将其替换为目标值 `des`，返回成功
+    - 否则将预期值 `exp` 更新为当前值，返回失败
 - `fetch_add / fetch_sub`：原子加减，返回旧值
 - `++, --, +=, -=`：方便使用，本质调用 `fetch` 操作
 
-## 5.2 内存序
+## 5.2 CAS
+
+CAS（Compare And Swap）是一条 CPU 指令（在 x86 架构中具体为 `LOCK CMPXCHG`），它是原子操作的基础，上面提到的 `store`、`load`、`exchange` `fetch_add`、`fetch_sub` 等原子操作都是基于 CAS 实现的。
+
+CAS 的核心思想是比较并交换，如果记作 `CAS(V, E, N)` ：
+1. 读取内存中的值 `V`
+2. 比较 `V` 是否等于预期值 `E`
+3. 如果相等，则将内存中的值更新为新值 `N`，否则不做任何操作，并返回当前值 `V`。
+
+在 C++ 中，`compare_exchange_weak/strong()` 就是 CAS 的封装，其中 `weak` 和 `strong` 的区别如下：
+- `compare_exchange_weak()`：
+    - **允许出现伪失败**（硬件干扰导致的写入失败，预期值保持原样不变）
+    - 适合在循环中使用，不断重试直到成功（如 `while (!atomic_var.compare_exchange_weak(...))`）
+- `compare_exchange_strong()`：
+    - 不会出现伪失败，但是**性能开销更大**
+    - 适合只尝试一次的场景
+
+互斥锁和 CAS 的关键区别：==互斥锁是在读写操作之前做限制，保证同一时刻只有一个线程可以访问共享资源；而 CAS 只在读写操作之后做检查，如果发现自己操作之后的共享资源与预期不符（也就是中途被别人修改过）则回滚并重试==。它们分别对应了悲观锁和乐观锁的概念：
+- 悲观锁：假设会发生冲突，线程在访问共享资源前就先加锁，保证独占访问
+- 乐观锁：假设不会发生冲突，线程在访问共享资源时不加锁，而是在操作完成后检查是否发生冲突，如果发生冲突则回滚并重试
+
+## 5.3 内存序
 
 首先在这里需要纠正一个误区：**代码并不是严格按照书写顺序执行的**。造成这种现象的原因主要有：
 - 编译器优化导致的代码重排
@@ -251,7 +274,7 @@ public:
 | `memory_order_acq_rel` | 同时具备 `acquire` 和 `release` 语义（读-改-写操作常用） | 中等偏高 |
 | `memory_order_seq_cst` | 所有线程看到相同的全局顺序（默认参数，也是最保险的选择）                 | 最高   |
 
-## 5.3 自旋锁
+## 5.4 自旋锁
 
 所谓自旋锁，是指线程在等待锁的过程中不会被挂起，而是不断地循环检查锁是否可用。其优点在于可以避免线程切换的开销，而缺点是如果锁被其他线程长时间占用，该线程就会长期占用 CPU 资源，从而导致 CPU 空转。所以自旋锁只适用于锁持有时间非常短的场景（比如简单计数器）。
 
@@ -280,6 +303,64 @@ public:
 - `clear()`: 原子地将标志清除为 `false`
 
 `ATOMIC_FLAG_INIT` 是一个宏，用于初始化 `std::atomic_flag` 对象为 `false`。其他原子类型也有这样的初始化宏（如 `ATOMIC_VAR_INIT(value)`），但从 C++20 开始，它们已经被逐渐弃用，现在更推荐的做法是使用构造函数（如 `std::atomic<int> a(0)`）。
+
+## 5.5 无锁栈
+
+通过 CAS 可以实现一个简单的无锁栈（Lock-Free Stack），它允许多个线程同时进行入栈和出栈操作，而不需要使用互斥锁。
+
+```cpp
+template<typename T>
+class LockFreeStack {
+    struct Node {
+        T data;
+        Node* next;
+        Node(T d, Node* n) : data(std::move(d)), next(n) {}
+    };
+    std::atomic<Node*> head_{nullptr};
+    std::atomic<size_t> size_{0};
+public:
+    void push(T val) {
+        Node* new_node = new Node(std::move(val), nullptr);
+        new_node->next = head_.load(std::memory_order_relaxed);
+
+        // CAS：如果 head_ 还是 new_node->next，就替换为 new_node
+        while (!head_.compare_exchange_weak(
+            new_node->next, new_node,
+            std::memory_order_release,
+            std::memory_order_relaxed)) {
+            // CAS 失败说明有竞争，new_node->next 已被更新为新的 head_
+            // 不断重试
+        }
+
+        size_.fetch_add(1, std::memory_order_relaxed);
+    }
+
+    std::optional<T> pop() {
+        Node* old_head = head_.load(std::memory_order_relaxed);
+        
+        // CAS：如果 head_ 还是 old_head，就替换为 old_head->next
+        while (old_head && !head_.compare_exchange_weak(
+            old_head, old_head->next,
+            std::memory_order_acquire,
+            std::memory_order_relaxed)) {
+            // CAS 失败说明有竞争，old_head 已被更新为新的 head_
+            // 不断重试
+        }
+
+        if (!old_head) return std::nullopt;
+        T val = std::move(old_head->data);
+        size_.fetch_sub(1, std::memory_order_relaxed);
+        delete old_head;  // 注意：实际项目需要安全回收（hazard pointer/epoch）
+        return val;
+    }
+
+    size_t size() const { return size_.load(std::memory_order_relaxed); }
+
+    ~LockFreeStack() {
+        while (pop()) {}
+    }
+};
+```
 
 # 6. 线程池
 
