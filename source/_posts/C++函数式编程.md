@@ -7,10 +7,13 @@ categories: C++
 tags:
   - C++
   - 函数式编程
+  - 仿函数
   - Lambda
   - function
   - bind
   - 回调函数
+  - 函数指针
+  - 函数名退化
 ---
 
 函数不再只是一段代码，也可以是一个对象、一个参数、一个返回值。C++ 为函数式风格提供了完整的工具箱：从重载 operator() 的仿函数，到灵活捕获上下文的 Lambda，再到通用的 std::function 包装器。
