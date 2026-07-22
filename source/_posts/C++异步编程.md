@@ -7,6 +7,10 @@ categories: C++
 tags:
   - C++
   - 异步编程
+  - future 
+  - promise
+  - packaged_task
+  - async
 ---
 
 C++ 的异步编程围绕一个核心展开：启动一个任务，在未来的某个时刻取回结果。其中 `std::future` 和 `std::promise` 构成了这条通道的两端，而 `std::async` 则把线程创建和结果传递打包在一起。
