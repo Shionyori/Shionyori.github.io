@@ -1,7 +1,7 @@
 ---
 title: C++ 异步编程
 date: 2025-03-04
-updated: 2026-07-05
+updated: 2026-07-24
 cover: cover.png
 categories: C++
 tags:
@@ -17,47 +17,80 @@ C++ 的异步编程围绕一个核心展开：启动一个任务，在未来的�
 
 ---
 
-# 1. 异步编程基础
-## 1.1 核心头文件
+# 1. 异步编程的基础
 
+主要涉及的头文件有：
 ```cpp
 #include <future> // std::future, std::promise, std::packaged_task, std::async
 #include <thread> // std::thread 底层线程支持
 ```
 
-## 1.2 异步三要素
-
+异步三要素：
 1. **`std::future<T>`**：获取异步结果的“只读句柄”，一次性获取（`get()` 后失效）
 2. **`std::promise<T>`**：手动设置异步结果的“写入端”，与 `future` 成对出现，通过 `get_future()` 关联
 3. **任务载体**：执行逻辑的封装，具体为 `std::async`（自动调度）、`std::packaged_task`（手动调度）、`std::thread`（原始线程）
 
-## 1.3 Future-Promise 机制
+# 2. future/promise 同步机制
 
-> **如何安全地将异步任务的结果（或异常）从工作线程传递到调用线程？**
+> 如何安全地将异步任务的结果（或异常）从工作线程传递到调用线程？
 
-传统方案（全局变量+锁）易出错且难以处理异常。C++ 标准库提供标准化解决方案：**共享状态（Shared State） + Future/Promise 双端接口**，`promise<T>` 是写入端，`future<T>` 是读取段。
+传统方案：全局变量 + 锁，易出错且难以处理异常。
+
+C++ 标准库提供标准化解决方案：**共享状态（Shared State） + Future/Promise 双端接口**，`promise<T>` 是写入端，`future<T>` 是读取段。
 
 - 线程安全：共享状态内部同步，用户无需手动加锁
 - 异常透明传递：`get()` 时在**调用线程**重抛，堆栈清晰
 - 一次性语义：`get()` 只能调用一次，防止数据竞争
 
-## 1.4 关键方法
+##  2.1 std::promise
 
-`std::promise<T>`：
+1. `get_future()`
+
+- 返回与 `promise` **绑定**的 `future`（即共享同一共享状态）
+- **只能调用一次**，调用后 `promise` 会变为无效（`valid() == false`），再次调用抛出 `std::future_error`
+
 ```cpp
 std::future<T> get_future();
 ```
-- 返回与 `promise` **绑定**的 `future`（即共享同一共享状态）
-- **只能调用一次**，重复调用抛出 `std::future_error`
 
-`std::future<T>`：
+2. `set_value()`
+
+- 设置共享状态的值，并唤醒等待的 `future`（如果有）
+- 只能调用一次，同上
+
+```cpp
+void set_value(const T& value);
+void set_value(T&& value);
+```
+
+3. `set_exception()`
+
+- 设置共享状态的异常，并唤醒等待的 `future`（如果有）
+- 只能调用一次，之后调用 `future.get()` 时会在调用线程重新抛出该异常
+
+```cpp
+void set_exception(std::exception_ptr p);
+```
+
+## 2.2 std::future
+
+1. `get()`
+
+- 如果共享状态已就绪，立即返回结果或抛出异常；否则，**阻塞**当前线程直到任务完成
+- **只能调用一次**，调用后 `future` 会变为无效（`valid() == false`），再次调用抛出 `std::future_error`
+
 ```cpp
 T get();
 T& get();
 void get();
 ```
-- **阻塞**：若共享状态未就绪，阻塞当前线程直到任务完成
-- **一次性**：调用后 `future` 会变为无效（`valid() == false`），再次调用抛出 `std::future_error`
+
+2. `wait()` / `wait_for()` / `wait_until()`
+
+等待共享状态就绪
+- `wait()`：阻塞直到共享状态就绪
+- `wait_for(duration)`：阻塞指定时间，超时返回
+- `wait_until(time_point)`：阻塞直到指定时间点，超时返回
 
 ```cpp
 fut.wait(); // deferred 策略下它会触发任务执行，以下两个则不会
@@ -65,7 +98,7 @@ fut.wait_for(100ms);
 fut.wait_until(std::chrono::system_clock::now() + 1s)
 ```
 
-时间结束后会返回其中一个状态值：
+其中 `wait_for()` 和 `wait_until()` 返回值为 `std::future_status`，表示共享状态的当前状态：
 ```cpp
 enum class std::future_status {
     ready,      // 共享状态已就绪（有结果/异常）
@@ -74,23 +107,21 @@ enum class std::future_status {
 };
 ```
 
+# 2. std::packaged_task
 
-
-# 2. `std::packaged_task`：手动调度的异步任务包装器
-## 2.1 定义
-
-`std::packaged_task` 本质上是**可调用对象 + 内置`promise<R>` + 自动绑定 `future<R>`**
+`std::packaged_task` 是手动调度的异步任务包装器，本质上就是**可调用对象 + 内置`promise<R>` + 自动绑定 `future<R>`**。
+- 可通过 `get_future()` 获取与之绑定的 `future`，**只能调用一次**
+- **只可移动**，不可拷贝：
+    - 传递时必须显式地使用 `std::move()`
+    - 无法直接存放到 `std::function` 中（要求可拷贝），需要使用 `shared_ptr` 作为中转
 
 ```cpp
 template<class R, class... Args>
 class packaged_task<R(Args...)> // 特化：包装返回 R 且接收 Args... 的可调用对象
 ```
 
-## 2.2 使用示例
+具体的使用方法如下：
 ```cpp
-#include <future>
-#include <iostream>
-
 // 创建任务
 std::packaged_task<int(int)> task([](int x) { return x * 2; });
 
@@ -98,37 +129,43 @@ std::packaged_task<int(int)> task([](int x) { return x * 2; });
 std::future<int> result = task.get_future();  
 
 // 执行任务（三种方式）
-task(10);                          // A. 当前线程同步执行
-// 或
-std::thread(std::move(task), 20).detach();  // B. 新线程异步执行
-// 或
-thread_pool.enqueue(std::move(task), 30);   // C. 线程池调度
+task(10);                                   // A. 当前线程同步执行
+std::thread(std::move(task), 10).detach();  // B. 新线程异步执行
+thread_pool.enqueue(std::move(task), 10);   // C. 线程池调度
 
 // 获取结果（阻塞直到任务完成）
 std::cout << result.get() << std::endl;
 ```
 
-# 3. `std::async`：自动调度的异步任务
-## 3.1 定义
+```cpp
+// 大部分通用线程池为了接收任意类型的任务，内部通常存的是 std::function<void()>
+// 由于 std::function 要求可拷贝，而 std::packaged_task 只可移动，所以需要使用 shared_ptr 作为中转
+auto task_ptr = std::make_shared<std::packaged_task<int(int)>>([](int x) { return x * 2; });
+auto result = task_ptr->get_future();
+thread_pool.enqueue([task_ptr](int x) { (*task_ptr)(x); }, 10);
+```
 
-`std::async`本质上是 **`packaged_task` + 策略驱动的自动调度器**，是对 `packaged_task` 的**高层便利封装**
+# 3. std::async
+
+`std::async` 是自动调度的异步任务，本质上是 **`packaged_task` + 策略驱动的自动调度器**，也就是对 `packaged_task` 的**高层便利封装**。
+- 自动返回一个 `std::future<R>`，用于获取异步任务的结果
+- 任务执行的默认策略为 `async | deferred`（异步或延迟执行），实际使用时一般指定 `async` 策略
 
 ```cpp
 template<class F, class... Args>
-std::future<std::invoke_result_t<std::decay_t<F>, std::decay_t<Args>...>> async(std::launch policy, F&& f, Args&&... args);
+std::future<std::invoke_result_t<std::decay_t<F>, std::decay_t<Args>...>> async(
+    std::launch policy, F&& f, Args&&... args);
 
 template<class F, class... Args>
 std::future<std::invoke_result_t<std::decay_t<F>, std::decay_t<Args>...>> async(F&& f, Args&&... args);
 ```
 
-## 3.2 启动策略
-
+启动策略：
 1. `std::launch::async`：立即创建新线程执行
 2. `std::launch::deferred`：延迟到 `get()/wait()` 时在当前线程同步执行
 3. `async | deferred`：默认策略
 
-## 3.3 使用示例
-
+具体的使用方法如下：
 ```cpp
 #include <future>
 #include <iostream>
@@ -151,8 +188,7 @@ int main() {
 }
 ```
 
-# 4. 其他问题
-## 4.1 `deferred`策略的尴尬地位
+# 4. deferred 策略的尴尬地位
 
 理论上说 `deferred` 策略提供了以下几点价值：
 

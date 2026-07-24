@@ -374,68 +374,118 @@ public:
     - 条件变量 (Condition Variable): 当队列为空时，工作线程休眠；当有新任务加入时，唤醒工作线程
 4. 管理接口: `submit()` (提交任务), `stop()` (关闭池子)
 
-简化版的代码逻辑：
-```cpp
-#include <vector>
-#include <queue>
-#include <thread>
-#include <mutex>
-#include <condition_variable>
-#include <functional>
+## 6.1 简单线程池
 
+为了支持任意类型的任务，线程池内部通常存储的是 `std::function<void()>`，而不是具体的函数指针或函数对象。这样我们可以通过 `std::bind` 或 `lambda` 将任意可调用对象和参数封装成一个统一的任务类型。
+
+```cpp
 class ThreadPool {
+    std::vector<std::thread> workers_;        // 工作线程集合
+    std::queue<std::function<void()>> tasks_; // 任务队列
+    std::mutex mtx_;                          // 队列锁
+    bool stop = false;                        // 停止标志
+    std::condition_variable cv_;              // 条件变量
 public:
-    ThreadPool(size_t num_threads) {
+    explicit ThreadPool(size_t n) {
         // 1. 创建指定数量的工作线程
-        for (size_t i = 0; i < num_threads; ++i) {
+        for (size_t i = 0; i < n; ++i) {
             workers.emplace_back([this] {
                 while (true) {
                     std::function<void()> task;
                     {
-                        // 2. 加锁访问队列
-                        std::unique_lock<std::mutex> lock(this->queue_mutex);
-                        // 3. 如果队列空且未停止，则等待 (释放锁并挂起)
-                        this->condition.wait(lock, [this] { 
-                            return this->stop || !this->tasks.empty(); 
-                        });
-                        // 4. 如果停止且队列空，退出线程
-                        if (this->stop && this->tasks.empty()) return;
-                        
-                        // 5. 取出任务
-                        task = std::move(this->tasks.front());
-                        this->tasks.pop();
+                        std::unique_lock<std::mutex> lock(mtx_); // 2. 加锁访问队列
+                        cv_.wait(lock, [this] { return this->stop || !this->tasks.empty(); }); // 3. 如果队列空且未停止，则等待 (释放锁并挂起)
+                        if (stop_ && tasks_.empty()) return; // 4. 如果停止且队列空，退出线程
+                        task = std::move(tasks_.front()); // 5. 取出任务
+                        tasks_.pop();
                     }
-                    // 6. 执行任务 (锁已释放)
-                    task();
+                    task(); // 6. 执行任务 (锁已释放)
                 }
             });
         }
     }
 
-    template<class F>
-    void submit(F&& f) {
+    template<typename F, typename... Args>
+    void submit(F&& func, Args&&... args) {
+        auto task = std::bind(std::forward<F>(func), std::forward<Args>(args)...); // 绑定函数和参数
         {
-            std::unique_lock<std::mutex> lock(queue_mutex);
-            tasks.emplace(std::forward<F>(f));
+            std::lock_guard<std::mutex> lock(mtx_);
+            if (stop_) throw std::runtime_error("submit to stopped pool");
+            tasks_.emplace(std::move(task));
         }
-        condition.notify_one(); // 唤醒一个线程
+        cv_.notify_one(); // 唤醒一个线程
     }
 
     ~ThreadPool() {
         {
-            std::unique_lock<std::mutex> lock(queue_mutex);
-            stop = true;
+            std::lock_guard<std::mutex> lock(mtx_);
+            stop_ = true;
         }
-        condition.notify_all(); // 唤醒所有线程以便退出
-        for (std::thread& worker : workers)
-            worker.join(); // 等待所有线程结束
+        cv_.notify_all(); // 唤醒所有线程，准备退出
+        for (auto& w : workers_) w.join(); // 依次等待每个线程进行收尾工作
+        // 最后析构
+    }
+};
+```
+
+## 6.2 支持任务返回值的线程池
+
+在实际应用中，线程池通常还需要支持任务返回值。为了实现这一点，我们可以使用 `std::packaged_task` 来封装任务，并返回一个 `std::future` 对象，允许调用者在未来某个时间点获取任务的结果。
+
+```cpp
+class ThreadPool {
+    std::vector<std::thread> workers_;
+    std::queue<std::function<void()>> tasks_;
+    std::mutex mtx_;
+    bool stop_ = false;
+    std::condition_variable cv_;
+public:
+    explicit ThreadPool(size_t n) {
+        for(size_t i = 0; i < n; ++i) {
+            workers_.emplace_back([this]{
+                while(true) {
+                    std::function<void()> task;
+                    {
+                        std::unique_lock lock(mtx_);
+                        cv_.wait(lock, [this]{return stop_ || !tasks_.empty();});
+                        if(stop_ || tasks_.empty()) return;
+                        task = std::move(tasks_.front());
+                        tasks_.pop();
+                    }
+                    task();
+                } 
+            });
+        }
     }
 
-private:
-    std::vector<std::thread> workers;       // 工作线程集合
-    std::queue<std::function<void()>> tasks;// 任务队列
-    std::mutex queue_mutex;                 // 队列锁
-    std::condition_variable condition;      // 条件变量
-    bool stop = false;                      // 停止标志
+    template<typename F, typename... Args>
+    auto submit(F&& func, Args&&... args) -> std::future<decltype(func(args...))> {
+        using ReturnType =  decltype(func(args...));
+
+        // std::packaged_task 是只移动类型，而 std::function（tasks_） 要求内部存储的可调用对象必须是可拷贝的
+        // 所以这里用智能指针，而且必须是 shared_ptr （因为 unique_ptr 也是只可移动）
+        auto task = std::make_shared(std::packaged_task<ReturnType()>(
+            std::bind(std::forward<F>(func), std::forward<Args>(args)...)
+        ));
+
+        std::future<ReturnType> result = task->get_future();
+        {
+            std::lock_guard lock(mtx_);
+            if (stop_) throw std::runtime_error("submit to stopped pool");
+            // task 是指针，需要构造一个可调用对象再传入
+            tasks_.emplace([task](){ (*task)(); }); // [task]{ (*task)(); } 是一样的，这里 lambda 的参数列表可省略
+        }
+        cv_.notify_one();
+        return result;
+    }
+
+    ~ThreadPool() {
+        {
+            std::lock_guard lock(mtx_);
+            stop_ = true;
+        }
+        cv_.notify_all();
+        for (auto& w : workers_) w.join();
+    }
 };
 ```
