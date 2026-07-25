@@ -1,7 +1,7 @@
 ---
 title: C++ 异步编程
 date: 2025-03-04
-updated: 2026-07-24
+updated: 2026-07-25
 cover: cover.png
 categories: C++
 tags:
@@ -107,6 +107,50 @@ enum class std::future_status {
 };
 ```
 
+---
+
+1. `future` / `promise` 手动通信
+```cpp
+int main() {
+    std::promise<int> promise;
+    std::future<int> future = promise.get_future();
+
+    std::thread worker([&promise] {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        promise.set_value(42);  // 设置结果
+        std::cout << "  [worker] value set\n";    
+    });
+
+    std::cout << "  [main] waiting for result...\n";
+    int result = future.get();  // 阻塞直到 set_value
+    std::cout << "  [main] got: " << result << "\n";
+    worker.join();
+}
+```
+
+2. `promise` 传递异常
+```cpp
+int main() {
+    std::promise<int> promise;
+    auto future = promise.get_future();
+    
+    std::thread worker([&promise] {
+        try {
+            throw std::runtime_error("something went wrong");
+        } catch (...) {
+            promise.set_exception(std::current_exception());
+        }
+    });
+
+    try {
+        future.get();  // 重新抛出异常
+    } catch (const std::exception& e) {
+        std::cout << "  caught: " << e.what() << "\n";
+    }
+    worker.join();
+}
+```
+
 # 3. std::packaged_task
 
 `std::packaged_task` 是手动调度的异步任务包装器，本质上就是**可调用对象 + 内置`promise<R>` + 自动绑定 `future<R>`**。
@@ -188,6 +232,22 @@ int main() {
 }
 ```
 
+使用 `std::async` 可以轻松实现并行计算，以分块求和为例：
+```cpp
+template<typename Iterator>
+double parallel_sum(Iterator begin, Iterator end) {
+    auto len = std::distance(begin, end);
+    if(len < 1000) {
+        return std::accumulate(begin, end, 0.0);
+    }
+
+    auto mid = begin + len / 2;
+    auto left = std::async(std::launch::async, parallel_sum<Iterator>, begin, mid);
+    double right =  parallel_sum(mid, end);
+    return left.get() + right;
+};
+```
+
 # 5. deferred 策略的尴尬地位
 
 理论上说 `deferred` 策略提供了以下几点价值：
@@ -196,3 +256,36 @@ int main() {
 2. 惰性求值，执行时机具有延迟性
 
 但是实际上，由于 `deferred` 策略下任务的执行直到 `get()/wait()` 被调用时才开始，而且是同步调用，会阻塞主线程，这与普通函数的调用是一致的，而且还存在 `future` 对象的管理开销。而延迟性带来的好处是可以随时选择是否调用并获取结果，但这一点也完全可以通过简单的 `if` 加上普通函数实现。所以 `deferred` 策略并没有带来新的优势，它的语法价值大于实际工程价值，有点像是为了存在而存在。
+
+# 6. std::shared_future
+
+`std::shared_future` 是 `std::future` 的共享版本，允许多个线程同时访问同一个共享状态的结果。
+- 由 `future` 调用 `share()` 方法获取，原来的 `future` 会变为无效 （允许隐式转换）
+- `get()` **可以被多次调用**，内部使用引用计数管理共享状态
+- 其余方法与 `std::future` 相同（如 `wait()`、`wait_for()`、`wait_until()`）
+
+```cpp
+auto shared = future.share();
+auto shared = packaged_task.get_future().share();
+auto shared = std::async(...).share();
+```
+
+使用 `std::shared_future` 可以让多个线程等待同一个结果：
+```cpp
+int main() {
+    std::promise<int> promise;
+    std::shared_future<int> shared = promise.get_future().share();
+
+    // 多个线程等待同一个结果
+    std::vector<std::thread> threads;
+    for (int i = 0; i < 3; ++i) {
+         threads.emplace_back([shared, i] {
+            int val = shared.get();  // 可多次调用
+            std::cout << "  thread " << i << " got: " << val << "\n";
+        });
+    }
+
+    promise.set_value(999);
+    for (auto& t : threads) t.join();
+}
+```
