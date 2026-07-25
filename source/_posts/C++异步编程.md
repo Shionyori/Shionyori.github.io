@@ -107,7 +107,7 @@ enum class std::future_status {
 };
 ```
 
-# 2. std::packaged_task
+# 3. std::packaged_task
 
 `std::packaged_task` 是手动调度的异步任务包装器，本质上就是**可调用对象 + 内置`promise<R>` + 自动绑定 `future<R>`**。
 - 可通过 `get_future()` 获取与之绑定的 `future`，**只能调用一次**
@@ -145,7 +145,7 @@ auto result = task_ptr->get_future();
 thread_pool.enqueue([task_ptr](int x) { (*task_ptr)(x); }, 10);
 ```
 
-# 3. std::async
+# 4. std::async
 
 `std::async` 是自动调度的异步任务，本质上是 **`packaged_task` + 策略驱动的自动调度器**，也就是对 `packaged_task` 的**高层便利封装**。
 - 自动返回一个 `std::future<R>`，用于获取异步任务的结果
@@ -188,7 +188,7 @@ int main() {
 }
 ```
 
-# 4. deferred 策略的尴尬地位
+# 5. deferred 策略的尴尬地位
 
 理论上说 `deferred` 策略提供了以下几点价值：
 
