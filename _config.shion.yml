@@ -3,6 +3,10 @@
 # Hexo merges this file on top of themes/shion/_config.yml
 # ============================================
 
+# --- Home Page ---
+home:
+  sticky_badge: false
+
 # --- Site Identity ---
 # --- Sidebar ---
 sidebar:

@@ -3,6 +3,7 @@ title: hexo-theme-shion 配置指南
 date: 2026-07-05
 updated: 2026-07-06
 cover: cover.png
+sticky: true
 categories: Hexo
 tags:
   - Hexo
