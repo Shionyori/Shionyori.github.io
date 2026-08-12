@@ -4,7 +4,7 @@ date: 2026-07-05
 updated: 2026-07-06
 cover: cover.png
 sticky: true
-categories: Hexo
+categories: 其他
 tags:
   - Hexo
   - 主题
