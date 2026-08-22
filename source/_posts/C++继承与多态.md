@@ -2,7 +2,7 @@
 title: C++ 继承与多态
 date: 2025-02-03
 updated: 2026-07-05
-cover: cover.png
+cover: /images/posts/C++继承与多态/cover.png
 categories: C++
 tags:
   - C++

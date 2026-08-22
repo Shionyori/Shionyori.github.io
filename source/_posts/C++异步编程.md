@@ -2,7 +2,7 @@
 title: C++ 异步编程
 date: 2025-03-04
 updated: 2026-07-25
-cover: cover.png
+cover: /images/posts/C++异步编程/cover.png
 categories: C++
 tags:
   - C++

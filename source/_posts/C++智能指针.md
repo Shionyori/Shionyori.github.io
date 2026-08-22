@@ -2,7 +2,7 @@
 title: C++ 智能指针
 date: 2025-03-09
 updated: 2026-07-05
-cover: cover.png
+cover: /images/posts/C++智能指针/cover.png
 categories: C++
 tags:
   - C++

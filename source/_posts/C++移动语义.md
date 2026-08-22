@@ -2,7 +2,7 @@
 title: C++ 移动语义
 date: 2026-01-11
 updated: 2026-07-09
-cover: cover.png
+cover: /images/posts/C++移动语义/cover.png
 categories: C++
 tags:
   - C++

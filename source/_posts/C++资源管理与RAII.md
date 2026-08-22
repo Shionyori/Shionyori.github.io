@@ -2,7 +2,7 @@
 title: C++ 资源管理与 RAII 机制
 date: 2025-02-21
 updated: 2026-07-05
-cover: cover.png
+cover: /images/posts/C++资源管理与RAII/cover.png
 categories: C++
 tags:
   - C++

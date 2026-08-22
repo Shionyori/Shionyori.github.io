@@ -2,7 +2,7 @@
 title: C++ 协程
 date: 2025-6-03
 update: 2026-7-10
-cover: cover.png
+cover: /images/posts/C++协程/cover.png
 categories: C++
 tags:
   - C++

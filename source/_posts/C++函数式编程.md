@@ -2,7 +2,7 @@
 title: C++ 函数式编程
 date: 2025-03-09
 updated: 2026-07-23
-cover: cover.png
+cover: /images/posts/C++函数式编程/cover.png
 categories: C++
 tags:
   - C++

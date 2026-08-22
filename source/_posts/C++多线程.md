@@ -2,7 +2,7 @@
 title: C++ 多线程
 date: 2025-03-04
 updated: 2026-07-20
-cover: cover.png
+cover: /images/posts/C++多线程/cover.png
 categories: C++
 tags:
   - C++

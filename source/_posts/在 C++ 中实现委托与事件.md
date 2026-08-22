@@ -2,7 +2,7 @@
 title: 在 C++ 中实现委托与事件
 date: 2026-01-18
 updated: 2026-07-07
-cover: cover.png
+cover: /images/posts/在 C++ 中实现委托与事件/cover.png
 categories: C++
 tags:
   - C++

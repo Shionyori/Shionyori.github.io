@@ -2,7 +2,7 @@
 title: 对 Socket 进行封装
 date: 2025-04-18
 updated: 2026-03-26
-cover: cover.png
+cover: /images/posts/对 Socket 进行封装/cover.png
 categories: 网络编程
 tags:
   - Socket

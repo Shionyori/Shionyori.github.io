@@ -2,7 +2,7 @@
 title: C++ 模板
 date: 2025-02-24
 updated: 2026-07-12
-cover: cover.png
+cover: /images/posts/C++模板/cover.png
 categories: C++
 tags:
   - C++

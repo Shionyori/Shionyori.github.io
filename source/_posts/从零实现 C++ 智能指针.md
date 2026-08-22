@@ -2,7 +2,7 @@
 title: 从零实现 C++ 智能指针
 date: 2026-02-25
 updated: 2026-02-25
-cover: cover.png
+cover: /images/posts/从零实现 C++ 智能指针/cover.png
 categories: C++
 tags:
   - 智能指针

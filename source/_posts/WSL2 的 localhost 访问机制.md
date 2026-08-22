@@ -2,7 +2,7 @@
 title: WSL2 的 localhost 访问机制
 date: 2026-08-12
 updated: 2026-08-12
-cover: cover.png
+cover: /images/posts/WSL2 的 localhost 访问机制/cover.png
 categories: 其他
 tags:
   - WSL2

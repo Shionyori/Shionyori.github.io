@@ -2,7 +2,7 @@
 title: IO 模型
 date: 2025-09-24
 updated: 2026-07-06
-cover: cover.png
+cover: /images/posts/IO 模型/cover.png
 categories: 网络编程
 tags:
   - IO模型

@@ -2,7 +2,7 @@
 title: RPC 与分布式系统
 date: 2026-08-21
 updated: 2026-08-21
-cover: cover.png
+cover: /images/posts/RPC 与分布式系统/cover.png
 categories: 计算机网络
 tags:
   - RPC

@@ -2,7 +2,7 @@
 title: hexo-theme-shion 组件演示
 date: 2026-07-05
 updated: 2026-07-06
-cover: cover.png
+cover: /images/posts/hexo-theme-shion 组件演示/cover.png
 sticky: true
 categories: 其他
 tags:
