@@ -1,9 +1,10 @@
 ---
 title: LangChain
 date: 2026-08-18
-updated: 2026-08-28
+updated: 2026-08-29
 cover: /images/posts/LangChain/cover.png
-categories: Tutorial
+categories: 
+  - LangChain
 tags:
   - LangChain
   - LLM
@@ -386,12 +387,528 @@ parallel_chain = RunnableParallel(
 result = parallel_chain.invoke(user_input="请将这句话翻译成英语、日语和韩语：我爱编程。")
 ```
 
-# 5. 上下文记忆（History / Memory）
+# 5. 上下文记忆（History）
+
+## 5.1 InMemoryChatMessageHistory
+
+`InMemoryChatMessageHistory` 是 LangChain 提供的一个简单的内存中的聊天消息历史记录类。它用于存储和管理聊天过程中的消息历史。
+
+```python
+from langchain.chat_models import init_chat_model
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.chat_history import InMemoryChatMessageHistory
+from langchain_core.runnables.history import RunnableWithMessageHistory
+
+from dotenv import load_dotenv
+import os
+
+load_dotenv(encoding='utf-8')
+
+prompt = ChatPromptTemplate.from_messages(
+    [
+        MessagesPlaceholder(variable_name="history"),
+        {"role": "human", "content": "{user_input}"},
+    ]
+)
+
+model = init_chat_model(
+    model="deepseek-v4-flash",
+    model_provider="openai",
+    api_key=os.getenv("DEEPSEEK_API_KEY"),
+    base_url="https://api.deepseek.com",
+)
+
+parser = StrOutputParser()
+
+chain = prompt | model | parser
+
+store = {}
+
+def get_session_history(session_id):
+    if session_id not in store:
+        store[session_id] = InMemoryChatMessageHistory()
+    return store[session_id]
+
+# history = InMemoryChatMessageHistory()
+
+with_history = RunnableWithMessageHistory(
+    chain,
+    get_session_history, # 必须是函数 / lambda表达式
+    # lambda x: history,
+    input_messages_key="user_input",
+    history_messages_key="history",
+)
+
+# RunnableWithMessageHistory 要求调用时传入 config 字典，其中必须包含 session_id
+print(with_history.invoke({"user_input": "我是李华"}, {"configurable": {"session_id": "user-001"}}))
+print(with_history.invoke({"user_input": "你还记得我是谁吗？"}, {"configurable": {"session_id": "user-001"}}))
+```
+
+## 5.2 RedisChatMessageHistory
+
+`RedisChatMessageHistory` 是 LangChain 提供的一个基于 Redis 的聊天消息历史记录类。它用于在 Redis 中存储和管理聊天过程中的消息历史。
+
+```python
+from langchain_redis.chat_message_history import RedisChatMessageHistory
+from langchain_core.runnables import RunnableWithMessageHistory
+
+from langchain.chat_models import init_chat_model
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.output_parsers import StrOutputParser
+
+from dotenv import load_dotenv
+import os
+
+import redis
+
+load_dotenv(encoding='utf-8')
+
+# 默认储存在 Redis 的 0 号数据库中，如果需要使用其他数据库，可以在 REDIS_URL 中指定，比如：redis://localhost:6379/1 表示使用 1 号数据库
+REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379") # 没有配置 REDIS_URL 环境变量时，默认使用本地 Redis 服务
+
+
+def check_redis():
+    try:
+        r = redis.Redis.from_url(REDIS_URL, decode_responses=True)
+        r.ping()
+        r.close()
+    except(redis.ConnectionError, redis.ResponseError) as e:
+        print("Redis 连接失败")
+        raise SystemExit(1) from e
+
+check_redis()
+
+model = init_chat_model(
+    model="deepseek-v4-flash",
+    model_provider="openai",
+    api_key=os.getenv("DEEPSEEK_API_KEY"),
+    base_url="https://api.deepseek.com",
+)
+
+prompt = ChatPromptTemplate(
+    [
+        MessagesPlaceholder("history"),
+        {"role": "human", "content": "{user_input}"},
+    ]
+)
+
+parser = StrOutputParser()
+
+chain = prompt | model | parser
+
+# decode_responses 把 bytes 解码为 str
+redis_client = redis.Redis.from_url(REDIS_URL, decode_responses=True)
+
+def get_session_history(session_id):
+    # 为每个 session 创建/返回对应的 redis 历史实例
+    return RedisChatMessageHistory(
+        session_id=session_id,
+        redis_url=REDIS_URL,
+    )
+
+with_history = RunnableWithMessageHistory(
+    chain,
+    get_session_history,
+    input_messages_key="user_input",
+    history_messages_key="history",
+)
+
+# print(with_history.invoke({"user_input": "我是李华"}, {"configurable": {"session_id": "user-001"}}))
+print(with_history.invoke({"user_input": "你还记得我是谁吗？"}, {"configurable": {"session_id": "user-001"}}))
+
+redis_client.close() # 一次性脚本结束后会自动关闭，但还是建议加上手动关闭
+```
 
 # 6. 工具调用（Tool）
 
+## 6.1 创建工具函数
+
+LangChain 提供了 `@tool` 装饰器，用于将普通的 Python 函数包装为工具函数。工具函数可以被模型调用，从而实现模型与外部系统的交互。
+
+```python
+class FieldInfo(BaseModel):
+    a: int = Field(description="第1个参数")
+    b: int = Field(description="第2个参数")
+
+# @tool 装饰器
+@tool(args_schema=FieldInfo) # 使用 Pydantic 可提供更多信息（参数类型/格式，参数校验规则等）
+def spec_compute(a:int, b:int) -> int:
+    """自定义的 Spec 运算，形式为 ( a spec b = c )""" # 至关重要，模型依赖它来理解工具用途
+    return (a + b)**2 + (a - b)**(-2)
+
+result = spec_compute.invoke({"a": 3, "b": 6}) # 可通过 invoke 直接调用
+print(result)
+
+# 查看元信息
+print(f"{spec_compute.name=}\n{spec_compute.description=}\n{spec_compute.args=}\n{spec_compute.return_direct}")
+```
+
+## 6.2 将工具绑定到模型上
+
+使用 `bind_tools` 方法将工具函数绑定到模型上，这样模型就可以直接调用工具函数了。
+
+```python
+model = init_chat_model(
+    model="deepseek-v4-flash",
+    model_provider="openai",
+    api_key=os.getenv("DEEPSEEK_API_KEY"),
+    base_url="https://api.deepseek.com",
+)
+
+model_with_tool = model.bind_tools([spec_compute])
+```
+
+## 6.3 调用工具函数
+
+由于模型输出是文本，无法直接传给工具函数，因此需要一个解析器来提取工具参数。
+
+```python
+# 从模型输出中提取工具参数，得到可直接传给 spec_compute 的入参（dict）
+parser = JsonOutputKeyToolsParser(key_name=spec_compute.name, first_tool_only=True)
+compute_chain = model_with_tool | parser | spec_compute
+```
+
+然后将计算结果传给模型，模型再输出最终结果。
+
+```python
+# 模型接收调用结果，然后输出
+output_prompt = PromptTemplate.from_template(
+    """
+    你会收到一个计算结果：{result} ，如果是小数就最多保留小数点后4位，然后再直接输出。
+    """
+)
+output_parser = StrOutputParser()
+output_chain = output_prompt | model | output_parser
+
+full_chain = compute_chain | (lambda x: {"result" : x}) | output_chain # 需要把 str 先转成 dict
+print(full_chain.invoke("请计算 12 spec 5 = ?"))
+```
+
 # 7. 检索增强生成（RAG）
+
+## 7.1 Embedding
+
+Embedding 模型由于缺少像 Chat 模型那样的统一接口，很多模型的支持不够完善。因此为了方便使用，我们一般需要自己封装一个 Embeddings 类，继承自 LangChain 的 Embeddings 基类。
+
+```python
+from langchain_core.embeddings import Embeddings
+from typing  import List
+import dashscope
+
+class QwenTextEmbeddings(Embeddings):
+    def __init__(self, model: str = "qwen3.7-text-embedding", api_key: str = None):
+        self.model = model
+        dashscope.api_key = api_key or os.getenv("QWEN_API_KEY")
+    
+    def embed_documents(self, texts: List[str]) -> List[List[float]]:
+        resp = dashscope.TextEmbedding.call(model=self.model, input=texts)
+        if resp.status_code == 200:
+            return [item["embedding"] for item in resp.output["embeddings"]]
+        raise Exception(f"Embedding 调用失败: {resp.message}")
+    
+    def embed_query(self, text: str) -> List[float]:
+        return self.embed_documents([text])[0]
+
+embeddings = QwenTextEmbeddings()
+```
+
+## 7.2 文本加载器
+
+因为 Embedding 模型只能处理文本数据，所以我们需要先将文档加载为文本格式。
+
+```python
+from langchain_community.document_loaders import TextLoader
+loader = TextLoader("test.txt", encoding="utf-8")
+documents = loader.load()
+```
+
+## 7.3 文本分割器
+
+将加载的文档进一步分割成更小的文本块，以便更好地进行 Embedding。
+
+```python
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+text_splitter = RecursiveCharacterTextSplitter(
+    chunk_size=500,
+    chunk_overlap=50,
+)
+
+chunks = text_splitter.split_documents(documents)
+```
+
+## 7.4 向量存储
+
+这里我们使用 Redis 作为向量存储，将 Embedding 结果存储在 Redis 中，以便后续检索。
+
+```python
+from langchain_redis import RedisConfig, RedisVectorStore
+
+config = RedisConfig(
+    index_name="new",
+    redis_url="redis://localhost:6379",
+)
+
+vector_store = RedisVectorStore.from_documents(
+    documents=chunks,
+    embedding=embeddings,
+    config=config,
+    overwrite=True,
+)
+```
+
+## 7.5 检索器
+
+将向量存储中的文档转换为可检索的对象。
+
+```python
+retriever = vector_store.as_retriever(search_kwargs={"k": 3})
+```
+
+## 7.6 RAG 链
+
+最后将检索器、提示词、模型和输出解析器组合成一个 RAG 链。
+
+```python
+from langchain_core.runnables import RunnablePassthrough
+
+# RunnablePassthrough 会将接收的字符串直接作为结果给到 "question"
+# "context" 则是 retriever 的调用结果
+rag_chain = {"context": retriever, "question": RunnablePassthrough()} | prompt | model | output_parser
+
+print(rag_chain.invoke("光合作用分为哪两个阶段？"))
+print(rag_chain.invoke("太阳与地球的距离？"))
+```
 
 # 8. 智能代理（Agent）
 
+Agent 是 LangChain 提供的一种高级功能，内部封装了模型、工具、记忆和决策逻辑，我们可以直接使用 Agent 来处理复杂的任务，而不需要关心底层的实现细节。
+
+```python
+from langchain.chat_models import init_chat_model
+from langchain_core.tools import tool
+from langchain.agents import create_agent
+
+from dotenv import load_dotenv
+import os
+
+load_dotenv(encoding='utf-8')
+
+llm = init_chat_model(
+    model="deepseek-v4-flash",
+    model_provider="openai",
+    api_key=os.getenv("DEEPSEEK_API_KEY"),
+    base_url="https://api.deepseek.com",
+)
+
+SYSTEM_PROMPT = """你是一个数学计算专家，擅长使用自定义的 Spec 运算工具进行计算。
+
+可用的工具：
+1. spec_add(a, b) → a sa b = (a * b) + (a // b)
+2. spec_mul(a, b) → a sm b = (a + b) * (a - b)
+3. spec_square(x) → x sq = (x sa x) sm (x sa x)
+
+请根据用户的问题，选择合适的工具进行计算。
+如果问题涉及复合运算，请分步执行并说明每一步。
+"""
+
+def create_tools():
+    @tool
+    def spec_add(a: int, b: int) -> int:
+        """
+        计算两个数的 Spec 和，记作 a sa b
+        公式：a sa b = (a * b) + (a // b)
+        """
+        return (a * b) + (a // b)
+
+    @tool
+    def spec_mul(a: int, b: int) -> int:
+        """
+        计算两个数的 Spec 积，记作 a sm b
+        公式：a sm b = (a + b) * (a - b)
+        """
+        return (a + b) * (a - b)
+
+    @tool
+    def spec_square(x: int) -> int:
+        """
+        计算一个数的 Spec 平方，记作 x sq
+        公式：x sq = (x sa x) sm (x sa x)
+        """
+        xsax = spec_add.invoke({"a": x, "b": x})
+        return spec_mul.invoke({"a": xsax, "b": xsax})
+
+    return [spec_add, spec_mul, spec_square]
+
+tools = create_tools()
+
+agent = create_agent(
+    model=llm,
+    tools=tools,
+    system_prompt=SYSTEM_PROMPT,
+)
+
+def main():
+    response = agent.invoke({"messages": [{"role": "user", "content": "请计算 3 sq"}]})
+    print(response["messages"][-1].content)
+
+if __name__ == "__main__":
+    main()
+```
+
 # 9. 远程工具调用（MCP）
+
+## 9.1 MCP Server
+
+负责接收模型的请求，调用本地工具函数，并将结果返回给模型。我们可以使用 `FastMCP` 来快速搭建一个 MCP Server。
+
+```python
+from mcp.server import FastMCP
+
+from pydantic import Field
+from typing import Annotated
+
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logging.info("Starting the custom math service...")
+server = FastMCP("custom-math-service")
+
+@server.tool()
+def add(
+    a: Annotated[int, Field(description="第一个数")],
+    b: Annotated[int, Field(description="第二个数")]
+) -> int:
+    """
+    （定义新运算）计算两个数的 Spec 和，记作 a spec b
+    
+    Args:
+        a: 第一个数
+        b: 第二个数
+    
+    Returns:
+        两数的 Spec 和
+    """
+    return (2 * a) + (b // 2)
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    logging.info("waiting for requests...")
+    server.run(transport="stdio")
+```
+
+## 9.2 MCP Client
+
+也就是向 MCP Server 发送请求的客户端，通常是模型所在的环境。
+
+```python
+import asyncio
+import os
+
+from dotenv import load_dotenv
+from langchain.chat_models import init_chat_model
+from langchain_mcp_adapters.client import MultiServerMCPClient
+
+load_dotenv(encoding='utf-8')
+
+class MyMCPClient:
+    def __init__(self):
+        self.llm = init_chat_model(
+            model="deepseek-v4-flash",
+            api_key=os.getenv("DEEPSEEK_API_KEY"),
+            base_url="https://api.deepseek.com",
+        )
+        self.tools = [] # MCP 工具列表
+        self.tool_map = {} # 工具名称到工具对象的映射
+        self.messages = [] # 历史消息记录（包括用户消息、模型消息和工具调用结果）
+
+    async def load_mcp_server(self, server_path):
+        # 初始化 MCP 客户端并加载工具
+        # 使用 MultiServerMCPClient 来管理多个 MCP 工具服务器
+        # 此处为本地启动的自定义工具服务器，可以根据路径启动，也可以使用远程服务器的 URL 连接
+        client = MultiServerMCPClient({
+            "demo": {
+                "transport": "stdio",
+                "command": "python",
+                "args": [server_path]
+            }
+        })
+
+        # 如果是远程服务器，可以直接使用 URL 连接
+        # client = MultiServerMCPClient({
+        #     "remote_service": {
+        #         "transport": "http",  # 1. 关键：指定为 http 传输
+        #         "url": "https://your-mcp-server.example.com/mcp",  # 2. 远程地址
+        #         "headers": {  # 3. 添加认证信息
+        #             "Authorization": f"Bearer {os.getenv('MCP_API_TOKEN')}",
+        #             "Content-Type": "application/json"
+        #         }
+        #     }
+        # })
+
+        self.tools = await client.get_tools()
+        self.tool_map = {t.name: t for t in self.tools}
+
+    async def chat(self, text: str) -> str:
+        # 记录用户消息
+        self.messages.append({"role": "user", "content": text})
+
+        # 调用 MCP 工具（最多尝试 5 次，防止无限循环）
+        for _ in range(5):
+            resp = self.llm.invoke(
+                self.messages, # 历史消息
+                tools=self._build_schemas(), # 工具列表
+                tool_choice="auto" # 模型自行选择是否使用工具
+            )
+
+            # a.如果没有使用工具，直接返回 LLM 的回答
+            if not resp.tool_calls:
+                # 记录模型消息
+                self.messages.append(resp)
+                return resp.content
+
+            # b.如果使用了工具，调用工具并将结果加入消息
+            self.messages.append(resp) # 记录调用工具的消息
+            for tc in resp.tool_calls:
+                args = tc["args"] # 解析工具调用参数
+                result = await self.tool_map[tc["name"]].ainvoke(args) # 调用工具
+                # 记录工具调用结果
+                self.messages.append({
+                    "role": "tool",
+                    "tool_call_id": tc["id"],
+                    "content": str(result)
+                })
+
+        # 超过 5 轮强制返回
+        return self.llm.invoke(self.messages).content
+
+    # 工具函数：将工具列表转换为模型可识别的 schema
+    def _build_schemas(self):
+        schemas = []
+        for tool in self.tools:
+            # 如果已经是 dict，直接使用；否则调用 model_json_schema
+            if hasattr(tool.args_schema, "model_json_schema"):
+                parameters = tool.args_schema.model_json_schema()
+            else:
+                parameters = tool.args_schema  # 已经是 dict
+            
+            schemas.append({
+                "type": "function",
+                "function": {
+                    "name": tool.name,
+                    "description": tool.description,
+                    "parameters": parameters
+                }
+            })
+        return schemas
+
+async def main():
+    agent = MyMCPClient()
+    await agent.load_mcp_server("mcp_server.py") # 加载自定义工具服务器
+    response = await agent.chat("请计算 3 spec 5")
+    print("Response:", response)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
