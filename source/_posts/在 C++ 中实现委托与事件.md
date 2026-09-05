@@ -37,7 +37,7 @@ int (*fp)(int, int) = add;
 fp(10, 20);
 ```
 
-在C++中我们可以使用 `using` 简化函数指针的定义：
+在 C++ 中我们可以使用 `using` 简化函数指针的定义：
 ```cpp
 using FuncPtr = int(*)(double, double);
 FuncPtr fp;
@@ -75,7 +75,7 @@ auto bf = std::bind(printSum, std::placeholders::_1, 10)
 `printSum` 的参数 b 被绑定为10，相当于 `bf` 只有一个参数 a。
 绑定后新的可调用对象 `bf` 的类型用 `std::function` 表示的话就是：
 ```cpp
-std::funtion<void(int)> 
+std::function<void(int)> 
 ```
 
 ## 回调机制
