@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>C++ 移动语义 - Shionyori&#39;s Blog</title>
+
+
+<meta name="description" content="Gorgeous blooming flowers will eventually elegantly scattered.">
+
+
+<meta property="og:title" content="C++ 移动语义">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://shionyori.github.io/2026/01/10/C++移动语义/">
+<meta property="og:site_name" content="Shionyori&#39;s Blog">
+
+
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C++ 移动语义">
+
+
+<link rel="canonical" href="https://shionyori.github.io/2026/01/10/C++移动语义/">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "name": "C++ 移动语义",
+  "url": "https://shionyori.github.io/2026/01/10/C++移动语义/",
+  "datePublished": "2026-01-11T00:00:00+08:00",
+  "author": { "@type": "Person", "name": "Shionyori" }
+  
+}
+</script>
+
+<meta name="theme-color" content="#6b7eb5">
+<link rel="icon" type="image/png" href="/images/shion/favicon.png">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+
+
+<script>
+  (function() {
+    var mode = 'auto';
+    var saved = localStorage.getItem('shion-theme');
+    if (saved) { mode = saved; }
+    else if (mode === 'auto') {
+      mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    if (mode === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+    (function() {
+      var fonts = {"heading":"'Noto Serif SC', 'Source Han Serif SC', Georgia, serif","body":"'Noto Sans SC', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif","code":"'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace","size_root":"15px"};
+      var legacySize = '';
+      var sizeRoot = fonts.size_root || legacySize;
+
+      if (fonts.heading) {
+        document.documentElement.style.setProperty('--font-heading', fonts.heading);
+      }
+      if (fonts.body) {
+        document.documentElement.style.setProperty('--font-body', fonts.body);
+      }
+      if (fonts.code) {
+        document.documentElement.style.setProperty('--font-code', fonts.code);
+      }
+      if (sizeRoot) {
+        document.documentElement.style.setProperty('--font-size-root', sizeRoot);
+      }
+    })();
+  })();
+</script>
+
+
+<noscript>
+  <style>
+    .sidebar-inner,
+    .content-card,
+    .post,
+    .page,
+    .archive-item,
+    .category-item,
+    .pagination,
+    .comments,
+    .not-found-content,
+    .widget,
+    .tag-cloud-item,
+    .post-card-wrapper,
+    .post-content,
+    .post-tags-footer,
+    .post-share,
+    .post-copyright,
+    .post-nav {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  </style>
+</noscript>
+
+  <script>
+    window.__shionConfig = {
+      katexCDN: 'https://cdn.jsdelivr.net/npm/katex@0',
+      katexDelimiters: [{"left":"$$","right":"$$","display":true},{"left":"$","right":"$","display":false}]
+    };
+  </script>
+<meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a class="site-logo" href="/">
+      
+        <span class="logo-text">Shionyori&#39;s Blog</span>
+      
+    </a>
+
+    <nav class="site-nav" id="site-nav">
+      
+        <a class="nav-item" href="/">首页</a>
+      
+        <a class="nav-item" href="/archives/">归档</a>
+      
+        <a class="nav-item" href="/tags/">标签</a>
+      
+        <a class="nav-item" href="/categories/">分类</a>
+      
+        <a class="nav-item" href="/friends/">友链</a>
+      
+        <a class="nav-item" href="/about/">关于</a>
+      
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn-icon search-toggle" id="search-toggle" aria-label="搜索">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon theme-toggle" id="theme-toggle" aria-label="深色模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon sidebar-toggle" id="sidebar-toggle" aria-label="sidebar_toggle">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+
+  
+<div class="reading-progress" id="reading-progress">
+  <div class="reading-progress-bar" id="reading-progress-bar"></div>
+</div>
+
+
+
+<div id="pjax-container">
+  
+  
+  
+  <div class="page-bg">
+  
+    <img src="/images/posts/C++%E7%A7%BB%E5%8A%A8%E8%AF%AD%E4%B9%89/cover.png" alt="">
+  </div>
+  
+
+  
+  
+  
+  <section class="page-hero">
+    <h1 class="hero-title">C++ 移动语义</h1>
+    <div class="hero-subtitle">
+      <div class="post-meta">
+    
+    <time class="post-date" datetime="2026-01-11T00:00:00+08:00">
+      2026-01-11
+    </time>
+    
+
+    
+    <time class="post-updated" datetime="2026-07-09T00:00:00+08:00">
+      更新于 2026-07-09
+    </time>
+    
+
+    
+    <span class="post-word-count">2398 words</span>
+    
+
+    
+    <span class="post-reading-time">9 min read</span>
+    
+
+    
+    <span class="post-categories">
+      
+        <a class="category-link" href="/categories/C/">C++</a>
+      
+    </span>
+    
+
+</div>
+
+    </div>
+    
+    <div class="hero-tags">
+      
+        <a class="tag-link" href="/tags/C/">C++</a>
+      
+        <a class="tag-link" href="/tags/%E7%A7%BB%E5%8A%A8%E8%AF%AD%E4%B9%89/">移动语义</a>
+      
+        <a class="tag-link" href="/tags/%E5%B7%A6%E5%80%BC/">左值</a>
+      
+        <a class="tag-link" href="/tags/%E5%8F%B3%E5%80%BC/">右值</a>
+      
+        <a class="tag-link" href="/tags/%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8/">右值引用</a>
+      
+        <a class="tag-link" href="/tags/%E4%B8%87%E8%83%BD%E5%BC%95%E7%94%A8/">万能引用</a>
+      
+        <a class="tag-link" href="/tags/%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/">完美转发</a>
+      
+    </div>
+    
+  </section>
+  
+  
+
+  
+<div class="container">
+    <div class="content-wrapper">
+      
+      
+<aside class="site-sidebar sidebar-post" id="site-sidebar" data-position="left">
+
+  
+  
+
+  <div class="sidebar-sticky-group">
+    
+    <section class="sidebar-card sidebar-music">
+      
+<div class="music-player" data-playlist='[{"name":"奏穹のラプソディア (狂想曲)","artist":"瑶山百霊","url":"/music/瑶山百霊 - 奏穹のラプソディア (狂想曲).ogg","cover":"/music/covers/soukyuu-no-rhapsody.jpg"},{"name":"Graveyard Memory","artist":"GET IN THE RING","url":"/music/GET IN THE RING - Graveyard Memory.ogg","cover":"/music/covers/graveyard-memory.jpg"},{"name":"ポラリス (北极星)","artist":"GET IN THE RING","url":"/music/GET IN THE RING - ポラリス (北极星).ogg","cover":"/music/covers/polaris.jpg"},{"name":"その唄の名は…","artist":"yukina / GET IN THE RING","url":"/music/yukina _ GET IN THE RING - その唄の名は….ogg","cover":"/music/covers/sono-uta-no-na-wa.jpg"},{"name":"over the moon","artist":"Forest306","url":"/music/Forest306 - over the moon.ogg","cover":"/music/covers/over-the-moon.jpg"},{"name":"21時の探しモノ (21时寻找的东西)","artist":"minimum electric design","url":"/music/minimum electric design - 21時の探しモノ (21时寻找的东西).ogg","cover":"/music/covers/21ji-no-sagashimono.jpg"},{"name":"Freak Report 01 ~他愛も無い二人の博物誌~","artist":"凛","url":"/music/凛 - Freak Report 01 ~他愛も無い二人の博物誌~.ogg","cover":"/music/covers/freak-report-01.jpg"},{"name":"かぜのいろ (カゼノイロ)","artist":"森羅万象","url":"/music/森羅万象 - かぜのいろ (カゼノイロ).ogg","cover":"/music/covers/kaze-no-iro.jpg"},{"name":"Onisan Dochira!","artist":"狐の工作室","url":"/music/狐の工作室 - Onisan Dochira!.ogg","cover":"/music/covers/onisan-dochira.jpg"},{"name":"Skip in the byway","artist":"神乃木製作所","url":"/music/神乃木製作所 - Skip in the byway.ogg","cover":"/music/covers/skip-in-the-byway.jpg"}]'>
+  
+  <div class="music-body">
+    <div class="music-cover">
+      
+      
+      <img src="/music/covers/soukyuu-no-rhapsody.jpg" alt="cover" class="music-cover-img" onerror="if(!this.dataset.failed){this.dataset.failed='1';this.src='/images/shion/404.png'}">
+      
+    </div>
+    <div class="music-info">
+      <div class="music-title-row">
+        <span class="music-title">奏穹のラプソディア (狂想曲)</span>
+        <span class="music-counter">1 / 10</span>
+      </div>
+      <span class="music-artist">瑶山百霊</span>
+      <div class="music-progress">
+        <div class="music-progress-bar">
+          <div class="music-progress-fill"></div>
+        </div>
+        <div class="music-time">
+          <span class="music-time-current">0:00</span>
+          <span class="music-time-total">0:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="music-controls">
+    <button class="music-btn music-btn-mode" aria-label="Play mode" data-mode="sequential" title="Sequential">
+      <svg class="music-mode-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+    <button class="music-btn music-btn-prev" aria-label="Previous track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+    </button>
+    <button class="music-btn music-btn-play" aria-label="Play">
+      <svg class="music-icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <svg class="music-icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="6" height="16"/><rect x="14" y="4" width="6" height="16"/></svg>
+    </button>
+    <button class="music-btn music-btn-next" aria-label="Next track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+    </button>
+    <button class="music-btn music-btn-list" aria-label="Playlist">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="music-playlist">
+    
+    <button class="music-playlist-item active" data-index="0">
+      <span class="music-playlist-name">奏穹のラプソディア (狂想曲)</span>
+      <span class="music-playlist-artist">瑶山百霊</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="1">
+      <span class="music-playlist-name">Graveyard Memory</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="2">
+      <span class="music-playlist-name">ポラリス (北极星)</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="3">
+      <span class="music-playlist-name">その唄の名は…</span>
+      <span class="music-playlist-artist">yukina / GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="4">
+      <span class="music-playlist-name">over the moon</span>
+      <span class="music-playlist-artist">Forest306</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="5">
+      <span class="music-playlist-name">21時の探しモノ (21时寻找的东西)</span>
+      <span class="music-playlist-artist">minimum electric design</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="6">
+      <span class="music-playlist-name">Freak Report 01 ~他愛も無い二人の博物誌~</span>
+      <span class="music-playlist-artist">凛</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="7">
+      <span class="music-playlist-name">かぜのいろ (カゼノイロ)</span>
+      <span class="music-playlist-artist">森羅万象</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="8">
+      <span class="music-playlist-name">Onisan Dochira!</span>
+      <span class="music-playlist-artist">狐の工作室</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="9">
+      <span class="music-playlist-name">Skip in the byway</span>
+      <span class="music-playlist-artist">神乃木製作所</span>
+    </button>
+    
+  </div>
+  
+</div>
+
+    </section>
+    
+
+    <section class="sidebar-card sidebar-toc">
+      <div class="sidebar-toc-header">
+        <a class="sidebar-back-home" href="/" title="首页">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </a>
+        <span class="sidebar-toc-label">C++ 移动语义</span>
+      </div>
+      <div class="sidebar-scroll">
+      
+      
+      <nav class="sidebar-toc">
+        <ol class="toc-list"><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#1-%E5%B7%A6%E5%80%BC%E4%B8%8E%E5%8F%B3%E5%80%BC"><span class="toc-list-text">1. 左值与右值</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#2-%E6%8B%B7%E8%B4%9D%E9%80%A0%E6%88%90%E7%9A%84%E9%A2%9D%E5%A4%96%E5%BC%80%E9%94%80"><span class="toc-list-text">2. 拷贝造成的额外开销</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#3-%E5%80%BC%E7%B1%BB%E5%88%AB"><span class="toc-list-text">3. 值类别</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#4-%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8"><span class="toc-list-text">4. 右值引用</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#5-%E7%A7%BB%E5%8A%A8%E6%9E%84%E9%80%A0%E4%B8%8E%E7%A7%BB%E5%8A%A8%E8%B5%8B%E5%80%BC"><span class="toc-list-text">5. 移动构造与移动赋值</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#6-%E4%B8%87%E8%83%BD%E5%BC%95%E7%94%A8"><span class="toc-list-text">6. 万能引用</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#7-%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91"><span class="toc-list-text">7. 完美转发</span></a></li></ol>
+      </nav>
+      
+      </div>
+      <a class="sidebar-back-home-bottom" href="/">← 首页</a>
+    </section>
+  </div>
+
+  
+</aside>
+
+      
+
+      <main class="site-main">
+        <article class="post">
+
+  <div class="post-content">
+    
+  
+  
+  
+
+
+    <p>C++11 引入了移动语义，它是 C++ 语言在资源管理方面的一次重大革新。通过移动语义，可以更高效地管理资源，减少不必要的拷贝操作，从而提升程序的性能。</p>
+<hr>
+<h1 id="1-左值与右值"><a href="#1-左值与右值" class="headerlink" title="1. 左值与右值"></a>1. 左值与右值</h1><p>在 C++98 时期，C++ 对于表达式的值类别划分非常纯粹，只分为左值（lvalue）和 右值（rvalue）：</p>
+<ul>
+<li>左值：一个有名字、有确定内存地址的值，可以对它取地址，生命周期由其所在的作用域决定</li>
+<li>右值：与左值相反，它是一个没有身份的临时值，无法对它取地址，在表达式结束后就会消失</li>
+</ul>
+<h1 id="2-拷贝造成的额外开销"><a href="#2-拷贝造成的额外开销" class="headerlink" title="2. 拷贝造成的额外开销"></a>2. 拷贝造成的额外开销</h1><p>众所周知，当我们进行对象传递时，通常有两种选择：一个是浅拷贝（也就是传引用），另一个是深拷贝（也就是把整个对象包括其内部指针指向的内存全都复制一份）。</p>
+<ul>
+<li>浅拷贝：滥用可能会导致多个对象共享同一内存区域，引发 Double-Free 或悬空指针等问题。</li>
+<li>深拷贝：虽然没有上述问题，但是由于它会完全重新分配一块内存进行一比一复制，往往会带来更大的开销。</li>
+</ul>
+<p>考虑以下常见的代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">std::vector&lt;<span class="hljs-type">int</span>&gt; <span class="hljs-title">get_large_data</span><span class="hljs-params">()</span> </span>&#123;<br>    std::vector&lt;<span class="hljs-type">int</span>&gt; tmp = &#123;<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, ...&#125;;<br>    <span class="hljs-keyword">return</span> tmp;<br>&#125;<br><br>std::vector&lt;<span class="hljs-type">int</span>&gt; data = <span class="hljs-built_in">get_large_data</span>();<br></code></pre></td></tr></table></figure>
+
+<p>传统机制的缺陷：函数内部构造了一个局部对象 <code>tmp</code>，并在堆（Heap）上分配了一块巨大的动态内存。当 <code>data</code> 接收返回值时，系统死板地触发了<strong>深拷贝</strong>：</p>
+<ul>
+<li>重新申请一块大小相等的新内存。</li>
+<li>把 <code>tmp</code> 内存里的内容逐字节拷贝过去。</li>
+<li>让 <code>data</code> 指向这块新内存。</li>
+<li>随后，<code>tmp</code> 触发析构函数，将原本完好无损的旧内存当场释放。<br>明明是完全一样的内容，在“交接”过程中却多了一次高昂的资源申请和拷贝操作。</li>
+</ul>
+<div class="note note-info"><p>为什么我们不能直接接管这个临时对象的资源呢？<br>如果能让 <code>data</code> 直接指向 <code>tmp</code> 已经构造好的内存区域，不就可以省去所有的额外开销了吗？</p>
+</div>
+
+<p>在 C++98 的框架下，我们想直接“接管资源”的想法会遇到两个无法逾越的底层障碍：</p>
+<ol>
+<li>C++ 规定<mark>非常量左值引用不能绑定到临时对象（右值）</mark>，我们无法将 <code>data</code> 直接指向临时对象 <code>tmp</code></li>
+<li>临时变量 <code>tmp</code> 的内存区域会被析构函数释放，即使我们能让 <code>data</code> 指向它，也会导致指针悬空</li>
+</ol>
+<p>为了打破上述机制的限制，C++11 分别引入了右值引用和特殊成员函数（移动构造和移动赋值函数）。</p>
+<h1 id="3-值类别"><a href="#3-值类别" class="headerlink" title="3. 值类别"></a>3. 值类别</h1><p>随着 C++11 引入了右值引用，值类别被进一步划分为三大类：左值、将亡值和纯右值。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">		表达式 (Expressions)<br>		    /       \ <br>	泛左值 (glvalue)   右值 (rvalue) <br>        /       \       /       \ <br>左值(lvalue)  将亡值(xvalue)  纯右值(prvalue)<br></code></pre></td></tr></table></figure>
+
+<p>主要看两条属性：</p>
+<ul>
+<li>是否有身份：可以通过名字或指针找到它（或者说是否可以取地址）</li>
+<li>是否可移动：其资源可以被安全地剥夺，不会引发逻辑错误</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>值类别</th>
+<th>有身份</th>
+<th>可移动</th>
+<th>典型样例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>左值 (lvalue)</td>
+<td>有</td>
+<td>不可</td>
+<td>变量名、返回左值引用的函数调用</td>
+</tr>
+<tr>
+<td>纯右值 (prvalue)</td>
+<td>无</td>
+<td>可</td>
+<td>字面量、非引用类型的函数返回值、临时对象</td>
+</tr>
+<tr>
+<td>将亡值 (xvalue)</td>
+<td>有</td>
+<td>可</td>
+<td>返回右值引用的函数调用、显式转换成的右值引用（<code>std::move</code>）</td>
+</tr>
+</tbody></table>
+<p>涉及xvalue的四种情况：</p>
+<ol>
+<li>调用函数（无论是隐式还是显式）的结果，该函数的返回类型是对对象类型的右值引用</li>
+<li>对 对象类型的右值引用 进行强制转换</li>
+<li>类成员访问表达式，指定非引用类型的非静态数据成员，其中对象表达式是xvalue</li>
+<li>指向成员表达式的指针，其中第一个操作数是xvalue，第二个操作数是指向数据成员的指针</li>
+</ol>
+<h1 id="4-右值引用"><a href="#4-右值引用" class="headerlink" title="4. 右值引用"></a>4. 右值引用</h1><p>右值引用（<code>&amp;&amp;</code>）专门用于绑定即将销毁的临时对象（右值），且可写（非 const），解决了接收方无法操作、无法修改临时对象的问题。</p>
+<ul>
+<li>返回右值引用的函数，值类别为 <code>xvalue</code></li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-type">int</span> a;<br>std::<span class="hljs-built_in">move</span>(a); <span class="hljs-comment">// 将亡值，xvalue</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li><code>std::move()</code> 除了返回右值引用之外，不会做任何操作；本质就是一次<strong>强制转化</strong></li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span> T&gt;<br><span class="hljs-keyword">typename</span> remove_reference&lt;T&gt;::<span class="hljs-function">type&amp;&amp; <span class="hljs-title">move</span><span class="hljs-params">(T&amp;&amp; t)</span> </span>&#123; <span class="hljs-comment">// T&amp;&amp; 万能引用</span><br>	<span class="hljs-keyword">return</span> <span class="hljs-keyword">static_cast</span>&lt;<span class="hljs-keyword">typename</span> remove_reference&lt;T&gt;::type&amp;&amp;&gt;(t);	<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li><code>xvalue</code> 本质上是左值，只不过是贴上了一个“语义”标签的左值</li>
+<li>右值引用是可以绑定到 <code>xvalue</code> 或 <code>prvalue</code> 的引用；左值引用是必须绑定到 <code>lvalue</code> 的引用</li>
+<li>绑定到对象上的左值&#x2F;右值引用并没有本质区别，他们都是一个对象的名别；</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-type">int</span> a = <span class="hljs-number">10</span>;<br><span class="hljs-type">int</span>&amp; ra = a;<br><span class="hljs-type">int</span>&amp; rra = std::<span class="hljs-built_in">move</span>(a);<br>cout &lt;&lt; a &lt;&lt; endl; <span class="hljs-comment">// 10</span><br>ra = <span class="hljs-number">11</span>;<br>cout &lt;&lt; a &lt;&lt; endl; <span class="hljs-comment">// 11</span><br>rra = <span class="hljs-number">12</span>;<br>cout &lt;&lt; a &lt;&lt; endl; <span class="hljs-comment">// 12 本质上 ra、rra 操作的都是同一个对象</span><br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>左值引用和右值引用的唯一区别在于<mark>后者多了一个“语义”标签，借此它的构造函数可以根据不同的引用类型来实现不同的操作</mark>（调用不同版本的构造函数）。</li>
+<li>构造函数的调用者通过 <code>std::move(a)</code> 做出承诺：a的资源我不要了，你可以随意移动；构造函数的实现者看到参数是右值引用，就可以放心地将资源持有权转移</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp">std::vector&lt;<span class="hljs-type">int</span>&gt; v &#123;<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>&#125;;<br>std::vector&lt;<span class="hljs-type">int</span>&gt; u = std::<span class="hljs-built_in">move</span>(v); <span class="hljs-comment">// 资源持有权转移给了 u</span><br><span class="hljs-keyword">for</span>(<span class="hljs-keyword">auto</span> a : v) &#123;<br>    std::cout &lt;&lt; a; <span class="hljs-comment">// v 不再持有资源，v 为空，不能再进行访问，此为未定义行为！</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>在实际工程中，当某个对象即将被销毁时（将亡值），我们才会对他的资源进行移动，所以我们必须保证移动操作后的对象处于可析构状态（即将指针置空，避免资源也被一并销毁）</li>
+</ul>
+<h1 id="5-移动构造与移动赋值"><a href="#5-移动构造与移动赋值" class="headerlink" title="5. 移动构造与移动赋值"></a>5. 移动构造与移动赋值</h1><p>利用右值引用的特权，类的内部可以实现全新的移动成员函数（移动构造函数、移动赋值函数）。通过移动成员函数，我们可以绕过析构函数，防止临时对象的资源被销毁，转而将资源转移给新对象。</p>
+<p>具体机制如下：</p>
+<ul>
+<li>新对象（<code>data</code>）调用移动构造函数，把自己的内部指针指向临时对象（<code>tmp</code>）已经构造好的那块内存</li>
+<li>然后将临时对象（<code>tmp</code>）内部的指针改写为 <code>nullptr</code></li>
+<li>函数表达式结束时，系统依旧调用 <code>tmp</code> 的析构函数：析构函数内部照常执行 <code>delete[] data</code></li>
+<li>但由于此时指针变为 <code>nullptr</code>，所以实际执行的是 <code>delete[] nullptr</code> （在 C++ 中释放空指针被认为是安全的）</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyVector</span> &#123;<br>    <span class="hljs-type">int</span>* data;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-comment">// 移动构造函数</span><br>    <span class="hljs-built_in">MyVector</span>(MyVector&amp;&amp; tmp) &#123;<br>        <span class="hljs-keyword">this</span>-&gt;data = tmp.data;  <span class="hljs-comment">// 1. 指针接管：新对象直接指向现成内存</span><br>        tmp.data = <span class="hljs-literal">nullptr</span>;     <span class="hljs-comment">// 2. 将临时对象的指针置为空</span><br>    &#125;<br>    <br>    <span class="hljs-comment">// 移动赋值函数</span><br>    Vector&amp; MyVector::<span class="hljs-keyword">operator</span>=(MyVector&amp;&amp; tmp) &#123;<br>	    <span class="hljs-keyword">this</span>-&gt;data = tmp.data;<br>	    tmp.data = <span class="hljs-literal">nullptr</span>;<br>    &#125;<br>    <br>    ~<span class="hljs-built_in">MyVector</span>() &#123;<br>        <span class="hljs-keyword">delete</span>[] data;          <span class="hljs-comment">// 3. tmp 析构时，执行 delete[] nullptr</span><br>    &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h1 id="6-万能引用"><a href="#6-万能引用" class="headerlink" title="6. 万能引用"></a>6. 万能引用</h1><p>在 C++11 中，并不是所有的 <code>&amp;&amp;</code> 都代表右值引用。当 <code>&amp;&amp;</code> 出现在一个需要<strong>类型推导</strong>的上下文中时（比如模板参数推导 <code>T&amp;&amp;</code> 或 <code>auto&amp;&amp;</code>），它被称为万能引用。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span> T&gt;</span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">func</span><span class="hljs-params">(T&amp;&amp; param)</span></span>; <span class="hljs-comment">// 这里的 T&amp;&amp; 是万能引用（既能接收左值，也能接收右值）</span><br></code></pre></td></tr></table></figure>
+
+<p>C++ 不允许出现引用的引用（如 <code>int&amp; &amp;&amp;</code>），为了让泛型代码能编译通过，编译器制定了<strong>引用折叠规则</strong>：</p>
+<ul>
+<li><code>&amp; + &amp; -&gt; &amp;</code></li>
+<li><code>&amp; + &amp;&amp; -&gt; &amp;</code></li>
+<li><code>&amp;&amp; + &amp; -&gt; &amp;</code></li>
+<li><code>&amp;&amp; + &amp;&amp; -&gt; &amp;&amp;</code></li>
+</ul>
+<p>只要有左值引用参与，折叠结果一律变成左值引用；只有当全都是右值引用时，才会折叠成右值引用。</p>
+<p>万能引用本质上就是折叠规则的具体应用：</p>
+<ul>
+<li>传入左值，<code>T</code> 被推导为 <code>int&amp;</code>，而 <code>int&amp; &amp;&amp;</code> 会被折叠为 <code>int&amp;</code>，即左值引用</li>
+<li>传入右值，<code>T</code> 被推导为 <code>int</code>，而 <code>int &amp;&amp;</code> 会被折叠为 <code>int&amp;&amp;</code>，即右值引用</li>
+</ul>
+<h1 id="7-完美转发"><a href="#7-完美转发" class="headerlink" title="7. 完美转发"></a>7. 完美转发</h1><p>在 C++ 中，<mark>一切具名的变量都是左值</mark>。这意味着，即使一个函数的形参是右值引用（或者是接收了右值的万能引用），在函数内部，这个参数的名字本身是一个左值（因为它有名字、有确定地址）。</p>
+<p>这个特性会导致一些问题：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">base_func</span><span class="hljs-params">(<span class="hljs-type">int</span>&amp; x)</span></span>;  <span class="hljs-comment">// 接收左值</span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">base_func</span><span class="hljs-params">(<span class="hljs-type">int</span>&amp;&amp; x)</span></span>; <span class="hljs-comment">// 接收右值</span><br><br><span class="hljs-function"><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span> T&gt;</span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">wrapper</span><span class="hljs-params">(T&amp;&amp; param)</span> </span>&#123;<br>    <span class="hljs-built_in">base_func</span>(param); <span class="hljs-comment">// 致命问题：无论传入的是什么，这里的 param 都是一个左值！</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-built_in">wrapper</span>(<span class="hljs-number">10</span>); <span class="hljs-comment">// 传入的是纯右值 10，wrapper内部的 param 却退化成了左值</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>在上面的代码中，虽然 <code>10</code> 是右值，但进入 <code>wrapper</code> 后，<code>param</code> 变成了左值。此时调用 <code>base_func(param)</code>，会错误地匹配到左值版本，也就是说右值属性在二级传递的过程中丢失了。</p>
+<p>为了解决这个问题，C++11 引入了 <code>std::forward</code>，它的作用是根据模板参数 <code>T</code> 携带的推导信息，完美还原参数最初的左右值属性。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span> T&gt;</span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">wrapper</span><span class="hljs-params">(T&amp;&amp; param)</span> </span>&#123;<br>    <span class="hljs-comment">// 如果 param 进来时是右值，forward 会把它强转回右值</span><br>    <span class="hljs-comment">// 如果 param 进来时是左值，forward 会保持它是左值</span><br>    <span class="hljs-built_in">base_func</span>(std::forward&lt;T&gt;(param)); <br>&#125;<br></code></pre></td></tr></table></figure>
+  </div>
+
+  
+  <div class="post-copyright">
+    <p><strong>Shionyori</strong></p>
+    <p>/2026/01/10/C++%E7%A7%BB%E5%8A%A8%E8%AF%AD%E4%B9%89/</p>
+    <p>&amp;copy; 2026 Shionyori. 保留所有权利。</p>
+  </div>
+  
+
+  <footer class="post-footer">
+    
+    <div class="post-tags-footer">
+      
+        <a class="tag-link" href="/tags/C/">C++</a>
+      
+        <a class="tag-link" href="/tags/%E7%A7%BB%E5%8A%A8%E8%AF%AD%E4%B9%89/">移动语义</a>
+      
+        <a class="tag-link" href="/tags/%E5%B7%A6%E5%80%BC/">左值</a>
+      
+        <a class="tag-link" href="/tags/%E5%8F%B3%E5%80%BC/">右值</a>
+      
+        <a class="tag-link" href="/tags/%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8/">右值引用</a>
+      
+        <a class="tag-link" href="/tags/%E4%B8%87%E8%83%BD%E5%BC%95%E7%94%A8/">万能引用</a>
+      
+        <a class="tag-link" href="/tags/%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/">完美转发</a>
+      
+    </div>
+    
+
+    
+<div class="post-share">
+  <div class="share-buttons">
+    
+    
+    
+
+    
+    <a class="share-btn share-twitter" href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fshionyori.github.io%2F2026%2F01%2F10%2FC%2B%2B%E7%A7%BB%E5%8A%A8%E8%AF%AD%E4%B9%89%2F&text=C%2B%2B%20%E7%A7%BB%E5%8A%A8%E8%AF%AD%E4%B9%89" target="_blank" rel="noopener" aria-label="分享到 Twitter">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fshionyori.github.io%2F2026%2F01%2F10%2FC%2B%2B%E7%A7%BB%E5%8A%A8%E8%AF%AD%E4%B9%89%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fshionyori.github.io%2F2026%2F01%2F10%2FC%2B%2B%E7%A7%BB%E5%8A%A8%E8%AF%AD%E4%B9%89%2F" target="_blank" rel="noopener" aria-label="分享到 LinkedIn">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    
+
+    
+    <button class="share-btn share-copy" aria-label="复制链接" data-url="https://shionyori.github.io/2026/01/10/C++移动语义/">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    </button>
+    
+  </div>
+</div>
+
+
+  </footer>
+</article>
+
+
+
+<nav class="post-nav">
+  
+    <a class="post-nav-item post-nav-prev has-cover" href="/2026/01/17/%E5%9C%A8%20C++%20%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%A7%94%E6%89%98%E4%B8%8E%E4%BA%8B%E4%BB%B6/" style='background-image: url(/images/posts/%E5%9C%A8%20C++%20%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%A7%94%E6%89%98%E4%B8%8E%E4%BA%8B%E4%BB%B6/cover.png)'>
+      <span class="nav-label">上一篇</span>
+      <span class="nav-title">在 C++ 中实现委托与事件</span>
+    </a>
+  
+  
+    <a class="post-nav-item post-nav-next has-cover" href="/2025/10/14/%E7%BC%96%E7%A8%8B%E5%85%A5%E9%97%A8%E5%89%8D%E7%9A%84%E5%87%86%E5%A4%87/" style='background-image: url(/images/posts/%E7%BC%96%E7%A8%8B%E5%85%A5%E9%97%A8%E5%89%8D%E7%9A%84%E5%87%86%E5%A4%87/cover.png)'>
+      <span class="nav-label">下一篇</span>
+      <span class="nav-title">编程入门前的准备</span>
+    </a>
+  
+</nav>
+
+
+
+
+
+      </main>
+
+      
+    </div>
+  </div>
+</div>
+
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+
+<nav class="mobile-nav" id="mobile-nav">
+  <div class="mobile-nav-inner">
+    <div class="mobile-nav-header">
+      <span class="mobile-nav-title">首页</span>
+      <button class="btn-icon mobile-nav-close" id="mobile-nav-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <ul class="mobile-nav-menu">
+      
+        <li>
+          <a class="mobile-nav-link" href="/">首页</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/archives/">归档</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/tags/">标签</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/categories/">分类</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/friends/">友链</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/about/">关于</a>
+        </li>
+      
+    </ul>
+
+    
+    <div class="mobile-nav-social">
+      
+        <a class="social-icon" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+  </div>
+</nav>
+
+  <footer class="site-footer">
+  <div class="footer-inner">
+    
+    <div class="footer-social">
+      
+        <a class="social-link" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+
+    <div class="footer-info">
+      <span class="copyright">
+        &copy;
+        
+          2025 &ndash;
+        
+        2026
+        Shionyori
+      </span>
+
+      
+        <span class="powered-by">由 <a href="https://hexo.io/" target="_blank">Hexo</a> 驱动</span>
+      
+
+      
+        <span class="theme-by">主题 Shion</span>
+      
+
+      
+    </div>
+
+    
+
+  </div>
+</footer>
+
+
+
+  
+<div class="search-overlay" id="search-overlay"
+     data-i18n-found="关于「{query}」，找到了 {count} 条记录"
+     data-i18n-not-found="关于「{query}」，没有找到任何记录呢">
+  <div class="search-container">
+    <img class="search-decoration" src="/images/shion/search.png" alt="">
+    <div class="search-header">
+      <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" class="search-input" id="search-input" placeholder="输入关键词搜索..." autocomplete="off">
+      <button class="search-close" id="search-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="search-info" id="search-info"></div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+
+
+  
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/contrib/auto-render.min.js"></script>
+
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

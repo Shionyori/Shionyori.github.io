@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>hexo-theme-shion 配置指南 - Shionyori&#39;s Blog</title>
+
+
+<meta name="description" content="Gorgeous blooming flowers will eventually elegantly scattered.">
+
+
+<meta property="og:title" content="hexo-theme-shion 配置指南">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://shionyori.github.io/2026/07/04/hexo-theme-shion 配置指南/">
+<meta property="og:site_name" content="Shionyori&#39;s Blog">
+
+
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="hexo-theme-shion 配置指南">
+
+
+<link rel="canonical" href="https://shionyori.github.io/2026/07/04/hexo-theme-shion 配置指南/">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "name": "hexo-theme-shion 配置指南",
+  "url": "https://shionyori.github.io/2026/07/04/hexo-theme-shion 配置指南/",
+  "datePublished": "2026-07-05T00:00:00+08:00",
+  "author": { "@type": "Person", "name": "Shionyori" }
+  
+}
+</script>
+
+<meta name="theme-color" content="#6b7eb5">
+<link rel="icon" type="image/png" href="/images/shion/favicon.png">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+
+
+<script>
+  (function() {
+    var mode = 'auto';
+    var saved = localStorage.getItem('shion-theme');
+    if (saved) { mode = saved; }
+    else if (mode === 'auto') {
+      mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    if (mode === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+    (function() {
+      var fonts = {"heading":"'Noto Serif SC', 'Source Han Serif SC', Georgia, serif","body":"'Noto Sans SC', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif","code":"'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace","size_root":"15px"};
+      var legacySize = '';
+      var sizeRoot = fonts.size_root || legacySize;
+
+      if (fonts.heading) {
+        document.documentElement.style.setProperty('--font-heading', fonts.heading);
+      }
+      if (fonts.body) {
+        document.documentElement.style.setProperty('--font-body', fonts.body);
+      }
+      if (fonts.code) {
+        document.documentElement.style.setProperty('--font-code', fonts.code);
+      }
+      if (sizeRoot) {
+        document.documentElement.style.setProperty('--font-size-root', sizeRoot);
+      }
+    })();
+  })();
+</script>
+
+
+<noscript>
+  <style>
+    .sidebar-inner,
+    .content-card,
+    .post,
+    .page,
+    .archive-item,
+    .category-item,
+    .pagination,
+    .comments,
+    .not-found-content,
+    .widget,
+    .tag-cloud-item,
+    .post-card-wrapper,
+    .post-content,
+    .post-tags-footer,
+    .post-share,
+    .post-copyright,
+    .post-nav {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  </style>
+</noscript>
+
+  <script>
+    window.__shionConfig = {
+      katexCDN: 'https://cdn.jsdelivr.net/npm/katex@0',
+      katexDelimiters: [{"left":"$$","right":"$$","display":true},{"left":"$","right":"$","display":false}]
+    };
+  </script>
+<meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a class="site-logo" href="/">
+      
+        <span class="logo-text">Shionyori&#39;s Blog</span>
+      
+    </a>
+
+    <nav class="site-nav" id="site-nav">
+      
+        <a class="nav-item" href="/">首页</a>
+      
+        <a class="nav-item" href="/archives/">归档</a>
+      
+        <a class="nav-item" href="/tags/">标签</a>
+      
+        <a class="nav-item" href="/categories/">分类</a>
+      
+        <a class="nav-item" href="/friends/">友链</a>
+      
+        <a class="nav-item" href="/about/">关于</a>
+      
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn-icon search-toggle" id="search-toggle" aria-label="搜索">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon theme-toggle" id="theme-toggle" aria-label="深色模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon sidebar-toggle" id="sidebar-toggle" aria-label="sidebar_toggle">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+
+  
+<div class="reading-progress" id="reading-progress">
+  <div class="reading-progress-bar" id="reading-progress-bar"></div>
+</div>
+
+
+
+<div id="pjax-container">
+  
+  
+  
+  <div class="page-bg">
+  
+    <img src="/images/posts/hexo-theme-shion%20%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97/cover.png" alt="">
+  </div>
+  
+
+  
+  
+  
+  <section class="page-hero">
+    <h1 class="hero-title">hexo-theme-shion 配置指南</h1>
+    <div class="hero-subtitle">
+      <div class="post-meta">
+    
+    <time class="post-date" datetime="2026-07-05T00:00:00+08:00">
+      2026-07-05
+    </time>
+    
+
+    
+    <time class="post-updated" datetime="2026-07-06T00:00:00+08:00">
+      更新于 2026-07-06
+    </time>
+    
+
+    
+    <span class="post-word-count">1849 words</span>
+    
+
+    
+    <span class="post-reading-time">8 min read</span>
+    
+
+    
+    <span class="post-categories">
+      
+        <a class="category-link" href="/categories/%E5%85%B6%E4%BB%96/">其他</a>
+      
+    </span>
+    
+
+</div>
+
+    </div>
+    
+    <div class="hero-tags">
+      
+        <a class="tag-link" href="/tags/Hexo/">Hexo</a>
+      
+        <a class="tag-link" href="/tags/%E4%B8%BB%E9%A2%98/">主题</a>
+      
+        <a class="tag-link" href="/tags/%E6%95%99%E7%A8%8B/">教程</a>
+      
+        <a class="tag-link" href="/tags/Shion/">Shion</a>
+      
+        <a class="tag-link" href="/tags/%E9%85%8D%E7%BD%AE/">配置</a>
+      
+    </div>
+    
+  </section>
+  
+  
+
+  
+<div class="container">
+    <div class="content-wrapper">
+      
+      
+<aside class="site-sidebar sidebar-post" id="site-sidebar" data-position="left">
+
+  
+  
+
+  <div class="sidebar-sticky-group">
+    
+    <section class="sidebar-card sidebar-music">
+      
+<div class="music-player" data-playlist='[{"name":"奏穹のラプソディア (狂想曲)","artist":"瑶山百霊","url":"/music/瑶山百霊 - 奏穹のラプソディア (狂想曲).ogg","cover":"/music/covers/soukyuu-no-rhapsody.jpg"},{"name":"Graveyard Memory","artist":"GET IN THE RING","url":"/music/GET IN THE RING - Graveyard Memory.ogg","cover":"/music/covers/graveyard-memory.jpg"},{"name":"ポラリス (北极星)","artist":"GET IN THE RING","url":"/music/GET IN THE RING - ポラリス (北极星).ogg","cover":"/music/covers/polaris.jpg"},{"name":"その唄の名は…","artist":"yukina / GET IN THE RING","url":"/music/yukina _ GET IN THE RING - その唄の名は….ogg","cover":"/music/covers/sono-uta-no-na-wa.jpg"},{"name":"over the moon","artist":"Forest306","url":"/music/Forest306 - over the moon.ogg","cover":"/music/covers/over-the-moon.jpg"},{"name":"21時の探しモノ (21时寻找的东西)","artist":"minimum electric design","url":"/music/minimum electric design - 21時の探しモノ (21时寻找的东西).ogg","cover":"/music/covers/21ji-no-sagashimono.jpg"},{"name":"Freak Report 01 ~他愛も無い二人の博物誌~","artist":"凛","url":"/music/凛 - Freak Report 01 ~他愛も無い二人の博物誌~.ogg","cover":"/music/covers/freak-report-01.jpg"},{"name":"かぜのいろ (カゼノイロ)","artist":"森羅万象","url":"/music/森羅万象 - かぜのいろ (カゼノイロ).ogg","cover":"/music/covers/kaze-no-iro.jpg"},{"name":"Onisan Dochira!","artist":"狐の工作室","url":"/music/狐の工作室 - Onisan Dochira!.ogg","cover":"/music/covers/onisan-dochira.jpg"},{"name":"Skip in the byway","artist":"神乃木製作所","url":"/music/神乃木製作所 - Skip in the byway.ogg","cover":"/music/covers/skip-in-the-byway.jpg"}]'>
+  
+  <div class="music-body">
+    <div class="music-cover">
+      
+      
+      <img src="/music/covers/soukyuu-no-rhapsody.jpg" alt="cover" class="music-cover-img" onerror="if(!this.dataset.failed){this.dataset.failed='1';this.src='/images/shion/404.png'}">
+      
+    </div>
+    <div class="music-info">
+      <div class="music-title-row">
+        <span class="music-title">奏穹のラプソディア (狂想曲)</span>
+        <span class="music-counter">1 / 10</span>
+      </div>
+      <span class="music-artist">瑶山百霊</span>
+      <div class="music-progress">
+        <div class="music-progress-bar">
+          <div class="music-progress-fill"></div>
+        </div>
+        <div class="music-time">
+          <span class="music-time-current">0:00</span>
+          <span class="music-time-total">0:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="music-controls">
+    <button class="music-btn music-btn-mode" aria-label="Play mode" data-mode="sequential" title="Sequential">
+      <svg class="music-mode-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+    <button class="music-btn music-btn-prev" aria-label="Previous track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+    </button>
+    <button class="music-btn music-btn-play" aria-label="Play">
+      <svg class="music-icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <svg class="music-icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="6" height="16"/><rect x="14" y="4" width="6" height="16"/></svg>
+    </button>
+    <button class="music-btn music-btn-next" aria-label="Next track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+    </button>
+    <button class="music-btn music-btn-list" aria-label="Playlist">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="music-playlist">
+    
+    <button class="music-playlist-item active" data-index="0">
+      <span class="music-playlist-name">奏穹のラプソディア (狂想曲)</span>
+      <span class="music-playlist-artist">瑶山百霊</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="1">
+      <span class="music-playlist-name">Graveyard Memory</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="2">
+      <span class="music-playlist-name">ポラリス (北极星)</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="3">
+      <span class="music-playlist-name">その唄の名は…</span>
+      <span class="music-playlist-artist">yukina / GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="4">
+      <span class="music-playlist-name">over the moon</span>
+      <span class="music-playlist-artist">Forest306</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="5">
+      <span class="music-playlist-name">21時の探しモノ (21时寻找的东西)</span>
+      <span class="music-playlist-artist">minimum electric design</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="6">
+      <span class="music-playlist-name">Freak Report 01 ~他愛も無い二人の博物誌~</span>
+      <span class="music-playlist-artist">凛</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="7">
+      <span class="music-playlist-name">かぜのいろ (カゼノイロ)</span>
+      <span class="music-playlist-artist">森羅万象</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="8">
+      <span class="music-playlist-name">Onisan Dochira!</span>
+      <span class="music-playlist-artist">狐の工作室</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="9">
+      <span class="music-playlist-name">Skip in the byway</span>
+      <span class="music-playlist-artist">神乃木製作所</span>
+    </button>
+    
+  </div>
+  
+</div>
+
+    </section>
+    
+
+    <section class="sidebar-card sidebar-toc">
+      <div class="sidebar-toc-header">
+        <a class="sidebar-back-home" href="/" title="首页">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </a>
+        <span class="sidebar-toc-label">hexo-theme-shion 配置指南</span>
+      </div>
+      <div class="sidebar-scroll">
+      
+      
+      <nav class="sidebar-toc">
+        <ol class="toc-list"><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B"><span class="toc-list-text">快速开始</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E7%8E%AF%E5%A2%83%E8%A6%81%E6%B1%82"><span class="toc-list-text">环境要求</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-list-text">安装</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%90%AF%E7%94%A8"><span class="toc-list-text">启用</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-list-text">配置文件</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E7%AB%99%E7%82%B9%E9%85%8D%E7%BD%AE"><span class="toc-list-text">站点配置</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E6%96%87%E7%AB%A0%E5%86%99%E4%BD%9C%E8%A7%84%E8%8C%83"><span class="toc-list-text">文章写作规范</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%88%9B%E5%BB%BA%E6%96%87%E7%AB%A0"><span class="toc-list-text">创建文章</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#Frontmatter"><span class="toc-list-text">Frontmatter</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%88%86%E7%B1%BB"><span class="toc-list-text">分类</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E6%A0%87%E7%AD%BE"><span class="toc-list-text">标签</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%B0%81%E9%9D%A2%E5%9B%BE"><span class="toc-list-text">封面图</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E6%91%98%E8%A6%81"><span class="toc-list-text">摘要</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E8%8D%89%E7%A8%BF"><span class="toc-list-text">草稿</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E4%B8%BB%E9%A2%98%E9%85%8D%E7%BD%AE"><span class="toc-list-text">主题配置</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E7%AB%99%E7%82%B9%E6%A0%87%E8%AF%86"><span class="toc-list-text">站点标识</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%AF%BC%E8%88%AA%E8%8F%9C%E5%8D%95"><span class="toc-list-text">导航菜单</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%A4%96%E8%A7%82"><span class="toc-list-text">外观</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E9%A6%96%E9%A1%B5"><span class="toc-list-text">首页</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E6%96%87%E7%AB%A0"><span class="toc-list-text">文章</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E4%BE%A7%E8%BE%B9%E6%A0%8F"><span class="toc-list-text">侧边栏</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-3"><a class="toc-list-link" href="#%E6%8C%89%E9%A1%B5%E9%9D%A2%E9%85%8D%E7%BD%AE"><span class="toc-list-text">按页面配置</span></a></li><li class="toc-list-item toc-list-level-3"><a class="toc-list-link" href="#%E7%A4%BE%E4%BA%A4%E5%9B%BE%E6%A0%87%E4%B8%8E%E5%B0%8F%E9%83%A8%E4%BB%B6"><span class="toc-list-text">社交图标与小部件</span></a></li></ol></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E8%AF%84%E8%AE%BA"><span class="toc-list-text">评论</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E6%90%9C%E7%B4%A2"><span class="toc-list-text">搜索</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90"><span class="toc-list-text">数据分析</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E9%9F%B3%E4%B9%90%E6%92%AD%E6%94%BE%E5%99%A8"><span class="toc-list-text">音乐播放器</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E9%A1%B5%E8%84%9A"><span class="toc-list-text">页脚</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E8%BF%87%E6%9C%9F%E6%8F%90%E9%86%92"><span class="toc-list-text">过期提醒</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%A0%B7%E5%BC%8F%E4%B8%8E%E8%84%9A%E6%9C%AC"><span class="toc-list-text">自定义样式与脚本</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%AD%97%E4%BD%93"><span class="toc-list-text">字体</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E5%86%85%E5%AE%B9%E7%BB%84%E7%BB%87"><span class="toc-list-text">内容组织</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="toc-list-text">目录结构</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%88%9B%E5%BB%BA%E7%8B%AC%E7%AB%8B%E9%A1%B5%E9%9D%A2"><span class="toc-list-text">创建独立页面</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-list-text">常用命令</span></a></li></ol>
+      </nav>
+      
+      </div>
+      <a class="sidebar-back-home-bottom" href="/">← 首页</a>
+    </section>
+  </div>
+
+  
+</aside>
+
+      
+
+      <main class="site-main">
+        <article class="post">
+
+  <div class="post-content">
+    
+  
+  
+  
+
+
+    <p>介绍 hexo-theme-shion 的安装配置、文章写作规范以及内容组织方式。</p>
+<hr>
+<h1 id="快速开始"><a href="#快速开始" class="headerlink" title="快速开始"></a>快速开始</h1><h2 id="环境要求"><a href="#环境要求" class="headerlink" title="环境要求"></a>环境要求</h2><ul>
+<li>Hexo 8.x 及以上</li>
+<li>Node.js 18 及以上</li>
+</ul>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cd</span> your-hexo-site<br>git <span class="hljs-built_in">clone</span> https://github.com/Shionyori/hexo-theme-shion themes/shion<br><br><span class="hljs-built_in">cd</span> themes/shion<br>npm install &amp;&amp; npm run build<br></code></pre></td></tr></table></figure>
+
+<h2 id="启用"><a href="#启用" class="headerlink" title="启用"></a>启用</h2><p>编辑站点根目录的 <code>_config.yml</code>，将 <code>theme</code> 改为 <code>shion</code>：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">theme:</span> <span class="hljs-string">shion</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h2><p>主题的默认配置位于 <code>themes/shion/_config.yml</code>。要覆盖默认值，将配置文件复制到站点根目录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cp</span> themes/shion/_config.yml _config.shion.yml<br></code></pre></td></tr></table></figure>
+
+<p>Hexo 会将 <code>_config.shion.yml</code> 深度合并到主题默认配置之上，只需在文件中写入要覆盖的选项。下文的配置示例均指写入 <code>_config.shion.yml</code> 的内容。</p>
+<hr>
+<h2 id="站点配置"><a href="#站点配置" class="headerlink" title="站点配置"></a>站点配置</h2><p>根目录的 <code>_config.yml</code> 是 Hexo 站点配置，几个关键项：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-comment"># 站点信息</span><br><span class="hljs-attr">title:</span> <span class="hljs-string">My</span> <span class="hljs-string">Blog</span><br><span class="hljs-attr">author:</span> <span class="hljs-string">Your</span> <span class="hljs-string">Name</span><br><span class="hljs-attr">language:</span> <span class="hljs-string">zh-CN</span><br><br><span class="hljs-comment"># 文章资源文件夹（建议开启）</span><br><span class="hljs-attr">post_asset_folder:</span> <span class="hljs-literal">true</span><br><br><span class="hljs-comment"># 固定链接格式</span><br><span class="hljs-attr">permalink:</span> <span class="hljs-string">:year/:month/:day/:title/</span><br><br><span class="hljs-comment"># 主题</span><br><span class="hljs-attr">theme:</span> <span class="hljs-string">shion</span><br><br><span class="hljs-comment"># 部署</span><br><span class="hljs-attr">deploy:</span><br>  <span class="hljs-attr">type:</span> <span class="hljs-string">git</span><br>  <span class="hljs-attr">repo:</span> <span class="hljs-string">https://github.com/username/username.github.io.git</span><br>  <span class="hljs-attr">branch:</span> <span class="hljs-string">gh-pages</span><br></code></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="文章写作规范"><a href="#文章写作规范" class="headerlink" title="文章写作规范"></a>文章写作规范</h1><h2 id="创建文章"><a href="#创建文章" class="headerlink" title="创建文章"></a>创建文章</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">hexo new <span class="hljs-string">&quot;文章标题&quot;</span><br></code></pre></td></tr></table></figure>
+
+<p>这会在 <code>source/_posts/</code> 下生成 <code>文章标题.md</code> 以及同名的资源文件夹（需要 <code>post_asset_folder: true</code>）。</p>
+<h2 id="Frontmatter"><a href="#Frontmatter" class="headerlink" title="Frontmatter"></a>Frontmatter</h2><p>每篇文章顶部的 YAML 区域定义元数据，基本结构：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-meta">---</span><br><span class="hljs-attr">title:</span> <span class="hljs-string">文章标题</span><br><span class="hljs-attr">date:</span> <span class="hljs-number">2026-07-05</span><br><span class="hljs-attr">categories:</span> <span class="hljs-string">Tutorial</span><br><span class="hljs-attr">tags:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">Hexo</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">教程</span><br><span class="hljs-attr">cover:</span> <span class="hljs-string">cover.png</span><br><span class="hljs-meta">---</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h2><p>一篇文章只设置一个分类，用于顶层归类：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">categories:</span> <span class="hljs-string">Tutorial</span><br></code></pre></td></tr></table></figure>
+
+<p>注意值是字符串而非列表。常用的分类命名参考：</p>
+<table>
+<thead>
+<tr>
+<th>分类</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Tutorial</code></td>
+<td>教程、指南</td>
+</tr>
+<tr>
+<td><code>Tech</code></td>
+<td>技术分享</td>
+</tr>
+<tr>
+<td><code>Life</code></td>
+<td>生活、随笔</td>
+</tr>
+<tr>
+<td><code>Notes</code></td>
+<td>学习笔记</td>
+</tr>
+<tr>
+<td><code>DevLog</code></td>
+<td>开发日志</td>
+</tr>
+</tbody></table>
+<h2 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h2><p>一篇文章可以有多个标签，用于细粒度描述文章涉及的 topic：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">tags:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">Hexo</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">JavaScript</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-string">前端</span><br></code></pre></td></tr></table></figure>
+
+<p>标签使用建议：</p>
+<ul>
+<li>每个标签应独立有意义</li>
+<li>同一含义只用一个标签（不要同时出现 <code>Tutorial</code> 和 <code>教程</code>）</li>
+<li>数量控制在 3–8 个，太多会稀释标签云的导航价值</li>
+</ul>
+<h2 id="封面图"><a href="#封面图" class="headerlink" title="封面图"></a>封面图</h2><p>将图片放入文章的资源文件夹，在 frontmatter 中引用：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">cover:</span> <span class="hljs-string">cover.png</span><br></code></pre></td></tr></table></figure>
+
+<p>主题会将其解析为文章资源文件夹下的相对路径。未设置时使用默认封面。</p>
+<h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><p>在正文中使用 <code>&lt;!-- more --&gt;</code> 截断，之前的段落会显示在首页卡片上：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs markdown">首页显示的摘要内容。<br><br>&lt;!-- more --&gt;<br><br>文章正文从这里开始。<br></code></pre></td></tr></table></figure>
+
+<h2 id="草稿"><a href="#草稿" class="headerlink" title="草稿"></a>草稿</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">hexo new draft <span class="hljs-string">&quot;草稿标题&quot;</span><br>hexo server --draft     <span class="hljs-comment"># 预览草稿</span><br>hexo publish <span class="hljs-string">&quot;草稿标题&quot;</span>  <span class="hljs-comment"># 发布为正式文章</span><br></code></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="主题配置"><a href="#主题配置" class="headerlink" title="主题配置"></a>主题配置</h1><p><code>_config.shion.yml</code> 中可覆盖的配置项按功能分组如下。</p>
+<h2 id="站点标识"><a href="#站点标识" class="headerlink" title="站点标识"></a>站点标识</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">favicon:</span> <span class="hljs-string">/images/shion/favicon.png</span><br><span class="hljs-attr">logo:</span><br>  <span class="hljs-attr">text:</span>          <span class="hljs-comment"># 导航栏文字标题（留空使用站点 title）</span><br>  <span class="hljs-attr">image:</span>         <span class="hljs-comment"># 导航栏图片 Logo</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="导航菜单"><a href="#导航菜单" class="headerlink" title="导航菜单"></a>导航菜单</h2><p>导航栏采用三等分布局，菜单项居中于页面中轴，左侧为站点 Logo，右侧为搜索和主题切换按钮。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">menu:</span><br>  <span class="hljs-attr">Home:</span> <span class="hljs-string">/</span><br>  <span class="hljs-attr">Archives:</span> <span class="hljs-string">/archives/</span><br>  <span class="hljs-attr">Tags:</span> <span class="hljs-string">/tags/</span><br>  <span class="hljs-attr">Categories:</span> <span class="hljs-string">/categories/</span><br>  <span class="hljs-attr">About:</span> <span class="hljs-string">/about/</span><br>  <span class="hljs-attr">Friends:</span> <span class="hljs-string">/friends/</span><br></code></pre></td></tr></table></figure>
+
+<p>键是显示文字，值是页面路径，可自由增删。</p>
+<h2 id="外观"><a href="#外观" class="headerlink" title="外观"></a>外观</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">appearance:</span><br>  <span class="hljs-attr">default_mode:</span> <span class="hljs-string">auto</span>        <span class="hljs-comment"># auto | light | dark</span><br>  <span class="hljs-attr">code_theme:</span> <span class="hljs-string">auto</span>          <span class="hljs-comment"># auto | light | dark</span><br>  <span class="hljs-attr">reading_progress:</span> <span class="hljs-literal">true</span>    <span class="hljs-comment"># 页面顶部阅读进度条</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="首页"><a href="#首页" class="headerlink" title="首页"></a>首页</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">home:</span><br>  <span class="hljs-attr">posts_per_page:</span> <span class="hljs-number">10</span><br>  <span class="hljs-attr">display_excerpt:</span> <span class="hljs-literal">true</span>     <span class="hljs-comment"># 显示摘要而非全文</span><br>  <span class="hljs-attr">excerpt_length:</span> <span class="hljs-number">280</span>       <span class="hljs-comment"># 自动摘要的字符数上限</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">post:</span><br>  <span class="hljs-attr">toc:</span> <span class="hljs-literal">true</span>                 <span class="hljs-comment"># 右侧目录</span><br>  <span class="hljs-attr">toc_max_depth:</span> <span class="hljs-number">3</span>          <span class="hljs-comment"># 目录最大标题层级</span><br>  <span class="hljs-attr">copyright:</span> <span class="hljs-literal">true</span>           <span class="hljs-comment"># 版权声明</span><br>  <span class="hljs-attr">reading_time:</span> <span class="hljs-literal">true</span>        <span class="hljs-comment"># 阅读时间估计</span><br>  <span class="hljs-attr">word_count:</span> <span class="hljs-literal">true</span>          <span class="hljs-comment"># 字数统计</span><br>  <span class="hljs-attr">date_format:</span> <span class="hljs-string">&#x27;YYYY-MM-DD&#x27;</span><br>  <span class="hljs-attr">cover:</span><br>    <span class="hljs-attr">enable:</span> <span class="hljs-literal">true</span><br>    <span class="hljs-attr">default:</span> <span class="hljs-string">/images/shion/default-cover.png</span><br>  <span class="hljs-attr">share:</span><br>    <span class="hljs-attr">enable:</span> <span class="hljs-literal">true</span><br>    <span class="hljs-attr">platforms:</span> [<span class="hljs-string">&#x27;twitter&#x27;</span>, <span class="hljs-string">&#x27;facebook&#x27;</span>, <span class="hljs-string">&#x27;linkedin&#x27;</span>, <span class="hljs-string">&#x27;copy&#x27;</span>]<br>  <span class="hljs-attr">copyright_license:</span> <span class="hljs-string">&#x27;CC BY-NC-SA 4.0&#x27;</span><br>  <span class="hljs-attr">copyright_license_url:</span> <span class="hljs-string">&#x27;https://creativecommons.org/licenses/by-nc-sa/4.0/&#x27;</span><br>  <span class="hljs-attr">code:</span><br>    <span class="hljs-attr">highlight:</span> <span class="hljs-string">highlight.js</span><br>    <span class="hljs-attr">line_numbers:</span> <span class="hljs-literal">true</span><br>    <span class="hljs-attr">copy_button:</span> <span class="hljs-literal">true</span><br>  <span class="hljs-attr">math:</span><br>    <span class="hljs-attr">enable:</span> <span class="hljs-literal">true</span><br>    <span class="hljs-attr">engine:</span> <span class="hljs-string">katex</span><br>  <span class="hljs-attr">image:</span><br>    <span class="hljs-attr">lazy_load:</span> <span class="hljs-literal">true</span><br>    <span class="hljs-attr">lightbox:</span> <span class="hljs-literal">true</span>           <span class="hljs-comment"># 点击图片放大</span><br></code></pre></td></tr></table></figure>
+
+<p>如需在特定文章关闭目录，在 frontmatter 中设置 <code>toc: false</code>。需要数学公式的文章设置 <code>math: true</code>。</p>
+<h2 id="侧边栏"><a href="#侧边栏" class="headerlink" title="侧边栏"></a>侧边栏</h2><p>侧边栏由个人信息卡片、音乐播放器和若干小部件（widget）组成。全局配置定义默认行为：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">sidebar:</span><br>  <span class="hljs-attr">enable:</span> <span class="hljs-literal">true</span><br>  <span class="hljs-attr">position:</span> <span class="hljs-string">left</span>             <span class="hljs-comment"># left | right</span><br>  <span class="hljs-attr">avatar:</span><br>    <span class="hljs-attr">enable:</span> <span class="hljs-literal">true</span><br>    <span class="hljs-attr">image:</span> <span class="hljs-string">/images/avatar.png</span><br>  <span class="hljs-attr">social:</span><br>    <span class="hljs-attr">GitHub:</span> <span class="hljs-string">https://github.com/your-username</span><br>    <span class="hljs-attr">Bilibili:</span> <span class="hljs-string">https://space.bilibili.com/your-id</span><br>  <span class="hljs-attr">widgets:</span>                   <span class="hljs-comment"># 全局默认小部件</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-string">recent-posts</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-string">categories-widget</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-string">tags-widget</span><br>  <span class="hljs-attr">recent_posts_count:</span> <span class="hljs-number">5</span><br>  <span class="hljs-attr">tagcloud_min_font:</span> <span class="hljs-number">1.2</span><br>  <span class="hljs-attr">tagcloud_max_font:</span> <span class="hljs-number">2.8</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="按页面配置"><a href="#按页面配置" class="headerlink" title="按页面配置"></a>按页面配置</h3><p>每个页面的侧边栏可以独立定制。通过 <code>layouts</code> 字段按页面类型覆盖，<strong>所有页面统一在这里管理</strong>：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">sidebar:</span><br>  <span class="hljs-attr">widgets:</span>                          <span class="hljs-comment"># 全局默认</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-string">recent-posts</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-string">categories-widget</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-string">tags-widget</span><br>  <span class="hljs-attr">layouts:</span>                          <span class="hljs-comment"># 按页面覆盖</span><br>    <span class="hljs-attr">index:</span>                          <span class="hljs-comment"># 主页 /</span><br>    <span class="hljs-attr">archive:</span>                        <span class="hljs-comment"># 归档 /archives/</span><br>      <span class="hljs-attr">widgets:</span> []<br>    <span class="hljs-attr">friends:</span>                        <span class="hljs-comment"># 友链 /friends/</span><br>      <span class="hljs-attr">widgets:</span> []<br>    <span class="hljs-attr">tags:</span>                           <span class="hljs-comment"># 标签 /tags/</span><br>      <span class="hljs-attr">widgets:</span> []<br>    <span class="hljs-attr">categories:</span>                     <span class="hljs-comment"># 分类 /categories/</span><br>      <span class="hljs-attr">widgets:</span> []<br>    <span class="hljs-attr">about:</span>                          <span class="hljs-comment"># 关于 /about/</span><br>      <span class="hljs-attr">widgets:</span> []<br></code></pre></td></tr></table></figure>
+
+<p>每个 layout 支持四个键：<code>enable</code>（开关侧边栏）、<code>profile</code>（个人信息）、<code>music</code>（音乐播放器）、<code>widgets</code>（小部件列表）。未设置的键自动沿用全局默认值。</p>
+<blockquote>
+<p>主页和归档页是 Hexo 自动生成的，没有 <code>.md</code> 源文件，只能通过 <code>layouts</code> 配置。友链、关于、分类、标签页除了 <code>layouts</code> 外，也可在各自的 <code>.md</code> frontmatter 中写 <code>sidebar:</code> 做一次性覆盖。</p>
+</blockquote>
+<h3 id="社交图标与小部件"><a href="#社交图标与小部件" class="headerlink" title="社交图标与小部件"></a>社交图标与小部件</h3><p>支持的社交平台键名：<code>GitHub</code>, <code>Twitter</code>, <code>Facebook</code>, <code>Instagram</code>, <code>YouTube</code>, <code>Bilibili</code>, <code>Email</code>, <code>RSS</code>, <code>Steam</code>, <code>Discord</code>, <code>Telegram</code>, <code>LinkedIn</code>, <code>Weibo</code>, <code>Zhihu</code>, <code>Douban</code>, <code>NPM</code>, <code>Patreon</code>, <code>Reddit</code>, <code>Twitch</code>, <code>Spotify</code>, <code>Medium</code>, <code>CodePen</code>, <code>GitLab</code>, <code>StackOverflow</code>, <code>Mastodon</code>。</p>
+<p>可选的小部件：<code>recent-posts</code>, <code>categories-widget</code>, <code>tags-widget</code>, <code>tagcloud</code>, <code>archives-widget</code>。</p>
+<h2 id="评论"><a href="#评论" class="headerlink" title="评论"></a>评论</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">comments:</span><br>  <span class="hljs-attr">enable:</span> <span class="hljs-literal">true</span><br>  <span class="hljs-attr">type:</span> <span class="hljs-string">giscus</span>               <span class="hljs-comment"># giscus | disqus | waline | twikoo | valine | gitalk | utterances</span><br>  <span class="hljs-attr">giscus:</span><br>    <span class="hljs-attr">repo:</span> <span class="hljs-string">username/repo</span><br>    <span class="hljs-attr">repo_id:</span> <span class="hljs-string">&#x27;xxx&#x27;</span><br>    <span class="hljs-attr">category:</span> <span class="hljs-string">Announcements</span><br>    <span class="hljs-attr">category_id:</span> <span class="hljs-string">&#x27;xxx&#x27;</span><br>    <span class="hljs-attr">mapping:</span> <span class="hljs-string">pathname</span><br></code></pre></td></tr></table></figure>
+
+<p>不同系统的具体参数见<a href="https://github.com/Shionyori/hexo-theme-shion/blob/main/docs/configuration.md" target="_blank" rel="noopener">主题配置文档</a>。</p>
+<h2 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h2><p>基于 Fuse.js 的本地搜索，快捷键 <code>Ctrl+K</code> &#x2F; <code>Cmd+K</code>：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">search:</span><br>  <span class="hljs-attr">enable:</span> <span class="hljs-literal">true</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="数据分析"><a href="#数据分析" class="headerlink" title="数据分析"></a>数据分析</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">analytics:</span><br>  <span class="hljs-attr">google:</span> <span class="hljs-string">G-XXXXXXXXXX</span>      <span class="hljs-comment"># Google Analytics</span><br>  <span class="hljs-attr">baidu:</span> <span class="hljs-string">xxxxxxxxxxxxx</span>       <span class="hljs-comment"># 百度统计</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="音乐播放器"><a href="#音乐播放器" class="headerlink" title="音乐播放器"></a>音乐播放器</h2><p>侧边栏内置 HTML5 音乐播放器，支持 MP3&#x2F;OGG&#x2F;WAV：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">music:</span><br>  <span class="hljs-attr">enable:</span> <span class="hljs-literal">true</span><br>  <span class="hljs-attr">playlist:</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">&#x27;曲名&#x27;</span><br>      <span class="hljs-attr">artist:</span> <span class="hljs-string">&#x27;艺术家&#x27;</span><br>      <span class="hljs-attr">url:</span> <span class="hljs-string">&#x27;/music/song.ogg&#x27;</span><br>      <span class="hljs-attr">cover:</span> <span class="hljs-string">&#x27;/music/cover.jpg&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<p>快捷键：<code>Space</code> 播放&#x2F;暂停，<code>Ctrl+→</code> 下一首，<code>Ctrl+←</code> 上一首。播放状态通过 localStorage 持久化，跨页面导航不中断。</p>
+<h2 id="页脚"><a href="#页脚" class="headerlink" title="页脚"></a>页脚</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">footer:</span><br>  <span class="hljs-attr">since:</span> <span class="hljs-number">2024</span>               <span class="hljs-comment"># 版权起始年份</span><br>  <span class="hljs-attr">powered_by:</span> <span class="hljs-literal">true</span><br>  <span class="hljs-attr">theme_by:</span> <span class="hljs-literal">true</span><br>  <span class="hljs-attr">icp:</span> <span class="hljs-string">&#x27;&#x27;</span>                   <span class="hljs-comment"># ICP 备案号</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="过期提醒"><a href="#过期提醒" class="headerlink" title="过期提醒"></a>过期提醒</h2><p>超过指定天数的文章顶部显示提醒：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">outdate:</span><br>  <span class="hljs-attr">enable:</span> <span class="hljs-literal">true</span><br>  <span class="hljs-attr">days:</span> <span class="hljs-number">365</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="自定义样式与脚本"><a href="#自定义样式与脚本" class="headerlink" title="自定义样式与脚本"></a>自定义样式与脚本</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">custom_css:</span> <span class="hljs-string">/css/custom.css</span><br><span class="hljs-attr">custom_js:</span> <span class="hljs-string">/js/custom.js</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="字体"><a href="#字体" class="headerlink" title="字体"></a>字体</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">fonts:</span><br>  <span class="hljs-attr">heading:</span> <span class="hljs-string">&quot;&#x27;Noto Serif SC&#x27;, Georgia, serif&quot;</span><br>  <span class="hljs-attr">body:</span> <span class="hljs-string">&quot;&#x27;Noto Sans SC&#x27;, Inter, sans-serif&quot;</span><br>  <span class="hljs-attr">code:</span> <span class="hljs-string">&quot;&#x27;JetBrains Mono&#x27;, &#x27;Fira Code&#x27;, Consolas, monospace&quot;</span><br>  <span class="hljs-attr">size_root:</span> <span class="hljs-string">15px</span><br></code></pre></td></tr></table></figure>
+
+<p>外部字体需要自行加载（通过 <code>custom_css</code> 或在模板中注入 <code>&lt;link&gt;</code> 标签）。</p>
+<hr>
+<h1 id="内容组织"><a href="#内容组织" class="headerlink" title="内容组织"></a>内容组织</h1><h2 id="目录结构"><a href="#目录结构" class="headerlink" title="目录结构"></a>目录结构</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">source/<br>├── _posts/<br>│   ├── 2026-07-05-my-post.md<br>│   ├── 2026-07-05-my-post/        # 资源文件夹<br>│   │   ├── cover.png<br>│   │   └── diagram.png<br>│   └── ...<br>├── about/<br>│   └── index.md<br>├── categories/<br>│   └── index.md<br>├── tags/<br>│   └── index.md<br>├── friends/<br>│   └── index.md<br>├── music/<br>│   └── song.ogg<br>└── images/<br>    └── avatar.png<br></code></pre></td></tr></table></figure>
+
+<h2 id="创建独立页面"><a href="#创建独立页面" class="headerlink" title="创建独立页面"></a>创建独立页面</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">hexo new page about<br>hexo new page friends<br></code></pre></td></tr></table></figure>
+
+<p>各页面的 <code>layout</code> 字段：</p>
+<table>
+<thead>
+<tr>
+<th>页面</th>
+<th>layout</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>关于</td>
+<td><code>about</code></td>
+</tr>
+<tr>
+<td>友链</td>
+<td><code>friends</code></td>
+</tr>
+<tr>
+<td>分类</td>
+<td><code>categories</code></td>
+</tr>
+<tr>
+<td>标签</td>
+<td><code>tags</code></td>
+</tr>
+</tbody></table>
+<p>友链页面使用 <code>layout: friends</code>，在 frontmatter 中填写 <code>friends</code> 数据。卡片采用双列网格布局，带有浮现入场动画：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-meta">---</span><br><span class="hljs-attr">title:</span> <span class="hljs-string">友链</span><br><span class="hljs-attr">layout:</span> <span class="hljs-string">friends</span><br><span class="hljs-attr">friends:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Example</span> <span class="hljs-string">Blog</span><br>    <span class="hljs-attr">url:</span> <span class="hljs-string">https://example.com</span><br>    <span class="hljs-attr">avatar:</span> <span class="hljs-string">https://example.com/avatar.jpg</span><br>    <span class="hljs-attr">description:</span> <span class="hljs-string">A</span> <span class="hljs-string">great</span> <span class="hljs-string">tech</span> <span class="hljs-string">blog</span><br><span class="hljs-meta">---</span><br></code></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>必填</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>name</code></td>
+<td>是</td>
+<td>显示名称</td>
+</tr>
+<tr>
+<td><code>url</code></td>
+<td>是</td>
+<td>链接地址</td>
+</tr>
+<tr>
+<td><code>avatar</code></td>
+<td>否</td>
+<td>头像 URL，失败时回落为首字母图标</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td>否</td>
+<td>一行简介</td>
+</tr>
+</tbody></table>
+<p>如需调整友链页的侧边栏组件，在 <code>_config.shion.yml</code> 的 <code>sidebar.layouts.friends</code> 中配置即可。</p>
+<hr>
+<h1 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash">hexo new <span class="hljs-string">&quot;标题&quot;</span>             <span class="hljs-comment"># 新建文章</span><br>hexo new page <span class="hljs-string">&quot;页面名&quot;</span>       <span class="hljs-comment"># 新建页面</span><br>hexo new draft <span class="hljs-string">&quot;草稿&quot;</span>       <span class="hljs-comment"># 新建草稿</span><br>hexo server                 <span class="hljs-comment"># 启动开发服务器</span><br>hexo server -p 5000         <span class="hljs-comment"># 指定端口</span><br>hexo server --draft         <span class="hljs-comment"># 预览草稿</span><br>hexo generate               <span class="hljs-comment"># 生成静态文件</span><br>hexo clean                  <span class="hljs-comment"># 清除缓存</span><br>hexo deploy                 <span class="hljs-comment"># 部署</span><br>hexo publish <span class="hljs-string">&quot;草稿名&quot;</span>       <span class="hljs-comment"># 发布草稿</span><br></code></pre></td></tr></table></figure>
+
+  </div>
+
+  
+  <div class="post-copyright">
+    <p><strong>Shionyori</strong></p>
+    <p>/2026/07/04/hexo-theme-shion%20%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97/</p>
+    <p>&amp;copy; 2026 Shionyori. 保留所有权利。</p>
+  </div>
+  
+
+  <footer class="post-footer">
+    
+    <div class="post-tags-footer">
+      
+        <a class="tag-link" href="/tags/Hexo/">Hexo</a>
+      
+        <a class="tag-link" href="/tags/%E4%B8%BB%E9%A2%98/">主题</a>
+      
+        <a class="tag-link" href="/tags/%E6%95%99%E7%A8%8B/">教程</a>
+      
+        <a class="tag-link" href="/tags/Shion/">Shion</a>
+      
+        <a class="tag-link" href="/tags/%E9%85%8D%E7%BD%AE/">配置</a>
+      
+    </div>
+    
+
+    
+<div class="post-share">
+  <div class="share-buttons">
+    
+    
+    
+
+    
+    <a class="share-btn share-twitter" href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fshionyori.github.io%2F2026%2F07%2F04%2Fhexo-theme-shion%20%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97%2F&text=hexo-theme-shion%20%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97" target="_blank" rel="noopener" aria-label="分享到 Twitter">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fshionyori.github.io%2F2026%2F07%2F04%2Fhexo-theme-shion%20%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fshionyori.github.io%2F2026%2F07%2F04%2Fhexo-theme-shion%20%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97%2F" target="_blank" rel="noopener" aria-label="分享到 LinkedIn">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    
+
+    
+    <button class="share-btn share-copy" aria-label="复制链接" data-url="https://shionyori.github.io/2026/07/04/hexo-theme-shion 配置指南/">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    </button>
+    
+  </div>
+</div>
+
+
+  </footer>
+</article>
+
+
+
+<nav class="post-nav">
+  
+    <a class="post-nav-item post-nav-prev has-cover" href="/2026/07/04/hexo-theme-shion%20%E7%BB%84%E4%BB%B6%E6%BC%94%E7%A4%BA/" style='background-image: url(/images/posts/hexo-theme-shion%20%E7%BB%84%E4%BB%B6%E6%BC%94%E7%A4%BA/cover.png)'>
+      <span class="nav-label">上一篇</span>
+      <span class="nav-title">hexo-theme-shion 组件演示</span>
+    </a>
+  
+  
+    <a class="post-nav-item post-nav-next has-cover" href="/2026/06/02/%E8%BF%91%E4%BC%BC%E7%AE%97%E6%B3%95%E4%B8%8E%E9%9A%8F%E6%9C%BA%E7%AE%97%E6%B3%95/" style='background-image: url(/images/posts/%E8%BF%91%E4%BC%BC%E7%AE%97%E6%B3%95%E4%B8%8E%E9%9A%8F%E6%9C%BA%E7%AE%97%E6%B3%95/cover.png)'>
+      <span class="nav-label">下一篇</span>
+      <span class="nav-title">近似算法与随机算法</span>
+    </a>
+  
+</nav>
+
+
+
+
+
+      </main>
+
+      
+    </div>
+  </div>
+</div>
+
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+
+<nav class="mobile-nav" id="mobile-nav">
+  <div class="mobile-nav-inner">
+    <div class="mobile-nav-header">
+      <span class="mobile-nav-title">首页</span>
+      <button class="btn-icon mobile-nav-close" id="mobile-nav-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <ul class="mobile-nav-menu">
+      
+        <li>
+          <a class="mobile-nav-link" href="/">首页</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/archives/">归档</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/tags/">标签</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/categories/">分类</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/friends/">友链</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/about/">关于</a>
+        </li>
+      
+    </ul>
+
+    
+    <div class="mobile-nav-social">
+      
+        <a class="social-icon" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+  </div>
+</nav>
+
+  <footer class="site-footer">
+  <div class="footer-inner">
+    
+    <div class="footer-social">
+      
+        <a class="social-link" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+
+    <div class="footer-info">
+      <span class="copyright">
+        &copy;
+        
+          2025 &ndash;
+        
+        2026
+        Shionyori
+      </span>
+
+      
+        <span class="powered-by">由 <a href="https://hexo.io/" target="_blank">Hexo</a> 驱动</span>
+      
+
+      
+        <span class="theme-by">主题 Shion</span>
+      
+
+      
+    </div>
+
+    
+
+  </div>
+</footer>
+
+
+
+  
+<div class="search-overlay" id="search-overlay"
+     data-i18n-found="关于「{query}」，找到了 {count} 条记录"
+     data-i18n-not-found="关于「{query}」，没有找到任何记录呢">
+  <div class="search-container">
+    <img class="search-decoration" src="/images/shion/search.png" alt="">
+    <div class="search-header">
+      <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" class="search-input" id="search-input" placeholder="输入关键词搜索..." autocomplete="off">
+      <button class="search-close" id="search-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="search-info" id="search-info"></div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+
+
+  
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/contrib/auto-render.min.js"></script>
+
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

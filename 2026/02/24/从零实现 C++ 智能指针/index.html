@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>从零实现 C++ 智能指针 - Shionyori&#39;s Blog</title>
+
+
+<meta name="description" content="Gorgeous blooming flowers will eventually elegantly scattered.">
+
+
+<meta property="og:title" content="从零实现 C++ 智能指针">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://shionyori.github.io/2026/02/24/从零实现 C++ 智能指针/">
+<meta property="og:site_name" content="Shionyori&#39;s Blog">
+
+
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="从零实现 C++ 智能指针">
+
+
+<link rel="canonical" href="https://shionyori.github.io/2026/02/24/从零实现 C++ 智能指针/">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "name": "从零实现 C++ 智能指针",
+  "url": "https://shionyori.github.io/2026/02/24/从零实现 C++ 智能指针/",
+  "datePublished": "2026-02-25T00:00:00+08:00",
+  "author": { "@type": "Person", "name": "Shionyori" }
+  
+}
+</script>
+
+<meta name="theme-color" content="#6b7eb5">
+<link rel="icon" type="image/png" href="/images/shion/favicon.png">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+
+
+<script>
+  (function() {
+    var mode = 'auto';
+    var saved = localStorage.getItem('shion-theme');
+    if (saved) { mode = saved; }
+    else if (mode === 'auto') {
+      mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    if (mode === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+    (function() {
+      var fonts = {"heading":"'Noto Serif SC', 'Source Han Serif SC', Georgia, serif","body":"'Noto Sans SC', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif","code":"'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace","size_root":"15px"};
+      var legacySize = '';
+      var sizeRoot = fonts.size_root || legacySize;
+
+      if (fonts.heading) {
+        document.documentElement.style.setProperty('--font-heading', fonts.heading);
+      }
+      if (fonts.body) {
+        document.documentElement.style.setProperty('--font-body', fonts.body);
+      }
+      if (fonts.code) {
+        document.documentElement.style.setProperty('--font-code', fonts.code);
+      }
+      if (sizeRoot) {
+        document.documentElement.style.setProperty('--font-size-root', sizeRoot);
+      }
+    })();
+  })();
+</script>
+
+
+<noscript>
+  <style>
+    .sidebar-inner,
+    .content-card,
+    .post,
+    .page,
+    .archive-item,
+    .category-item,
+    .pagination,
+    .comments,
+    .not-found-content,
+    .widget,
+    .tag-cloud-item,
+    .post-card-wrapper,
+    .post-content,
+    .post-tags-footer,
+    .post-share,
+    .post-copyright,
+    .post-nav {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  </style>
+</noscript>
+
+  <script>
+    window.__shionConfig = {
+      katexCDN: 'https://cdn.jsdelivr.net/npm/katex@0',
+      katexDelimiters: [{"left":"$$","right":"$$","display":true},{"left":"$","right":"$","display":false}]
+    };
+  </script>
+<meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a class="site-logo" href="/">
+      
+        <span class="logo-text">Shionyori&#39;s Blog</span>
+      
+    </a>
+
+    <nav class="site-nav" id="site-nav">
+      
+        <a class="nav-item" href="/">首页</a>
+      
+        <a class="nav-item" href="/archives/">归档</a>
+      
+        <a class="nav-item" href="/tags/">标签</a>
+      
+        <a class="nav-item" href="/categories/">分类</a>
+      
+        <a class="nav-item" href="/friends/">友链</a>
+      
+        <a class="nav-item" href="/about/">关于</a>
+      
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn-icon search-toggle" id="search-toggle" aria-label="搜索">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon theme-toggle" id="theme-toggle" aria-label="深色模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon sidebar-toggle" id="sidebar-toggle" aria-label="sidebar_toggle">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+
+  
+<div class="reading-progress" id="reading-progress">
+  <div class="reading-progress-bar" id="reading-progress-bar"></div>
+</div>
+
+
+
+<div id="pjax-container">
+  
+  
+  
+  <div class="page-bg">
+  
+    <img src="/images/posts/%E4%BB%8E%E9%9B%B6%E5%AE%9E%E7%8E%B0%20C++%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/cover.png" alt="">
+  </div>
+  
+
+  
+  
+  
+  <section class="page-hero">
+    <h1 class="hero-title">从零实现 C++ 智能指针</h1>
+    <div class="hero-subtitle">
+      <div class="post-meta">
+    
+    <time class="post-date" datetime="2026-02-25T00:00:00+08:00">
+      2026-02-25
+    </time>
+    
+
+    
+    <time class="post-updated" datetime="2026-02-25T00:00:00+08:00">
+      更新于 2026-02-25
+    </time>
+    
+
+    
+    <span class="post-word-count">4077 words</span>
+    
+
+    
+    <span class="post-reading-time">17 min read</span>
+    
+
+    
+    <span class="post-categories">
+      
+        <a class="category-link" href="/categories/C/">C++</a>
+      
+    </span>
+    
+
+</div>
+
+    </div>
+    
+    <div class="hero-tags">
+      
+        <a class="tag-link" href="/tags/C/">C++</a>
+      
+        <a class="tag-link" href="/tags/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/">智能指针</a>
+      
+        <a class="tag-link" href="/tags/%E6%A8%A1%E6%9D%BF/">模板</a>
+      
+        <a class="tag-link" href="/tags/RAII/">RAII</a>
+      
+    </div>
+    
+  </section>
+  
+  
+
+  
+<div class="container">
+    <div class="content-wrapper">
+      
+      
+<aside class="site-sidebar sidebar-post" id="site-sidebar" data-position="left">
+
+  
+  
+
+  <div class="sidebar-sticky-group">
+    
+    <section class="sidebar-card sidebar-music">
+      
+<div class="music-player" data-playlist='[{"name":"奏穹のラプソディア (狂想曲)","artist":"瑶山百霊","url":"/music/瑶山百霊 - 奏穹のラプソディア (狂想曲).ogg","cover":"/music/covers/soukyuu-no-rhapsody.jpg"},{"name":"Graveyard Memory","artist":"GET IN THE RING","url":"/music/GET IN THE RING - Graveyard Memory.ogg","cover":"/music/covers/graveyard-memory.jpg"},{"name":"ポラリス (北极星)","artist":"GET IN THE RING","url":"/music/GET IN THE RING - ポラリス (北极星).ogg","cover":"/music/covers/polaris.jpg"},{"name":"その唄の名は…","artist":"yukina / GET IN THE RING","url":"/music/yukina _ GET IN THE RING - その唄の名は….ogg","cover":"/music/covers/sono-uta-no-na-wa.jpg"},{"name":"over the moon","artist":"Forest306","url":"/music/Forest306 - over the moon.ogg","cover":"/music/covers/over-the-moon.jpg"},{"name":"21時の探しモノ (21时寻找的东西)","artist":"minimum electric design","url":"/music/minimum electric design - 21時の探しモノ (21时寻找的东西).ogg","cover":"/music/covers/21ji-no-sagashimono.jpg"},{"name":"Freak Report 01 ~他愛も無い二人の博物誌~","artist":"凛","url":"/music/凛 - Freak Report 01 ~他愛も無い二人の博物誌~.ogg","cover":"/music/covers/freak-report-01.jpg"},{"name":"かぜのいろ (カゼノイロ)","artist":"森羅万象","url":"/music/森羅万象 - かぜのいろ (カゼノイロ).ogg","cover":"/music/covers/kaze-no-iro.jpg"},{"name":"Onisan Dochira!","artist":"狐の工作室","url":"/music/狐の工作室 - Onisan Dochira!.ogg","cover":"/music/covers/onisan-dochira.jpg"},{"name":"Skip in the byway","artist":"神乃木製作所","url":"/music/神乃木製作所 - Skip in the byway.ogg","cover":"/music/covers/skip-in-the-byway.jpg"}]'>
+  
+  <div class="music-body">
+    <div class="music-cover">
+      
+      
+      <img src="/music/covers/soukyuu-no-rhapsody.jpg" alt="cover" class="music-cover-img" onerror="if(!this.dataset.failed){this.dataset.failed='1';this.src='/images/shion/404.png'}">
+      
+    </div>
+    <div class="music-info">
+      <div class="music-title-row">
+        <span class="music-title">奏穹のラプソディア (狂想曲)</span>
+        <span class="music-counter">1 / 10</span>
+      </div>
+      <span class="music-artist">瑶山百霊</span>
+      <div class="music-progress">
+        <div class="music-progress-bar">
+          <div class="music-progress-fill"></div>
+        </div>
+        <div class="music-time">
+          <span class="music-time-current">0:00</span>
+          <span class="music-time-total">0:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="music-controls">
+    <button class="music-btn music-btn-mode" aria-label="Play mode" data-mode="sequential" title="Sequential">
+      <svg class="music-mode-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+    <button class="music-btn music-btn-prev" aria-label="Previous track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+    </button>
+    <button class="music-btn music-btn-play" aria-label="Play">
+      <svg class="music-icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <svg class="music-icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="6" height="16"/><rect x="14" y="4" width="6" height="16"/></svg>
+    </button>
+    <button class="music-btn music-btn-next" aria-label="Next track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+    </button>
+    <button class="music-btn music-btn-list" aria-label="Playlist">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="music-playlist">
+    
+    <button class="music-playlist-item active" data-index="0">
+      <span class="music-playlist-name">奏穹のラプソディア (狂想曲)</span>
+      <span class="music-playlist-artist">瑶山百霊</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="1">
+      <span class="music-playlist-name">Graveyard Memory</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="2">
+      <span class="music-playlist-name">ポラリス (北极星)</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="3">
+      <span class="music-playlist-name">その唄の名は…</span>
+      <span class="music-playlist-artist">yukina / GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="4">
+      <span class="music-playlist-name">over the moon</span>
+      <span class="music-playlist-artist">Forest306</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="5">
+      <span class="music-playlist-name">21時の探しモノ (21时寻找的东西)</span>
+      <span class="music-playlist-artist">minimum electric design</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="6">
+      <span class="music-playlist-name">Freak Report 01 ~他愛も無い二人の博物誌~</span>
+      <span class="music-playlist-artist">凛</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="7">
+      <span class="music-playlist-name">かぜのいろ (カゼノイロ)</span>
+      <span class="music-playlist-artist">森羅万象</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="8">
+      <span class="music-playlist-name">Onisan Dochira!</span>
+      <span class="music-playlist-artist">狐の工作室</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="9">
+      <span class="music-playlist-name">Skip in the byway</span>
+      <span class="music-playlist-artist">神乃木製作所</span>
+    </button>
+    
+  </div>
+  
+</div>
+
+    </section>
+    
+
+    <section class="sidebar-card sidebar-toc">
+      <div class="sidebar-toc-header">
+        <a class="sidebar-back-home" href="/" title="首页">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </a>
+        <span class="sidebar-toc-label">从零实现 C++ 智能指针</span>
+      </div>
+      <div class="sidebar-scroll">
+      
+      
+      <nav class="sidebar-toc">
+        <ol class="toc-list"><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#1-%E5%AE%9E%E7%8E%B0%E5%9F%BA%E6%9C%AC%E7%9A%84-unique-ptr-%E5%92%8C-shared-ptr"><span class="toc-list-text">1. 实现基本的 unique_ptr 和 shared_ptr</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#2-%E6%B7%BB%E5%8A%A0-weak-ptr-%E5%B9%B6%E5%AE%8C%E5%96%84-shared-ptr"><span class="toc-list-text">2. 添加 weak_ptr 并完善 shared_ptr</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#3-%E4%B8%BA-unique-ptr-%E5%92%8C-shared-ptr-%E6%B7%BB%E5%8A%A0%E6%95%B0%E7%BB%84%E6%94%AF%E6%8C%81"><span class="toc-list-text">3. 为 unique_ptr 和 shared_ptr 添加数组支持</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#4-%E6%B7%BB%E5%8A%A0-make-unique-%E5%92%8C-make-shared-%E6%96%B9%E6%B3%95"><span class="toc-list-text">4. 添加 make_unique 和 make_shared 方法</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#5-%E6%B7%BB%E5%8A%A0%E9%BB%98%E8%AE%A4%E5%88%A0%E9%99%A4%E5%99%A8%E5%92%8C%E8%87%AA%E5%AE%9A%E4%B9%89%E5%88%A0%E9%99%A4%E5%99%A8"><span class="toc-list-text">5. 添加默认删除器和自定义删除器</span></a></li></ol>
+      </nav>
+      
+      </div>
+      <a class="sidebar-back-home-bottom" href="/">← 首页</a>
+    </section>
+  </div>
+
+  
+</aside>
+
+      
+
+      <main class="site-main">
+        <article class="post">
+
+  <div class="post-content">
+    
+  
+  
+  
+
+
+    <h1 id="1-实现基本的-unique-ptr-和-shared-ptr"><a href="#1-实现基本的-unique-ptr-和-shared-ptr" class="headerlink" title="1. 实现基本的 unique_ptr 和 shared_ptr"></a>1. 实现基本的 <code>unique_ptr</code> 和 <code>shared_ptr</code></h1><p>智能指针的本质是 裸指针 + RAII 对象封装，我们通过将裸指针封装成一个类对象，利用对象的 RAII 机制实现资源的自动释放。</p>
+<p>为了实现智能指针的资源自动管理，即 RAII 机制，我们需要严格按照 三五零法则 设计模板类，具体而言就是除了基本的构造函数以外，还需要自定义以下特殊成员函数：</p>
+<ul>
+<li>析构函数 <code>~T()</code></li>
+<li>拷贝构造函数 <code>T(const T&amp;)</code></li>
+<li>拷贝赋值运算符 <code>T&amp; operator=(const T&amp;)</code></li>
+<li>移动构造函数 <code>T(T&amp;&amp;)</code></li>
+<li>移动赋值运算符 <code>T&amp; operator=(T&amp;&amp;)</code></li>
+</ul>
+<p><code>unique_ptr</code> 的设计原则是一份资源的所有权只能同时被一个指针所拥有，所以需要禁用所有的拷贝操作，只允许移动操作。</p>
+<p>此外我们还需要提供智能指针的一些基本操作的函数：</p>
+<ul>
+<li>解引用</li>
+<li>返回指针</li>
+<li>释放智能指针</li>
+<li>重置所有权</li>
+</ul>
+<p><code>unique_ptr</code> 代码示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> once</span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;cstddef&gt;</span></span><br><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> T&gt;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">unique_ptr</span><br>&#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-keyword">explicit</span> <span class="hljs-title">unique_ptr</span><span class="hljs-params">(T *ptr = <span class="hljs-literal">nullptr</span>)</span> : ptr(ptr) &#123;</span>&#125;<br><br>    ~<span class="hljs-built_in">unique_ptr</span>()<br>    &#123;<br>        <span class="hljs-keyword">delete</span> ptr;<br>    &#125;<br><br>    <span class="hljs-comment">// copying is banned (unique ownership)</span><br>    <span class="hljs-built_in">unique_ptr</span>(<span class="hljs-type">const</span> unique_ptr &amp;) = <span class="hljs-keyword">delete</span>;<br>    unique_ptr &amp;<span class="hljs-keyword">operator</span>=(<span class="hljs-type">const</span> unique_ptr &amp;) = <span class="hljs-keyword">delete</span>;<br><br>    <span class="hljs-comment">// moving is allowed</span><br>    <span class="hljs-built_in">unique_ptr</span>(unique_ptr &amp;&amp;other) : <span class="hljs-built_in">ptr</span>(other.ptr)<br>    &#123;<br>        other.ptr = <span class="hljs-literal">nullptr</span>;<br>    &#125;<br>    unique_ptr &amp;<span class="hljs-keyword">operator</span>=(unique_ptr &amp;&amp;other)<br>    &#123;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span> != &amp;other)<br>        &#123;<br>            <span class="hljs-keyword">delete</span> ptr;<br>            ptr = other.ptr;<br>            other.ptr = <span class="hljs-literal">nullptr</span>;<br>        &#125;<br>        <span class="hljs-keyword">return</span> *<span class="hljs-keyword">this</span>;<br>    &#125;<br><br>    <span class="hljs-comment">// pointer operation</span><br>    T &amp;<span class="hljs-keyword">operator</span>*() <span class="hljs-type">const</span> &#123; <span class="hljs-keyword">return</span> *ptr; &#125;<br>    T *<span class="hljs-keyword">operator</span>-&gt;() <span class="hljs-type">const</span> &#123; <span class="hljs-keyword">return</span> ptr; &#125;<br>    <span class="hljs-function">T *<span class="hljs-title">get</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> ptr; &#125;<br><br>    <span class="hljs-function">T *<span class="hljs-title">release</span><span class="hljs-params">()</span></span><br><span class="hljs-function">    </span>&#123;<br>        T *temp = ptr;<br>        ptr = <span class="hljs-literal">nullptr</span>;<br>        <span class="hljs-keyword">return</span> temp;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">reset</span><span class="hljs-params">(T *new_ptr = <span class="hljs-literal">nullptr</span>)</span></span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-keyword">delete</span> ptr;<br>        ptr = new_ptr;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">explicit</span> <span class="hljs-keyword">operator</span> <span class="hljs-title">bool</span><span class="hljs-params">()</span> <span class="hljs-type">const</span></span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-keyword">return</span> ptr != <span class="hljs-literal">nullptr</span>;<br>    &#125;<br><br><span class="hljs-keyword">private</span>:<br>    T *ptr;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<div class="note note-info"><p>其中，显式布尔运算符 <code>operator bool()</code> 是一种特殊的成员函数，用于将类对象显示转换为布尔值。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">explicit</span> <span class="hljs-keyword">operator</span> <span class="hljs-title">bool</span><span class="hljs-params">()</span> <span class="hljs-type">const</span></span><br><span class="hljs-function"></span>&#123;<br>    <span class="hljs-keyword">return</span> ptr != <span class="hljs-literal">nullptr</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>有了它，我们才能正常使用类似于 <code>if(ptr)</code>、<code>!ptr</code> 的表达式。加上 <code>explicit</code> 禁止隐式转换，避免预料之外对象被转换为布尔值的情况。</p>
+</div>
+
+
+<p><code>shared_ptr</code> 的设计原则是一份资源的所有权可以被多个指针共享。</p>
+<p>为了实现共享的功能，我们需要创建一个公共的引用计数，用于统计资源被引用的次数，决定何时释放资源。我们为 <code>shared_ptr</code> 添加一个 <code>count</code> 成员变量，需要注意的是，<code>count</code> 需要设为指针类型，而非普通的值类型。因为这样每次 <code>shared_ptr</code> 在执行拷贝操作时，都只会将地址拷贝，而不会创建新的值对象，保证从始至终只有一个公共的 <code>count</code>。</p>
+<p>当初始指针被创建时将引用计数设为1，每当初始指针被拷贝给新的指针时，就将引用计数（<code>count</code>）+1。当某一个指针调用 <code>release()</code> 试图释放资源时，<code>release()</code> 会将引用计数-1，直到计数为0时，才会执行 <code>delete</code> 释放资源。</p>
+<p><code>shared_ptr</code> 其余内容与 <code>unique_ptr</code> 类似，实现相应的函数即可。</p>
+<p><code>shared_ptr</code> 代码示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> T&gt;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">shared_ptr</span><br>&#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-keyword">explicit</span> <span class="hljs-title">shared_ptr</span><span class="hljs-params">(T *ptr = <span class="hljs-literal">nullptr</span>)</span> : ptr(ptr), count(new size_t(<span class="hljs-number">1</span>)) &#123;</span>&#125;<br><br>    ~<span class="hljs-built_in">shared_ptr</span>()<br>    &#123;<br>        <span class="hljs-built_in">release</span>();<br>    &#125;<br><br>    <span class="hljs-comment">// copying (shared ownership)</span><br>    <span class="hljs-built_in">shared_ptr</span>(<span class="hljs-type">const</span> shared_ptr &amp;other) : <span class="hljs-built_in">ptr</span>(other.ptr), <span class="hljs-built_in">count</span>(other.count)<br>    &#123;<br>        <span class="hljs-keyword">if</span> (count)<br>        &#123;<br>            ++(*count); <span class="hljs-comment">// reference count +1</span><br>        &#125;<br>    &#125;<br>    shared_ptr &amp;<span class="hljs-keyword">operator</span>=(<span class="hljs-type">const</span> shared_ptr &amp;other)<br>    &#123;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span> != &amp;other)<br>        &#123;<br>            <span class="hljs-built_in">release</span>();<br>            ptr = other.ptr;<br>            count = other.count;<br>            ++(*count); <span class="hljs-comment">// reference count +1</span><br>        &#125;<br>        <span class="hljs-keyword">return</span> *<span class="hljs-keyword">this</span>;<br>    &#125;<br><br>    <span class="hljs-comment">// moving</span><br>    <span class="hljs-built_in">shared_ptr</span>(shared_ptr &amp;&amp;other) : <span class="hljs-built_in">ptr</span>(other.ptr), <span class="hljs-built_in">count</span>(other.count)<br>    &#123;<br>        other.ptr = <span class="hljs-literal">nullptr</span>;<br>        other.count = <span class="hljs-literal">nullptr</span>;<br>    &#125;<br>    shared_ptr &amp;<span class="hljs-keyword">operator</span>=(shared_ptr &amp;&amp;other)<br>    &#123;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span> != &amp;other)<br>        &#123;<br>            <span class="hljs-built_in">release</span>();<br>            ptr = other.ptr;<br>            count = other.count;<br>            other.ptr = <span class="hljs-literal">nullptr</span>;<br>            other.count = <span class="hljs-literal">nullptr</span>;<br>        &#125;<br>        <span class="hljs-keyword">return</span> *<span class="hljs-keyword">this</span>;<br>    &#125;<br><br>    <span class="hljs-comment">// pointer operation</span><br>    T &amp;<span class="hljs-keyword">operator</span>*() <span class="hljs-type">const</span> &#123; <span class="hljs-keyword">return</span> *ptr; &#125;<br>    T *<span class="hljs-keyword">operator</span>-&gt;() <span class="hljs-type">const</span> &#123; <span class="hljs-keyword">return</span> ptr; &#125;<br>    <span class="hljs-function">T *<span class="hljs-title">get</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> ptr; &#125;<br><br>    <span class="hljs-function"><span class="hljs-type">size_t</span> <span class="hljs-title">use_count</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> count ? *count : <span class="hljs-number">0</span>; &#125;<br>    <span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">unique</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> <span class="hljs-built_in">use_count</span>() == <span class="hljs-number">1</span>; &#125;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">reset</span><span class="hljs-params">(T *new_ptr = <span class="hljs-literal">nullptr</span>)</span></span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-built_in">release</span>();<br>        ptr = new_ptr;<br>        <span class="hljs-keyword">if</span> (ptr)<br>            count = <span class="hljs-keyword">new</span> <span class="hljs-built_in">size_t</span>(<span class="hljs-number">1</span>);<br>        <span class="hljs-keyword">else</span><br>            count = <span class="hljs-literal">nullptr</span>;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">explicit</span> <span class="hljs-keyword">operator</span> <span class="hljs-title">bool</span><span class="hljs-params">()</span> <span class="hljs-type">const</span></span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-keyword">return</span> ptr != <span class="hljs-literal">nullptr</span>;<br>    &#125;<br><br><span class="hljs-keyword">private</span>:<br>    T *ptr;<br>    <span class="hljs-type">size_t</span> *count;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">release</span><span class="hljs-params">()</span></span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-keyword">if</span> (count &amp;&amp; --(*count) == <span class="hljs-number">0</span>)<br>        &#123;<br>            <span class="hljs-keyword">delete</span> ptr;<br>            <span class="hljs-keyword">delete</span> count;<br>        &#125;<br>    &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="2-添加-weak-ptr-并完善-shared-ptr"><a href="#2-添加-weak-ptr-并完善-shared-ptr" class="headerlink" title="2. 添加 weak_ptr 并完善 shared_ptr"></a>2. 添加 <code>weak_ptr</code> 并完善 <code>shared_ptr</code></h1><p>之前实现的 <code>shared_ptr</code> 并不完美，其中一个问题是，当两个 <code>shared_ptr</code> 相互引用彼此时会导致引用计数永远无法归零，导致资源无法被释放。</p>
+<p>为了进一步完善 <code>shared_ptr</code>，我们需要引入 控制块 和 <code>weak_ptr</code>。</p>
+<p><code>weak_ptr</code> 是 <code>shared_ptr</code> 的辅助类，专门用于解决循环引用的问题。</p>
+<p>我们将之前在 <code>shared_ptr</code> 定义的引用计数重新命名为强引用计数 <code>strong_count</code>，此外再添加一个属于 <code>weak_ptr</code> 的弱引用计数 <code>weak_count</code>。当弱引用计数归零时不会释放资源，只有当强引用计数归零时才会释放资源。弱引用计数的主要作用是决定控制块自身的生命周期。</p>
+<p><code>strong_count == 0</code> -&gt; 释放资源<br><code>strong_count == 0 &amp;&amp; weak_count == 0</code> -&gt; 释放控制块的内存</p>
+<p>引用计数以及内部指针统一由控制块 <code>control_block</code> 管理，共享同一份资源的 <code>shared_ptr</code> 通过保留 <code>control_block</code> 的指针，访问公共的控制块内容。所有公共内容都应该由控制块管理，这时引用计数就没必要像之前一样存指针，这里直接保留值类型即可。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> T&gt;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">control_block</span><br>&#123;<br><span class="hljs-keyword">public</span>:<br>    T* ptr;<br>    <span class="hljs-type">size_t</span> strong_count;<br>    <span class="hljs-type">size_t</span> weak_count;<br><br>    <span class="hljs-function"><span class="hljs-keyword">explicit</span> <span class="hljs-title">control_block</span><span class="hljs-params">(T* p)</span> : ptr(p), strong_count(<span class="hljs-number">1</span>), weak_count(<span class="hljs-number">0</span>) &#123;</span>&#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>接下来我们实现 <code>weak_ptr</code> ，由于加入了控制块，我们需要适当修改之前使用引用计数的方式。</p>
+<p><code>weak_ptr</code> 的设计理念是在某些可能导致循环引用的情况下代替 <code>shared_ptr</code> 而使用，但是 <code>weak_ptr</code> 并不能决定资源的生命周期，在必要时我们需要将其提升为 <code>shared_ptr</code>，反过来也是同理。所以我们需要提供二者相互转化的方法，即为 <code>shared_ptr</code> 和 <code>weak_ptr</code> 都加上使用彼此为参数的构造函数和赋值函数。 需要注意的是，在构造时它们需要访问彼此私有的 控制块指针，所以需要将它们设置互为友元。</p>
+<p>此外，再提供一些外部接口：<br><code>lock()</code> 用于将 <code>weak_ptr</code> 提升为 <code>shared_ptr</code>。<br><code>use_count()</code> 返回 强引用计数<br><code>expired()</code> 判断资源是否被释放</p>
+<p><code>weak_ptr</code> 代码示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> T&gt;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">weak_ptr</span><br>&#123;<br><span class="hljs-keyword">private</span>:<br>    control_block&lt;T&gt;* cb;<br>    T* ptr;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">release</span><span class="hljs-params">()</span></span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-keyword">if</span> (cb)<br>        &#123;<br>            --cb-&gt;weak_count;<br>            <span class="hljs-keyword">if</span> (cb-&gt;strong_count == <span class="hljs-number">0</span> &amp;&amp; cb-&gt;weak_count == <span class="hljs-number">0</span>)<br>            &#123;<br>                <span class="hljs-keyword">delete</span> cb;<br>            &#125;<br>        &#125;<br>    &#125;<br><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-built_in">weak_ptr</span>() : <span class="hljs-built_in">cb</span>(<span class="hljs-literal">nullptr</span>), <span class="hljs-built_in">ptr</span>(<span class="hljs-literal">nullptr</span>) &#123;&#125;<br><br>    ~<span class="hljs-built_in">weak_ptr</span>()<br>    &#123;<br>        <span class="hljs-built_in">release</span>();<br>    &#125;<br><br>    <span class="hljs-comment">// construct from shared_ptr</span><br>    <span class="hljs-built_in">weak_ptr</span>(<span class="hljs-type">const</span> shared_ptr&lt;T&gt;&amp; sp) : <span class="hljs-built_in">cb</span>(sp.cb), <span class="hljs-built_in">ptr</span>(sp.ptr)<br>    &#123;<br>        <span class="hljs-keyword">if</span> (cb)<br>        &#123;<br>            ++cb-&gt;weak_count;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-built_in">weak_ptr</span>(<span class="hljs-type">const</span> weak_ptr&amp; other) : <span class="hljs-built_in">cb</span>(other.cb), <span class="hljs-built_in">ptr</span>(other.ptr)<br>    &#123;<br>        <span class="hljs-keyword">if</span> (cb)<br>        &#123;<br>            ++cb-&gt;weak_count;<br>        &#125;<br>    &#125;<br><br>    weak_ptr&amp; <span class="hljs-keyword">operator</span>=(<span class="hljs-type">const</span> weak_ptr&amp; other)<br>    &#123;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span> != &amp;other)<br>        &#123;<br>            <span class="hljs-built_in">release</span>();<br>            cb = other.cb;<br>            ptr = other.ptr;<br>            <span class="hljs-keyword">if</span> (cb)<br>            &#123;<br>                ++cb-&gt;weak_count;<br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">return</span> *<span class="hljs-keyword">this</span>;<br>    &#125;<br><br>    <span class="hljs-comment">// assign from shared_ptr</span><br>    weak_ptr&amp; <span class="hljs-keyword">operator</span>=(<span class="hljs-type">const</span> shared_ptr&lt;T&gt;&amp; sp)<br>    &#123;<br>        <span class="hljs-built_in">release</span>();<br>        cb = sp.cb;<br>        ptr = sp.ptr;<br>        <span class="hljs-keyword">if</span> (cb)<br>        &#123;<br>            ++cb-&gt;weak_count;<br>        &#125;<br>        <span class="hljs-keyword">return</span> *<span class="hljs-keyword">this</span>;<br>    &#125;<br><br>    <span class="hljs-comment">// moving</span><br>    <span class="hljs-built_in">weak_ptr</span>(weak_ptr&amp;&amp; other) <span class="hljs-keyword">noexcept</span> : <span class="hljs-built_in">cb</span>(other.cb), <span class="hljs-built_in">ptr</span>(other.ptr)<br>    &#123;<br>        other.cb = <span class="hljs-literal">nullptr</span>;<br>        other.ptr = <span class="hljs-literal">nullptr</span>;<br>    &#125;<br><br>    weak_ptr&amp; <span class="hljs-keyword">operator</span>=(weak_ptr&amp;&amp; other) <span class="hljs-keyword">noexcept</span><br>    &#123;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span> != &amp;other)<br>        &#123;<br>            <span class="hljs-built_in">release</span>();<br>            cb = other.cb;<br>            ptr = other.ptr;<br>            other.cb = <span class="hljs-literal">nullptr</span>;<br>            other.ptr = <span class="hljs-literal">nullptr</span>;<br>        &#125;<br>        <span class="hljs-keyword">return</span> *<span class="hljs-keyword">this</span>;<br>    &#125;<br><br>    <span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> U&gt;<br>    <span class="hljs-keyword">friend</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">shared_ptr</span>;<br><br>    <span class="hljs-function">shared_ptr&lt;T&gt; <span class="hljs-title">lock</span><span class="hljs-params">()</span> <span class="hljs-type">const</span></span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-keyword">if</span> (cb &amp;&amp; cb-&gt;strong_count &gt; <span class="hljs-number">0</span>)<br>        &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-built_in">shared_ptr</span>&lt;T&gt;(*<span class="hljs-keyword">this</span>);<br>        &#125;<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">shared_ptr</span>&lt;T&gt;();<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-type">size_t</span> <span class="hljs-title">use_count</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> cb ? cb-&gt;strong_count : <span class="hljs-number">0</span>; &#125;<br>    <span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">expired</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> <span class="hljs-built_in">use_count</span>() == <span class="hljs-number">0</span>; &#125;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">reset</span><span class="hljs-params">()</span></span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-built_in">release</span>();<br>        cb = <span class="hljs-literal">nullptr</span>;<br>        ptr = <span class="hljs-literal">nullptr</span>;<br>    &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p><code>shared_ptr</code> 修改后的代码示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> T&gt;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">shared_ptr</span><br>&#123;<br><span class="hljs-keyword">private</span>:<br>    control_block&lt;T&gt;* cb;<br>    T* ptr;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">release</span><span class="hljs-params">()</span></span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-keyword">if</span> (cb)<br>        &#123;<br>            --cb-&gt;strong_count;<br>            <span class="hljs-keyword">if</span> (cb-&gt;strong_count == <span class="hljs-number">0</span>)<br>            &#123;<br>                <span class="hljs-keyword">delete</span> cb-&gt;ptr;<br>                <span class="hljs-keyword">if</span> (cb-&gt;weak_count == <span class="hljs-number">0</span>)<br>                &#123;<br>                    <span class="hljs-keyword">delete</span> cb;<br>                &#125;<br>            &#125;<br>        &#125;<br>    &#125;<br><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-keyword">explicit</span> <span class="hljs-title">shared_ptr</span><span class="hljs-params">(T* p = <span class="hljs-literal">nullptr</span>)</span> : cb(p ? new control_block&lt;T&gt;(p) : nullptr), ptr(p) &#123;</span>&#125;<br><br>    <span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> U&gt;<br>    <span class="hljs-function"><span class="hljs-keyword">explicit</span> <span class="hljs-title">shared_ptr</span><span class="hljs-params">(<span class="hljs-type">const</span> weak_ptr&lt;U&gt;&amp; other)</span> : cb(other.cb), ptr(other.ptr)</span><br><span class="hljs-function">    &#123;</span><br>        <span class="hljs-keyword">if</span> (cb)<br>        &#123;<br>            ++cb-&gt;strong_count;<br>        &#125;<br>    &#125;<br><br>    ~<span class="hljs-built_in">shared_ptr</span>()<br>    &#123;<br>        <span class="hljs-built_in">release</span>();<br>    &#125;<br><br>    <span class="hljs-built_in">shared_ptr</span>(<span class="hljs-type">const</span> shared_ptr&amp; other) : <span class="hljs-built_in">cb</span>(other.cb), <span class="hljs-built_in">ptr</span>(other.ptr)<br>    &#123;<br>        <span class="hljs-keyword">if</span> (cb)<br>        &#123;<br>            ++cb-&gt;strong_count;<br>        &#125;<br>    &#125;<br><br>    shared_ptr&amp; <span class="hljs-keyword">operator</span>=(<span class="hljs-type">const</span> shared_ptr&amp; other)<br>    &#123;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span> != &amp;other)<br>        &#123;<br>            <span class="hljs-built_in">release</span>();<br>            cb = other.cb;<br>            ptr = other.ptr;<br>            <span class="hljs-keyword">if</span> (cb)<br>            &#123;<br>                ++cb-&gt;strong_count;<br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">return</span> *<span class="hljs-keyword">this</span>;<br>    &#125;<br><br>    <span class="hljs-built_in">shared_ptr</span>(shared_ptr&amp;&amp; other) <span class="hljs-keyword">noexcept</span> : <span class="hljs-built_in">cb</span>(other.cb), <span class="hljs-built_in">ptr</span>(other.ptr)<br>    &#123;<br>        other.cb = <span class="hljs-literal">nullptr</span>;<br>        other.ptr = <span class="hljs-literal">nullptr</span>;<br>    &#125;<br><br>    shared_ptr&amp; <span class="hljs-keyword">operator</span>=(shared_ptr&amp;&amp; other) <span class="hljs-keyword">noexcept</span><br>    &#123;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span> != &amp;other)<br>        &#123;<br>            <span class="hljs-built_in">release</span>();<br>            cb = other.cb;<br>            ptr = other.ptr;<br>            other.cb = <span class="hljs-literal">nullptr</span>;<br>            other.ptr = <span class="hljs-literal">nullptr</span>;<br>        &#125;<br>        <span class="hljs-keyword">return</span> *<span class="hljs-keyword">this</span>;<br>    &#125;<br><br>    <span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> U&gt;<br>    <span class="hljs-keyword">friend</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">weak_ptr</span>;<br><br>    T&amp; <span class="hljs-keyword">operator</span>*() <span class="hljs-type">const</span> &#123; <span class="hljs-keyword">return</span> *ptr; &#125;<br>    T* <span class="hljs-keyword">operator</span>-&gt;() <span class="hljs-type">const</span> &#123; <span class="hljs-keyword">return</span> ptr; &#125;<br>    <span class="hljs-function">T* <span class="hljs-title">get</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> ptr; &#125;<br><br>    <span class="hljs-function"><span class="hljs-type">size_t</span> <span class="hljs-title">use_count</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> cb ? cb-&gt;strong_count : <span class="hljs-number">0</span>; &#125;<br>    <span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">unique</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> <span class="hljs-built_in">use_count</span>() == <span class="hljs-number">1</span>; &#125;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">reset</span><span class="hljs-params">(T* p = <span class="hljs-literal">nullptr</span>)</span></span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-built_in">release</span>();<br>        <span class="hljs-keyword">if</span> (p)<br>        &#123;<br>            cb = <span class="hljs-keyword">new</span> <span class="hljs-built_in">control_block</span>&lt;T&gt;(p);<br>            ptr = p;<br>        &#125;<br>        <span class="hljs-keyword">else</span><br>        &#123;<br>            cb = <span class="hljs-literal">nullptr</span>;<br>            ptr = <span class="hljs-literal">nullptr</span>;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">explicit</span> <span class="hljs-keyword">operator</span> <span class="hljs-title">bool</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> ptr != <span class="hljs-literal">nullptr</span>; &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+<hr>
+<h1 id="3-为-unique-ptr-和-shared-ptr-添加数组支持"><a href="#3-为-unique-ptr-和-shared-ptr-添加数组支持" class="headerlink" title="3. 为 unique_ptr 和 shared_ptr 添加数组支持"></a>3. 为 <code>unique_ptr</code> 和 <code>shared_ptr</code> 添加数组支持</h1><p>目前我们的智能指针只能接受类对象，无法像这样 <code>unique_ptr&lt;int[]&gt;(new int[3]&#123;1, 2, 4&#125;)</code> 来创建新的智能指针。关键在于我们需要提供 <code>operator[]</code> 而非 <code>operator*</code>，析构时调用 <code>delete[]</code> 而非 <code>delete</code>。</p>
+<p>我们可以添加一个偏特化的模板，从而同时实现不同的解析运算符和析构函数。代码实现上基本与原模板一致，只需要对几个关键函数进行修改。</p>
+<p><code>unique_ptr</code> 数组支持特化的代码示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> T&gt;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">unique_ptr</span>&lt;T[]&gt;<br>&#123;<br><span class="hljs-keyword">private</span>:<br>    T *ptr;<br><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-keyword">explicit</span> <span class="hljs-title">unique_ptr</span><span class="hljs-params">(T *ptr = <span class="hljs-literal">nullptr</span>)</span> : ptr(ptr) &#123;</span>&#125;<br><br>    ~<span class="hljs-built_in">unique_ptr</span>()<br>    &#123;<br>        <span class="hljs-keyword">delete</span>[] ptr;<br>    &#125;<br><br>    <span class="hljs-comment">// copying is banned</span><br>    <span class="hljs-built_in">unique_ptr</span>(<span class="hljs-type">const</span> unique_ptr &amp;) = <span class="hljs-keyword">delete</span>;<br>    unique_ptr &amp;<span class="hljs-keyword">operator</span>=(<span class="hljs-type">const</span> unique_ptr &amp;) = <span class="hljs-keyword">delete</span>;<br><br>    <span class="hljs-comment">// moving is allowed</span><br>    <span class="hljs-built_in">unique_ptr</span>(unique_ptr &amp;&amp;other) : <span class="hljs-built_in">ptr</span>(other.ptr)<br>    &#123;<br>        other.ptr = <span class="hljs-literal">nullptr</span>;<br>    &#125;<br>    unique_ptr &amp;<span class="hljs-keyword">operator</span>=(unique_ptr &amp;&amp;other)<br>    &#123;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span> != &amp;other)<br>        &#123;<br>            <span class="hljs-keyword">delete</span>[] ptr;<br>            ptr = other.ptr;<br>            other.ptr = <span class="hljs-literal">nullptr</span>;<br>        &#125;<br>        <span class="hljs-keyword">return</span> *<span class="hljs-keyword">this</span>;<br>    &#125;<br><br>    <span class="hljs-comment">// getter</span><br>    T &amp;<span class="hljs-keyword">operator</span>[](<span class="hljs-type">size_t</span> index) <span class="hljs-type">const</span> &#123; <span class="hljs-keyword">return</span> ptr[index]; &#125;<br>    <span class="hljs-function">T *<span class="hljs-title">get</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> ptr; &#125;<br><br>    <span class="hljs-function">T *<span class="hljs-title">release</span><span class="hljs-params">()</span></span><br><span class="hljs-function">    </span>&#123;<br>        T *temp = ptr;<br>        ptr = <span class="hljs-literal">nullptr</span>;<br>        <span class="hljs-keyword">return</span> temp;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">reset</span><span class="hljs-params">(T *new_ptr = <span class="hljs-literal">nullptr</span>)</span></span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-keyword">delete</span>[] ptr;<br>        ptr = new_ptr;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">explicit</span> <span class="hljs-keyword">operator</span> <span class="hljs-title">bool</span><span class="hljs-params">()</span> <span class="hljs-type">const</span></span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-keyword">return</span> ptr != <span class="hljs-literal">nullptr</span>;<br>    &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p><code>shared_ptr</code> 数组支持特化的代码示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> T&gt;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">shared_ptr</span>&lt;T[]&gt;<br>&#123;<br><span class="hljs-keyword">private</span>:<br>    control_block&lt;T&gt; *cb;<br>    T *ptr;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">release</span><span class="hljs-params">()</span></span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-keyword">if</span> (cb)<br>        &#123;<br>            --cb-&gt;strong_count;<br>            <span class="hljs-keyword">if</span> (cb-&gt;strong_count == <span class="hljs-number">0</span>)<br>            &#123;<br>                <span class="hljs-keyword">delete</span>[] cb-&gt;ptr;<br>                <span class="hljs-keyword">if</span> (cb-&gt;weak_count == <span class="hljs-number">0</span>)<br>                &#123;<br>                    <span class="hljs-keyword">delete</span> cb;<br>                &#125;<br>            &#125;<br>        &#125;<br>    &#125;<br><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-keyword">explicit</span> <span class="hljs-title">shared_ptr</span><span class="hljs-params">(T *p = <span class="hljs-literal">nullptr</span>)</span> : cb(p ? new control_block&lt;T&gt;(p) : nullptr), ptr(p) &#123;</span>&#125;<br><br>    ~<span class="hljs-built_in">shared_ptr</span>()<br>    &#123;<br>        <span class="hljs-built_in">release</span>();<br>    &#125;<br><br>    <span class="hljs-built_in">shared_ptr</span>(<span class="hljs-type">const</span> shared_ptr &amp;other) : <span class="hljs-built_in">cb</span>(other.cb), <span class="hljs-built_in">ptr</span>(other.ptr)<br>    &#123;<br>        <span class="hljs-keyword">if</span> (cb)<br>        &#123;<br>            ++cb-&gt;strong_count;<br>        &#125;<br>    &#125;<br><br>    shared_ptr &amp;<span class="hljs-keyword">operator</span>=(<span class="hljs-type">const</span> shared_ptr &amp;other)<br>    &#123;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span> != &amp;other)<br>        &#123;<br>            <span class="hljs-built_in">release</span>();<br>            cb = other.cb;<br>            ptr = other.ptr;<br>            <span class="hljs-keyword">if</span> (cb)<br>            &#123;<br>                ++cb-&gt;strong_count;<br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">return</span> *<span class="hljs-keyword">this</span>;<br>    &#125;<br><br>    <span class="hljs-built_in">shared_ptr</span>(shared_ptr &amp;&amp;other) <span class="hljs-keyword">noexcept</span> : <span class="hljs-built_in">cb</span>(other.cb), <span class="hljs-built_in">ptr</span>(other.ptr)<br>    &#123;<br>        other.cb = <span class="hljs-literal">nullptr</span>;<br>        other.ptr = <span class="hljs-literal">nullptr</span>;<br>    &#125;<br><br>    shared_ptr &amp;<span class="hljs-keyword">operator</span>=(shared_ptr &amp;&amp;other) <span class="hljs-keyword">noexcept</span><br>    &#123;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span> != &amp;other)<br>        &#123;<br>            <span class="hljs-built_in">release</span>();<br>            cb = other.cb;<br>            ptr = other.ptr;<br>            other.cb = <span class="hljs-literal">nullptr</span>;<br>            other.ptr = <span class="hljs-literal">nullptr</span>;<br>        &#125;<br>        <span class="hljs-keyword">return</span> *<span class="hljs-keyword">this</span>;<br>    &#125;<br><br>    <span class="hljs-comment">// getter</span><br>    T &amp;<span class="hljs-keyword">operator</span>[](<span class="hljs-type">size_t</span> index) <span class="hljs-type">const</span> &#123; <span class="hljs-keyword">return</span> ptr[index]; &#125;<br>    <span class="hljs-function">T *<span class="hljs-title">get</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> ptr; &#125;<br><br>    <span class="hljs-function"><span class="hljs-type">size_t</span> <span class="hljs-title">use_count</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> cb ? cb-&gt;strong_count : <span class="hljs-number">0</span>; &#125;<br>    <span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">unique</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> <span class="hljs-built_in">use_count</span>() == <span class="hljs-number">1</span>; &#125;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">reset</span><span class="hljs-params">(T *p = <span class="hljs-literal">nullptr</span>)</span></span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-built_in">release</span>();<br>        <span class="hljs-keyword">if</span> (p)<br>        &#123;<br>            cb = <span class="hljs-keyword">new</span> <span class="hljs-built_in">control_block</span>&lt;T&gt;(p);<br>            ptr = p;<br>        &#125;<br>        <span class="hljs-keyword">else</span><br>        &#123;<br>            cb = <span class="hljs-literal">nullptr</span>;<br>            ptr = <span class="hljs-literal">nullptr</span>;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">explicit</span> <span class="hljs-keyword">operator</span> <span class="hljs-title">bool</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> ptr != <span class="hljs-literal">nullptr</span>; &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+<hr>
+<h1 id="4-添加-make-unique-和-make-shared-方法"><a href="#4-添加-make-unique-和-make-shared-方法" class="headerlink" title="4. 添加 make_unique 和 make_shared 方法"></a>4. 添加 <code>make_unique</code> 和 <code>make_shared</code> 方法</h1><p>直接使用 <code>new</code> 来构造智能指针，一旦发生异常，容易导致内存泄漏。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">    std::<span class="hljs-built_in">unique_ptr</span>&lt;A&gt;(<span class="hljs-keyword">new</span> <span class="hljs-built_in">A</span>())<br></code></pre></td></tr></table></figure>
+<p>默认编译器从右向左执行，如果在 <code>new A()</code> 执行后发生异常，此时 <code>A</code> 对应内存已经被分配，但是<code>unique_ptr</code> 尚未被创建，从而导致这块内存无人负责释放。</p>
+<p>而 <code>make_unique</code> 将这一过程封装在一个函数内，只要函数内部发生异常，整个函数过程都会被回滚，从而避免了上述问题。</p>
+<p>对照之前添加的 <code>unique_ptr</code> 和 <code>shared_ptr</code> 的数组支持版本的特化模板，那么 <code>make_unique</code> 和 <code>make_shared</code> 方法也需要分为是否为数组两种情况进行实现。此外，我们还需要根据传入的模板参数 <code>T</code> 是否为数组类型，选择对应的模板函数。</p>
+<p>但是由于 <code>make_unique&lt;T[]&gt;()</code> 可以同时匹配模板参数为 <code>template &lt;typename T, typename... Args&gt;</code> 和 <code>template &lt;typename T&gt;</code> 的同一个函数的两个特化版本，为了实现编译器对函数特化版本的正确选择，我们不得不使用 <code>std::enable_if</code> 并借助模板的 SFINAE 机制。</p>
+<div class="note note-info"><p>SFINAE 机制在这里简单来说就是，当编译器尝试推导模板函数的类型参数时，若发现某个参数不存在，编译器并不会报错，而是直接将该模板函数从候选列表中移除。</p>
+</div>
+
+<p><code>std::enable_if</code> 是一个类模板，可以传入一个条件表达式，它会根据这个表达式的布尔值决定类内是否存在 <code>type</code> 这个成员变量（具体原理就是当表达式值为真就选择包含 <code>type</code> 成员的特化版本的类模板）。我们可以将 <code>std::enable_if&lt;std::is_array&lt;T&gt;::value, int&gt;::type</code> 作为 <code>make_unique</code> 函数模板的类型参数之一，这样它就会根据条件 <code>std::is_array&lt;T&gt;</code> 决定 <code>type</code> 是否存在，进而因 SFINAE 机制影响编译器对模板函数的选择。 </p>
+<p>借助以上特性和方法，我们就可以做到自动选择模板函数的正确版本，且不会因为出现编译错误。</p>
+<p><code>make_unique</code> 代码示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// make_unique - object</span><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> T, <span class="hljs-keyword">typename</span>... Args,<br>          <span class="hljs-keyword">typename</span> std::enable_if&lt;!std::is_array&lt;T&gt;::value, <span class="hljs-type">int</span>&gt;::type = <span class="hljs-number">0</span>&gt;<br>unique_ptr&lt;T&gt; <span class="hljs-built_in">make_unique</span>(Args &amp;&amp;...args)<br>&#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">unique_ptr</span>&lt;T&gt;(<span class="hljs-keyword">new</span> <span class="hljs-built_in">T</span>(std::forward&lt;Args&gt;(args)...));<br>&#125;<br><br><span class="hljs-comment">// make_unique - array</span><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> T,<br>          <span class="hljs-keyword">typename</span> std::enable_if&lt;std::is_array&lt;T&gt;::value, <span class="hljs-type">int</span>&gt;::type = <span class="hljs-number">0</span>&gt;<br>unique_ptr&lt;T&gt; <span class="hljs-built_in">make_unique</span>(<span class="hljs-type">size_t</span> size)<br>&#123;<br>    <span class="hljs-keyword">using</span> ElementType = <span class="hljs-keyword">typename</span> std::remove_extent&lt;T&gt;::type;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">unique_ptr</span>&lt;T&gt;(<span class="hljs-keyword">new</span> ElementType[size]());<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>make_shared</code> 代码示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// make_shared - object</span><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> T, <span class="hljs-keyword">typename</span>... Args,<br>          <span class="hljs-keyword">typename</span> std::enable_if&lt;!std::is_array&lt;T&gt;::value, <span class="hljs-type">int</span>&gt;::type = <span class="hljs-number">0</span>&gt;<br>shared_ptr&lt;T&gt; <span class="hljs-built_in">make_shared</span>(Args &amp;&amp;...args)<br>&#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">shared_ptr</span>&lt;T&gt;(<span class="hljs-keyword">new</span> <span class="hljs-built_in">T</span>(std::forward&lt;Args&gt;(args)...));<br>&#125;<br><br><span class="hljs-comment">// make_shared - array</span><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> T,<br>          <span class="hljs-keyword">typename</span> std::enable_if&lt;std::is_array&lt;T&gt;::value, <span class="hljs-type">int</span>&gt;::type = <span class="hljs-number">0</span>&gt;<br>shared_ptr&lt;T&gt; <span class="hljs-built_in">make_shared</span>(<span class="hljs-type">size_t</span> size)<br>&#123;<br>    <span class="hljs-keyword">using</span> ElementType = <span class="hljs-keyword">typename</span> std::remove_extent&lt;T&gt;::type;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">shared_ptr</span>&lt;T&gt;(<span class="hljs-keyword">new</span> ElementType[size]());<br>&#125;<br></code></pre></td></tr></table></figure>
+<hr>
+<h1 id="5-添加默认删除器和自定义删除器"><a href="#5-添加默认删除器和自定义删除器" class="headerlink" title="5. 添加默认删除器和自定义删除器"></a>5. 添加默认删除器和自定义删除器</h1><p>智能指针的基本功能已经初具雏形，但是我们前面只考虑了 需要管理的资源为堆内存 这一种情况，实际上的资源还可能是 文件句柄、互斥量、套接字等其他需要显示管理生命周期的东西。</p>
+<p>不同资源的释放逻辑不同，例如 <code>fclose()</code> 、<code>unlock()</code>，因此之前全部使用 <code>delete/delete[]</code> 是不全面的。</p>
+<p>为了能够统一管理资源的释放逻辑，我们可以实现删除器。</p>
+<p>首先我们可以先实现统一的默认删除器，相当于是把之前的 <code>delete/delete[]</code> 释放逻辑重新封装起来。默认删除器被定义为可调用对象，可以像函数指针一样直接调用并执行对应逻辑。</p>
+<p>默认删除器代码示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// default deleter - object</span><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> T&gt;<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">default_deleter</span><br>&#123;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">operator</span><span class="hljs-params">()</span><span class="hljs-params">(T *ptr)</span> <span class="hljs-type">const</span></span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-keyword">delete</span> ptr;<br>    &#125;<br>&#125;;<br><br><span class="hljs-comment">// default deleter - array</span><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> T&gt;<br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">default_deleter</span>&lt;T[]&gt;<br>&#123;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">operator</span><span class="hljs-params">()</span><span class="hljs-params">(T *ptr)</span> <span class="hljs-type">const</span></span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-keyword">delete</span>[] ptr;<br>    &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>然后为 <code>unique_ptr</code> 添加自定义删除器的接口，允许传入自定义删除器作为参数。修改构造函数，同时记得将之前的资源释放逻辑全部替换为调用删除器 <code>deleter(ptr)</code>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> T, <span class="hljs-keyword">typename</span> Deleter = default_deleter&lt;T&gt;&gt;<br><span class="hljs-keyword">class</span> unique_ptr<br>&#123;<br><span class="hljs-keyword">private</span>:<br>    T *ptr;<br>    Deleter deleter;<br>    <br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-comment">// constructor: default</span><br>    <span class="hljs-function"><span class="hljs-keyword">explicit</span> <span class="hljs-title">unique_ptr</span><span class="hljs-params">(T *ptr = <span class="hljs-literal">nullptr</span>)</span> : ptr(ptr), deleter(Deleter()) &#123;</span>&#125;<br><br>    <span class="hljs-comment">// constructor: with custom deleter</span><br>    <span class="hljs-built_in">unique_ptr</span>(T *ptr, Deleter d) : <span class="hljs-built_in">ptr</span>(ptr), <span class="hljs-built_in">deleter</span>(std::<span class="hljs-built_in">move</span>(d)) &#123;&#125;<br>    <br>	<span class="hljs-comment">// other things...</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>unique_ptr</code> 的删除器实例由智能指针自身管理，每一份资源对应一个 <code>unique_ptr</code>， 对应一个删除器。<br><code>shared_ptr</code> 的删除器由控制块管理，同一份资源只会有一个删除器。</p>
+<p>可以发现，<code>unique_ptr</code> 的删除器与类型紧密绑定，每次创建 <code>unique_ptr</code> 时，会因为传入的删除器不同而导致本质上的类型不同。对于独享资源的情况并没有影响，但是对于共享资源的 <code>shared_ptr</code> 这种模式会造成不必要的麻烦。</p>
+<div class="note note-info"><p>因此我们需要用另一种方式实现，它被称为类型擦除。</p>
+<p>首先定义一个 <code>deleter_base</code> 纯虚类，以它为基类再定义一个 <code>deleter_wrapper</code> 类模板。我们在控制块中存放 基类（<code>deleter_base</code>） 的指针，而在构造时传入的是 派生类（<code>deleter_wrapper</code>） 的指针，通过向上转型，使得本质上类型不同的 <code>deleter_wrapper</code> 指针统一为了 <code>deleter_base</code> 指针。</p>
+</div>
+
+<p>这样一来我们在调用删除器时，直接通过 <code>deleter_base</code> 调用，而完全不用关心类型的问题。</p>
+<p><code>deleter_base/deleter_wrapper</code> 类型擦除代码示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// base class for custom deleters ( type-erased )</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">deleter_base</span><br>&#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-keyword">virtual</span> ~<span class="hljs-built_in">deleter_base</span>() = <span class="hljs-keyword">default</span>;<br>    <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-type">void</span> <span class="hljs-title">call</span><span class="hljs-params">(<span class="hljs-type">void</span> *ptr)</span> <span class="hljs-type">const</span> </span>= <span class="hljs-number">0</span>;<br>&#125;;<br><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> T, <span class="hljs-keyword">typename</span> Deleter&gt;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">deleter_wrapper</span> : <span class="hljs-keyword">public</span> deleter_base<br>&#123;<br><span class="hljs-keyword">private</span>:<br>    Deleter deleter;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-built_in">deleter_wrapper</span>(Deleter d) : <span class="hljs-built_in">deleter</span>(std::<span class="hljs-built_in">move</span>(d)) &#123;&#125;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">call</span><span class="hljs-params">(<span class="hljs-type">void</span> *ptr)</span> <span class="hljs-type">const</span> <span class="hljs-keyword">override</span></span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-built_in">deleter</span>(<span class="hljs-built_in">static_cast</span>&lt;T *&gt;(ptr));<br>    &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>更符合标准库的做法是作为 <code>control_block</code> 的内部类</p>
+</blockquote>
+<p>修改后的 <code>control_block</code> 代码示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> T&gt;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">control_block</span><br>&#123;<br><span class="hljs-keyword">public</span>:<br>    T *ptr;<br>    <span class="hljs-type">size_t</span> strong_count;<br>    <span class="hljs-type">size_t</span> weak_count;<br>    deleter_base *deleter;<br><br>    <span class="hljs-comment">// constructor: default</span><br>    <span class="hljs-built_in">control_block</span>(T *p) : <span class="hljs-built_in">ptr</span>(p), <span class="hljs-built_in">strong_count</span>(<span class="hljs-number">1</span>), <span class="hljs-built_in">weak_count</span>(<span class="hljs-number">0</span>), <br>                          <span class="hljs-built_in">deleter</span>(<span class="hljs-keyword">new</span> deleter_wrapper&lt;T, default_deleter&lt;T&gt;&gt;(default_deleter&lt;T&gt;&#123;&#125;)) &#123;&#125;<br><br>    <span class="hljs-comment">// constructor: with custom deleter</span><br>    <span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> Deleter&gt;<br>    <span class="hljs-built_in">control_block</span>(T *p, Deleter d) : <span class="hljs-built_in">ptr</span>(p), <span class="hljs-built_in">strong_count</span>(<span class="hljs-number">1</span>), <span class="hljs-built_in">weak_count</span>(<span class="hljs-number">0</span>), <br>                                     <span class="hljs-built_in">deleter</span>(<span class="hljs-keyword">new</span> <span class="hljs-built_in">deleter_wrapper</span>&lt;T, Deleter&gt;(std::<span class="hljs-built_in">move</span>(d))) &#123;&#125;<br><br>    <span class="hljs-comment">// destructor</span><br>    ~<span class="hljs-built_in">control_block</span>()<br>    &#123;<br>        <span class="hljs-keyword">delete</span> deleter;<br>    &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>最后再修改 <code>shared_ptr</code> 中的构造函数以及资源释放逻辑的相关代码即可。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// constructor: default</span><br>   <span class="hljs-function"><span class="hljs-keyword">explicit</span> <span class="hljs-title">shared_ptr</span><span class="hljs-params">(T *p = <span class="hljs-literal">nullptr</span>)</span> : cb(p ? new control_block&lt;T&gt;(p) : nullptr), ptr(p) &#123;</span>&#125;<br><br>   <span class="hljs-comment">// constructor: with custom deleter</span><br>   <span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> Deleter&gt;<br>   <span class="hljs-built_in">shared_ptr</span>(T *p, Deleter d) : <span class="hljs-built_in">cb</span>(p ? <span class="hljs-keyword">new</span> <span class="hljs-built_in">control_block</span>&lt;T&gt;(p, d) : <span class="hljs-literal">nullptr</span>), <span class="hljs-built_in">ptr</span>(p) &#123;&#125;<br></code></pre></td></tr></table></figure>
+
+
+  </div>
+
+  
+  <div class="post-copyright">
+    <p><strong>Shionyori</strong></p>
+    <p>/2026/02/24/%E4%BB%8E%E9%9B%B6%E5%AE%9E%E7%8E%B0%20C++%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/</p>
+    <p>&amp;copy; 2026 Shionyori. 保留所有权利。</p>
+  </div>
+  
+
+  <footer class="post-footer">
+    
+    <div class="post-tags-footer">
+      
+        <a class="tag-link" href="/tags/C/">C++</a>
+      
+        <a class="tag-link" href="/tags/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/">智能指针</a>
+      
+        <a class="tag-link" href="/tags/%E6%A8%A1%E6%9D%BF/">模板</a>
+      
+        <a class="tag-link" href="/tags/RAII/">RAII</a>
+      
+    </div>
+    
+
+    
+<div class="post-share">
+  <div class="share-buttons">
+    
+    
+    
+
+    
+    <a class="share-btn share-twitter" href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fshionyori.github.io%2F2026%2F02%2F24%2F%E4%BB%8E%E9%9B%B6%E5%AE%9E%E7%8E%B0%20C%2B%2B%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%2F&text=%E4%BB%8E%E9%9B%B6%E5%AE%9E%E7%8E%B0%20C%2B%2B%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88" target="_blank" rel="noopener" aria-label="分享到 Twitter">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fshionyori.github.io%2F2026%2F02%2F24%2F%E4%BB%8E%E9%9B%B6%E5%AE%9E%E7%8E%B0%20C%2B%2B%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fshionyori.github.io%2F2026%2F02%2F24%2F%E4%BB%8E%E9%9B%B6%E5%AE%9E%E7%8E%B0%20C%2B%2B%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%2F" target="_blank" rel="noopener" aria-label="分享到 LinkedIn">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    
+
+    
+    <button class="share-btn share-copy" aria-label="复制链接" data-url="https://shionyori.github.io/2026/02/24/从零实现 C++ 智能指针/">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    </button>
+    
+  </div>
+</div>
+
+
+  </footer>
+</article>
+
+
+
+<nav class="post-nav">
+  
+    <a class="post-nav-item post-nav-prev has-cover" href="/2026/06/02/%E8%BF%91%E4%BC%BC%E7%AE%97%E6%B3%95%E4%B8%8E%E9%9A%8F%E6%9C%BA%E7%AE%97%E6%B3%95/" style='background-image: url(/images/posts/%E8%BF%91%E4%BC%BC%E7%AE%97%E6%B3%95%E4%B8%8E%E9%9A%8F%E6%9C%BA%E7%AE%97%E6%B3%95/cover.png)'>
+      <span class="nav-label">上一篇</span>
+      <span class="nav-title">近似算法与随机算法</span>
+    </a>
+  
+  
+    <a class="post-nav-item post-nav-next has-cover" href="/2026/01/17/%E5%9C%A8%20C++%20%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%A7%94%E6%89%98%E4%B8%8E%E4%BA%8B%E4%BB%B6/" style='background-image: url(/images/posts/%E5%9C%A8%20C++%20%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%A7%94%E6%89%98%E4%B8%8E%E4%BA%8B%E4%BB%B6/cover.png)'>
+      <span class="nav-label">下一篇</span>
+      <span class="nav-title">在 C++ 中实现委托与事件</span>
+    </a>
+  
+</nav>
+
+
+
+
+
+      </main>
+
+      
+    </div>
+  </div>
+</div>
+
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+
+<nav class="mobile-nav" id="mobile-nav">
+  <div class="mobile-nav-inner">
+    <div class="mobile-nav-header">
+      <span class="mobile-nav-title">首页</span>
+      <button class="btn-icon mobile-nav-close" id="mobile-nav-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <ul class="mobile-nav-menu">
+      
+        <li>
+          <a class="mobile-nav-link" href="/">首页</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/archives/">归档</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/tags/">标签</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/categories/">分类</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/friends/">友链</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/about/">关于</a>
+        </li>
+      
+    </ul>
+
+    
+    <div class="mobile-nav-social">
+      
+        <a class="social-icon" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+  </div>
+</nav>
+
+  <footer class="site-footer">
+  <div class="footer-inner">
+    
+    <div class="footer-social">
+      
+        <a class="social-link" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+
+    <div class="footer-info">
+      <span class="copyright">
+        &copy;
+        
+          2025 &ndash;
+        
+        2026
+        Shionyori
+      </span>
+
+      
+        <span class="powered-by">由 <a href="https://hexo.io/" target="_blank">Hexo</a> 驱动</span>
+      
+
+      
+        <span class="theme-by">主题 Shion</span>
+      
+
+      
+    </div>
+
+    
+
+  </div>
+</footer>
+
+
+
+  
+<div class="search-overlay" id="search-overlay"
+     data-i18n-found="关于「{query}」，找到了 {count} 条记录"
+     data-i18n-not-found="关于「{query}」，没有找到任何记录呢">
+  <div class="search-container">
+    <img class="search-decoration" src="/images/shion/search.png" alt="">
+    <div class="search-header">
+      <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" class="search-input" id="search-input" placeholder="输入关键词搜索..." autocomplete="off">
+      <button class="search-close" id="search-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="search-info" id="search-info"></div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+
+
+  
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/contrib/auto-render.min.js"></script>
+
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

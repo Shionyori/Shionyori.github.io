@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>C++ 异步编程 - Shionyori&#39;s Blog</title>
+
+
+<meta name="description" content="Gorgeous blooming flowers will eventually elegantly scattered.">
+
+
+<meta property="og:title" content="C++ 异步编程">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://shionyori.github.io/2025/03/03/C++异步编程/">
+<meta property="og:site_name" content="Shionyori&#39;s Blog">
+
+
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C++ 异步编程">
+
+
+<link rel="canonical" href="https://shionyori.github.io/2025/03/03/C++异步编程/">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "name": "C++ 异步编程",
+  "url": "https://shionyori.github.io/2025/03/03/C++异步编程/",
+  "datePublished": "2025-03-04T00:00:00+08:00",
+  "author": { "@type": "Person", "name": "Shionyori" }
+  
+}
+</script>
+
+<meta name="theme-color" content="#6b7eb5">
+<link rel="icon" type="image/png" href="/images/shion/favicon.png">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+
+
+<script>
+  (function() {
+    var mode = 'auto';
+    var saved = localStorage.getItem('shion-theme');
+    if (saved) { mode = saved; }
+    else if (mode === 'auto') {
+      mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    if (mode === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+    (function() {
+      var fonts = {"heading":"'Noto Serif SC', 'Source Han Serif SC', Georgia, serif","body":"'Noto Sans SC', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif","code":"'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace","size_root":"15px"};
+      var legacySize = '';
+      var sizeRoot = fonts.size_root || legacySize;
+
+      if (fonts.heading) {
+        document.documentElement.style.setProperty('--font-heading', fonts.heading);
+      }
+      if (fonts.body) {
+        document.documentElement.style.setProperty('--font-body', fonts.body);
+      }
+      if (fonts.code) {
+        document.documentElement.style.setProperty('--font-code', fonts.code);
+      }
+      if (sizeRoot) {
+        document.documentElement.style.setProperty('--font-size-root', sizeRoot);
+      }
+    })();
+  })();
+</script>
+
+
+<noscript>
+  <style>
+    .sidebar-inner,
+    .content-card,
+    .post,
+    .page,
+    .archive-item,
+    .category-item,
+    .pagination,
+    .comments,
+    .not-found-content,
+    .widget,
+    .tag-cloud-item,
+    .post-card-wrapper,
+    .post-content,
+    .post-tags-footer,
+    .post-share,
+    .post-copyright,
+    .post-nav {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  </style>
+</noscript>
+
+  <script>
+    window.__shionConfig = {
+      katexCDN: 'https://cdn.jsdelivr.net/npm/katex@0',
+      katexDelimiters: [{"left":"$$","right":"$$","display":true},{"left":"$","right":"$","display":false}]
+    };
+  </script>
+<meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a class="site-logo" href="/">
+      
+        <span class="logo-text">Shionyori&#39;s Blog</span>
+      
+    </a>
+
+    <nav class="site-nav" id="site-nav">
+      
+        <a class="nav-item" href="/">首页</a>
+      
+        <a class="nav-item" href="/archives/">归档</a>
+      
+        <a class="nav-item" href="/tags/">标签</a>
+      
+        <a class="nav-item" href="/categories/">分类</a>
+      
+        <a class="nav-item" href="/friends/">友链</a>
+      
+        <a class="nav-item" href="/about/">关于</a>
+      
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn-icon search-toggle" id="search-toggle" aria-label="搜索">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon theme-toggle" id="theme-toggle" aria-label="深色模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon sidebar-toggle" id="sidebar-toggle" aria-label="sidebar_toggle">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+
+  
+<div class="reading-progress" id="reading-progress">
+  <div class="reading-progress-bar" id="reading-progress-bar"></div>
+</div>
+
+
+
+<div id="pjax-container">
+  
+  
+  
+  <div class="page-bg">
+  
+    <img src="/images/posts/C++%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/cover.png" alt="">
+  </div>
+  
+
+  
+  
+  
+  <section class="page-hero">
+    <h1 class="hero-title">C++ 异步编程</h1>
+    <div class="hero-subtitle">
+      <div class="post-meta">
+    
+    <time class="post-date" datetime="2025-03-04T00:00:00+08:00">
+      2025-03-04
+    </time>
+    
+
+    
+    <time class="post-updated" datetime="2026-07-25T00:00:00+08:00">
+      更新于 2026-07-25
+    </time>
+    
+
+    
+    <span class="post-word-count">1928 words</span>
+    
+
+    
+    <span class="post-reading-time">8 min read</span>
+    
+
+    
+    <span class="post-categories">
+      
+        <a class="category-link" href="/categories/C/">C++</a>
+      
+    </span>
+    
+
+</div>
+
+    </div>
+    
+    <div class="hero-tags">
+      
+        <a class="tag-link" href="/tags/C/">C++</a>
+      
+        <a class="tag-link" href="/tags/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/">异步编程</a>
+      
+        <a class="tag-link" href="/tags/future/">future</a>
+      
+        <a class="tag-link" href="/tags/promise/">promise</a>
+      
+        <a class="tag-link" href="/tags/packaged-task/">packaged_task</a>
+      
+        <a class="tag-link" href="/tags/async/">async</a>
+      
+    </div>
+    
+  </section>
+  
+  
+
+  
+<div class="container">
+    <div class="content-wrapper">
+      
+      
+<aside class="site-sidebar sidebar-post" id="site-sidebar" data-position="left">
+
+  
+  
+
+  <div class="sidebar-sticky-group">
+    
+    <section class="sidebar-card sidebar-music">
+      
+<div class="music-player" data-playlist='[{"name":"奏穹のラプソディア (狂想曲)","artist":"瑶山百霊","url":"/music/瑶山百霊 - 奏穹のラプソディア (狂想曲).ogg","cover":"/music/covers/soukyuu-no-rhapsody.jpg"},{"name":"Graveyard Memory","artist":"GET IN THE RING","url":"/music/GET IN THE RING - Graveyard Memory.ogg","cover":"/music/covers/graveyard-memory.jpg"},{"name":"ポラリス (北极星)","artist":"GET IN THE RING","url":"/music/GET IN THE RING - ポラリス (北极星).ogg","cover":"/music/covers/polaris.jpg"},{"name":"その唄の名は…","artist":"yukina / GET IN THE RING","url":"/music/yukina _ GET IN THE RING - その唄の名は….ogg","cover":"/music/covers/sono-uta-no-na-wa.jpg"},{"name":"over the moon","artist":"Forest306","url":"/music/Forest306 - over the moon.ogg","cover":"/music/covers/over-the-moon.jpg"},{"name":"21時の探しモノ (21时寻找的东西)","artist":"minimum electric design","url":"/music/minimum electric design - 21時の探しモノ (21时寻找的东西).ogg","cover":"/music/covers/21ji-no-sagashimono.jpg"},{"name":"Freak Report 01 ~他愛も無い二人の博物誌~","artist":"凛","url":"/music/凛 - Freak Report 01 ~他愛も無い二人の博物誌~.ogg","cover":"/music/covers/freak-report-01.jpg"},{"name":"かぜのいろ (カゼノイロ)","artist":"森羅万象","url":"/music/森羅万象 - かぜのいろ (カゼノイロ).ogg","cover":"/music/covers/kaze-no-iro.jpg"},{"name":"Onisan Dochira!","artist":"狐の工作室","url":"/music/狐の工作室 - Onisan Dochira!.ogg","cover":"/music/covers/onisan-dochira.jpg"},{"name":"Skip in the byway","artist":"神乃木製作所","url":"/music/神乃木製作所 - Skip in the byway.ogg","cover":"/music/covers/skip-in-the-byway.jpg"}]'>
+  
+  <div class="music-body">
+    <div class="music-cover">
+      
+      
+      <img src="/music/covers/soukyuu-no-rhapsody.jpg" alt="cover" class="music-cover-img" onerror="if(!this.dataset.failed){this.dataset.failed='1';this.src='/images/shion/404.png'}">
+      
+    </div>
+    <div class="music-info">
+      <div class="music-title-row">
+        <span class="music-title">奏穹のラプソディア (狂想曲)</span>
+        <span class="music-counter">1 / 10</span>
+      </div>
+      <span class="music-artist">瑶山百霊</span>
+      <div class="music-progress">
+        <div class="music-progress-bar">
+          <div class="music-progress-fill"></div>
+        </div>
+        <div class="music-time">
+          <span class="music-time-current">0:00</span>
+          <span class="music-time-total">0:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="music-controls">
+    <button class="music-btn music-btn-mode" aria-label="Play mode" data-mode="sequential" title="Sequential">
+      <svg class="music-mode-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+    <button class="music-btn music-btn-prev" aria-label="Previous track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+    </button>
+    <button class="music-btn music-btn-play" aria-label="Play">
+      <svg class="music-icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <svg class="music-icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="6" height="16"/><rect x="14" y="4" width="6" height="16"/></svg>
+    </button>
+    <button class="music-btn music-btn-next" aria-label="Next track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+    </button>
+    <button class="music-btn music-btn-list" aria-label="Playlist">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="music-playlist">
+    
+    <button class="music-playlist-item active" data-index="0">
+      <span class="music-playlist-name">奏穹のラプソディア (狂想曲)</span>
+      <span class="music-playlist-artist">瑶山百霊</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="1">
+      <span class="music-playlist-name">Graveyard Memory</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="2">
+      <span class="music-playlist-name">ポラリス (北极星)</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="3">
+      <span class="music-playlist-name">その唄の名は…</span>
+      <span class="music-playlist-artist">yukina / GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="4">
+      <span class="music-playlist-name">over the moon</span>
+      <span class="music-playlist-artist">Forest306</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="5">
+      <span class="music-playlist-name">21時の探しモノ (21时寻找的东西)</span>
+      <span class="music-playlist-artist">minimum electric design</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="6">
+      <span class="music-playlist-name">Freak Report 01 ~他愛も無い二人の博物誌~</span>
+      <span class="music-playlist-artist">凛</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="7">
+      <span class="music-playlist-name">かぜのいろ (カゼノイロ)</span>
+      <span class="music-playlist-artist">森羅万象</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="8">
+      <span class="music-playlist-name">Onisan Dochira!</span>
+      <span class="music-playlist-artist">狐の工作室</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="9">
+      <span class="music-playlist-name">Skip in the byway</span>
+      <span class="music-playlist-artist">神乃木製作所</span>
+    </button>
+    
+  </div>
+  
+</div>
+
+    </section>
+    
+
+    <section class="sidebar-card sidebar-toc">
+      <div class="sidebar-toc-header">
+        <a class="sidebar-back-home" href="/" title="首页">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </a>
+        <span class="sidebar-toc-label">C++ 异步编程</span>
+      </div>
+      <div class="sidebar-scroll">
+      
+      
+      <nav class="sidebar-toc">
+        <ol class="toc-list"><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#1-%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E7%9A%84%E5%9F%BA%E7%A1%80"><span class="toc-list-text">1. 异步编程的基础</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#2-future-promise-%E5%90%8C%E6%AD%A5%E6%9C%BA%E5%88%B6"><span class="toc-list-text">2. future&#x2F;promise 同步机制</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#2-1-std-promise"><span class="toc-list-text">2.1 std::promise</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#2-2-std-future"><span class="toc-list-text">2.2 std::future</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#3-std-packaged-task"><span class="toc-list-text">3. std::packaged_task</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#4-std-async"><span class="toc-list-text">4. std::async</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#5-deferred-%E7%AD%96%E7%95%A5%E7%9A%84%E5%B0%B4%E5%B0%AC%E5%9C%B0%E4%BD%8D"><span class="toc-list-text">5. deferred 策略的尴尬地位</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#6-std-shared-future"><span class="toc-list-text">6. std::shared_future</span></a></li></ol>
+      </nav>
+      
+      </div>
+      <a class="sidebar-back-home-bottom" href="/">← 首页</a>
+    </section>
+  </div>
+
+  
+</aside>
+
+      
+
+      <main class="site-main">
+        <article class="post">
+
+  <div class="post-content">
+    
+  
+  
+  
+
+
+    <p>C++ 的异步编程围绕一个核心展开：启动一个任务，在未来的某个时刻取回结果。其中 <code>std::future</code> 和 <code>std::promise</code> 构成了这条通道的两端，而 <code>std::async</code> 则把线程创建和结果传递打包在一起。</p>
+<hr>
+<h1 id="1-异步编程的基础"><a href="#1-异步编程的基础" class="headerlink" title="1. 异步编程的基础"></a>1. 异步编程的基础</h1><p>主要涉及的头文件有：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;future&gt;</span> <span class="hljs-comment">// std::future, std::promise, std::packaged_task, std::async</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;thread&gt;</span> <span class="hljs-comment">// std::thread 底层线程支持</span></span><br></code></pre></td></tr></table></figure>
+
+<p>异步三要素：</p>
+<ol>
+<li><strong><code>std::future&lt;T&gt;</code></strong>：获取异步结果的“只读句柄”，一次性获取（<code>get()</code> 后失效）</li>
+<li><strong><code>std::promise&lt;T&gt;</code></strong>：手动设置异步结果的“写入端”，与 <code>future</code> 成对出现，通过 <code>get_future()</code> 关联</li>
+<li><strong>任务载体</strong>：执行逻辑的封装，具体为 <code>std::async</code>（自动调度）、<code>std::packaged_task</code>（手动调度）、<code>std::thread</code>（原始线程）</li>
+</ol>
+<h1 id="2-future-promise-同步机制"><a href="#2-future-promise-同步机制" class="headerlink" title="2. future&#x2F;promise 同步机制"></a>2. future&#x2F;promise 同步机制</h1><blockquote>
+<p>如何安全地将异步任务的结果（或异常）从工作线程传递到调用线程？</p>
+</blockquote>
+<p>传统方案：全局变量 + 锁，易出错且难以处理异常。</p>
+<p>C++ 标准库提供标准化解决方案：<strong>共享状态（Shared State） + Future&#x2F;Promise 双端接口</strong>，<code>promise&lt;T&gt;</code> 是写入端，<code>future&lt;T&gt;</code> 是读取段。</p>
+<ul>
+<li>线程安全：共享状态内部同步，用户无需手动加锁</li>
+<li>异常透明传递：<code>get()</code> 时在<strong>调用线程</strong>重抛，堆栈清晰</li>
+<li>一次性语义：<code>get()</code> 只能调用一次，防止数据竞争</li>
+</ul>
+<h2 id="2-1-std-promise"><a href="#2-1-std-promise" class="headerlink" title="2.1 std::promise"></a>2.1 std::promise</h2><ol>
+<li><code>get_future()</code></li>
+</ol>
+<ul>
+<li>返回与 <code>promise</code> <strong>绑定</strong>的 <code>future</code>（即共享同一共享状态）</li>
+<li><strong>只能调用一次</strong>，调用后 <code>promise</code> 会变为无效（<code>valid() == false</code>），再次调用抛出 <code>std::future_error</code></li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">std::future&lt;T&gt; <span class="hljs-title">get_future</span><span class="hljs-params">()</span></span>;<br></code></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><code>set_value()</code></li>
+</ol>
+<ul>
+<li>设置共享状态的值，并唤醒等待的 <code>future</code>（如果有）</li>
+<li>只能调用一次，同上</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">set_value</span><span class="hljs-params">(<span class="hljs-type">const</span> T&amp; value)</span></span>;<br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">set_value</span><span class="hljs-params">(T&amp;&amp; value)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<ol start="3">
+<li><code>set_exception()</code></li>
+</ol>
+<ul>
+<li>设置共享状态的异常，并唤醒等待的 <code>future</code>（如果有）</li>
+<li>只能调用一次，之后调用 <code>future.get()</code> 时会在调用线程重新抛出该异常</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">set_exception</span><span class="hljs-params">(std::exception_ptr p)</span></span>;<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-2-std-future"><a href="#2-2-std-future" class="headerlink" title="2.2 std::future"></a>2.2 std::future</h2><ol>
+<li><code>get()</code></li>
+</ol>
+<ul>
+<li>如果共享状态已就绪，立即返回结果或抛出异常；否则，<strong>阻塞</strong>当前线程直到任务完成</li>
+<li><strong>只能调用一次</strong>，调用后 <code>future</code> 会变为无效（<code>valid() == false</code>），再次调用抛出 <code>std::future_error</code></li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">T <span class="hljs-title">get</span><span class="hljs-params">()</span></span>;<br><span class="hljs-function">T&amp; <span class="hljs-title">get</span><span class="hljs-params">()</span></span>;<br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">get</span><span class="hljs-params">()</span></span>;<br></code></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><code>wait()</code> &#x2F; <code>wait_for()</code> &#x2F; <code>wait_until()</code></li>
+</ol>
+<p>等待共享状态就绪</p>
+<ul>
+<li><code>wait()</code>：阻塞直到共享状态就绪</li>
+<li><code>wait_for(duration)</code>：阻塞指定时间，超时返回</li>
+<li><code>wait_until(time_point)</code>：阻塞直到指定时间点，超时返回</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cpp">fut.<span class="hljs-built_in">wait</span>(); <span class="hljs-comment">// deferred 策略下它会触发任务执行，以下两个则不会</span><br>fut.<span class="hljs-built_in">wait_for</span>(<span class="hljs-number">100</span>ms);<br>fut.<span class="hljs-built_in">wait_until</span>(std::chrono::system_clock::<span class="hljs-built_in">now</span>() + <span class="hljs-number">1</span>s)<br></code></pre></td></tr></table></figure>
+
+<p>其中 <code>wait_for()</code> 和 <code>wait_until()</code> 返回值为 <code>std::future_status</code>，表示共享状态的当前状态：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">enum class</span> <span class="hljs-title class_">std</span>::future_status &#123;<br>    ready,      <span class="hljs-comment">// 共享状态已就绪（有结果/异常）</span><br>    timeout,    <span class="hljs-comment">// 超时</span><br>    deferred    <span class="hljs-comment">// deferred 策略：任务尚未启动（特殊状态）</span><br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<ol>
+<li><code>future</code> &#x2F; <code>promise</code> 手动通信</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    std::promise&lt;<span class="hljs-type">int</span>&gt; promise;<br>    std::future&lt;<span class="hljs-type">int</span>&gt; future = promise.<span class="hljs-built_in">get_future</span>();<br><br>    <span class="hljs-function">std::thread <span class="hljs-title">worker</span><span class="hljs-params">([&amp;promise] &#123;</span></span><br><span class="hljs-params"><span class="hljs-function">        std::this_thread::sleep_for(std::chrono::milliseconds(<span class="hljs-number">100</span>));</span></span><br><span class="hljs-params"><span class="hljs-function">        promise.set_value(<span class="hljs-number">42</span>);  <span class="hljs-comment">// 设置结果</span></span></span><br><span class="hljs-params"><span class="hljs-function">        std::cout &lt;&lt; <span class="hljs-string">&quot;  [worker] value set\n&quot;</span>;    </span></span><br><span class="hljs-params"><span class="hljs-function">    &#125;)</span></span>;<br><br>    std::cout &lt;&lt; <span class="hljs-string">&quot;  [main] waiting for result...\n&quot;</span>;<br>    <span class="hljs-type">int</span> result = future.<span class="hljs-built_in">get</span>();  <span class="hljs-comment">// 阻塞直到 set_value</span><br>    std::cout &lt;&lt; <span class="hljs-string">&quot;  [main] got: &quot;</span> &lt;&lt; result &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>    worker.<span class="hljs-built_in">join</span>();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><code>promise</code> 传递异常</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    std::promise&lt;<span class="hljs-type">int</span>&gt; promise;<br>    <span class="hljs-keyword">auto</span> future = promise.<span class="hljs-built_in">get_future</span>();<br>    <br>    <span class="hljs-function">std::thread <span class="hljs-title">worker</span><span class="hljs-params">([&amp;promise] &#123;</span></span><br><span class="hljs-params"><span class="hljs-function">        <span class="hljs-keyword">try</span> &#123;</span></span><br><span class="hljs-params"><span class="hljs-function">            <span class="hljs-keyword">throw</span> std::runtime_error(<span class="hljs-string">&quot;something went wrong&quot;</span>);</span></span><br><span class="hljs-params"><span class="hljs-function">        &#125; <span class="hljs-keyword">catch</span> (...) &#123;</span></span><br><span class="hljs-params"><span class="hljs-function">            promise.set_exception(std::current_exception());</span></span><br><span class="hljs-params"><span class="hljs-function">        &#125;</span></span><br><span class="hljs-params"><span class="hljs-function">    &#125;)</span></span>;<br><br>    <span class="hljs-keyword">try</span> &#123;<br>        future.<span class="hljs-built_in">get</span>();  <span class="hljs-comment">// 重新抛出异常</span><br>    &#125; <span class="hljs-built_in">catch</span> (<span class="hljs-type">const</span> std::exception&amp; e) &#123;<br>        std::cout &lt;&lt; <span class="hljs-string">&quot;  caught: &quot;</span> &lt;&lt; e.<span class="hljs-built_in">what</span>() &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>    &#125;<br>    worker.<span class="hljs-built_in">join</span>();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h1 id="3-std-packaged-task"><a href="#3-std-packaged-task" class="headerlink" title="3. std::packaged_task"></a>3. std::packaged_task</h1><p><code>std::packaged_task</code> 是手动调度的异步任务包装器，本质上就是<strong>可调用对象 + 内置<code>promise&lt;R&gt;</code> + 自动绑定 <code>future&lt;R&gt;</code></strong>。</p>
+<ul>
+<li>可通过 <code>get_future()</code> 获取与之绑定的 <code>future</code>，<strong>只能调用一次</strong></li>
+<li><strong>只可移动</strong>，不可拷贝：<ul>
+<li>传递时必须显式地使用 <code>std::move()</code></li>
+<li>无法直接存放到 <code>std::function</code> 中（要求可拷贝），需要使用 <code>shared_ptr</code> 作为中转</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">class</span> <span class="hljs-title class_">R</span>, <span class="hljs-keyword">class</span>... Args&gt;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">packaged_task</span>&lt;<span class="hljs-built_in">R</span>(Args...)&gt; <span class="hljs-comment">// 特化：包装返回 R 且接收 Args... 的可调用对象</span><br></code></pre></td></tr></table></figure>
+
+<p>具体的使用方法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 创建任务</span><br><span class="hljs-function">std::packaged_task&lt;<span class="hljs-title">int</span><span class="hljs-params">(<span class="hljs-type">int</span>)</span>&gt; <span class="hljs-title">task</span><span class="hljs-params">([](<span class="hljs-type">int</span> x) &#123; <span class="hljs-keyword">return</span> x * <span class="hljs-number">2</span>; &#125;)</span></span>;<br><br><span class="hljs-comment">// 必须先获取 future（只能调用一次！）</span><br>std::future&lt;<span class="hljs-type">int</span>&gt; result = task.<span class="hljs-built_in">get_future</span>();  <br><br><span class="hljs-comment">// 执行任务（三种方式）</span><br><span class="hljs-built_in">task</span>(<span class="hljs-number">10</span>);                                   <span class="hljs-comment">// A. 当前线程同步执行</span><br>std::<span class="hljs-built_in">thread</span>(std::<span class="hljs-built_in">move</span>(task), <span class="hljs-number">10</span>).<span class="hljs-built_in">detach</span>();  <span class="hljs-comment">// B. 新线程异步执行</span><br>thread_pool.<span class="hljs-built_in">enqueue</span>(std::<span class="hljs-built_in">move</span>(task), <span class="hljs-number">10</span>);   <span class="hljs-comment">// C. 线程池调度</span><br><br><span class="hljs-comment">// 获取结果（阻塞直到任务完成）</span><br>std::cout &lt;&lt; result.<span class="hljs-built_in">get</span>() &lt;&lt; std::endl;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 大部分通用线程池为了接收任意类型的任务，内部通常存的是 std::function&lt;void()&gt;</span><br><span class="hljs-comment">// 由于 std::function 要求可拷贝，而 std::packaged_task 只可移动，所以需要使用 shared_ptr 作为中转</span><br><span class="hljs-keyword">auto</span> task_ptr = std::make_shared&lt;std::packaged_task&lt;<span class="hljs-built_in">int</span>(<span class="hljs-type">int</span>)&gt;&gt;([](<span class="hljs-type">int</span> x) &#123; <span class="hljs-keyword">return</span> x * <span class="hljs-number">2</span>; &#125;);<br><span class="hljs-keyword">auto</span> result = task_ptr-&gt;<span class="hljs-built_in">get_future</span>();<br>thread_pool.<span class="hljs-built_in">enqueue</span>([task_ptr](<span class="hljs-type">int</span> x) &#123; (*task_ptr)(x); &#125;, <span class="hljs-number">10</span>);<br></code></pre></td></tr></table></figure>
+
+<h1 id="4-std-async"><a href="#4-std-async" class="headerlink" title="4. std::async"></a>4. std::async</h1><p><code>std::async</code> 是自动调度的异步任务，本质上是 <strong><code>packaged_task</code> + 策略驱动的自动调度器</strong>，也就是对 <code>packaged_task</code> 的<strong>高层便利封装</strong>。</p>
+<ul>
+<li>自动返回一个 <code>std::future&lt;R&gt;</code>，用于获取异步任务的结果</li>
+<li>任务执行的默认策略为 <code>async | deferred</code>（异步或延迟执行），实际使用时一般指定 <code>async</code> 策略</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">class</span> <span class="hljs-title class_">F</span>, <span class="hljs-keyword">class</span>... Args&gt;<br>std::future&lt;std::<span class="hljs-type">invoke_result_t</span>&lt;std::<span class="hljs-type">decay_t</span>&lt;F&gt;, std::<span class="hljs-type">decay_t</span>&lt;Args&gt;...&gt;&gt; <span class="hljs-built_in">async</span>(<br>    std::launch policy, F&amp;&amp; f, Args&amp;&amp;... args);<br><br><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">class</span> <span class="hljs-title class_">F</span>, <span class="hljs-keyword">class</span>... Args&gt;<br>std::future&lt;std::<span class="hljs-type">invoke_result_t</span>&lt;std::<span class="hljs-type">decay_t</span>&lt;F&gt;, std::<span class="hljs-type">decay_t</span>&lt;Args&gt;...&gt;&gt; <span class="hljs-built_in">async</span>(F&amp;&amp; f, Args&amp;&amp;... args);<br></code></pre></td></tr></table></figure>
+
+<p>启动策略：</p>
+<ol>
+<li><code>std::launch::async</code>：立即创建新线程执行</li>
+<li><code>std::launch::deferred</code>：延迟到 <code>get()/wait()</code> 时在当前线程同步执行</li>
+<li><code>async | deferred</code>：默认策略</li>
+</ol>
+<p>具体的使用方法如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;future&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;chrono&gt;</span></span><br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">heavy_computation</span><span class="hljs-params">(<span class="hljs-type">int</span> x)</span> </span>&#123;<br>    std::this_thread::<span class="hljs-built_in">sleep_for</span>(std::chrono::<span class="hljs-built_in">seconds</span>(<span class="hljs-number">1</span>));<br>    <span class="hljs-keyword">return</span> x * x;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-comment">// 强制异步执行</span><br>    <span class="hljs-keyword">auto</span> fut = std::<span class="hljs-built_in">async</span>(std::launch::async, heavy_computation, <span class="hljs-number">10</span>);<br>    <br>    <span class="hljs-comment">// 主线程可以同时做其他工作</span><br>    std::cout &lt;&lt; <span class="hljs-string">&quot;Doing other work...\n&quot;</span>;<br>    std::this_thread::<span class="hljs-built_in">sleep_for</span>(std::chrono::<span class="hljs-built_in">milliseconds</span>(<span class="hljs-number">200</span>)); <span class="hljs-comment">// 模拟耗时操作</span><br>    <br>    std::cout &lt;&lt; <span class="hljs-string">&quot;Result: &quot;</span> &lt;&lt; fut.<span class="hljs-built_in">get</span>() &lt;&lt; std::endl;  <span class="hljs-comment">// 阻塞获取结果</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>使用 <code>std::async</code> 可以轻松实现并行计算，以分块求和为例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span> Iterator&gt;</span><br><span class="hljs-function"><span class="hljs-type">double</span> <span class="hljs-title">parallel_sum</span><span class="hljs-params">(Iterator begin, Iterator end)</span> </span>&#123;<br>    <span class="hljs-keyword">auto</span> len = std::<span class="hljs-built_in">distance</span>(begin, end);<br>    <span class="hljs-keyword">if</span>(len &lt; <span class="hljs-number">1000</span>) &#123;<br>        <span class="hljs-keyword">return</span> std::<span class="hljs-built_in">accumulate</span>(begin, end, <span class="hljs-number">0.0</span>);<br>    &#125;<br><br>    <span class="hljs-keyword">auto</span> mid = begin + len / <span class="hljs-number">2</span>;<br>    <span class="hljs-keyword">auto</span> left = std::<span class="hljs-built_in">async</span>(std::launch::async, parallel_sum&lt;Iterator&gt;, begin, mid);<br>    <span class="hljs-type">double</span> right =  <span class="hljs-built_in">parallel_sum</span>(mid, end);<br>    <span class="hljs-keyword">return</span> left.<span class="hljs-built_in">get</span>() + right;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h1 id="5-deferred-策略的尴尬地位"><a href="#5-deferred-策略的尴尬地位" class="headerlink" title="5. deferred 策略的尴尬地位"></a>5. deferred 策略的尴尬地位</h1><p>理论上说 <code>deferred</code> 策略提供了以下几点价值：</p>
+<ol>
+<li>语法对齐，对应 <code>async</code> 策略的异步调用</li>
+<li>惰性求值，执行时机具有延迟性</li>
+</ol>
+<p>但是实际上，由于 <code>deferred</code> 策略下任务的执行直到 <code>get()/wait()</code> 被调用时才开始，而且是同步调用，会阻塞主线程，这与普通函数的调用是一致的，而且还存在 <code>future</code> 对象的管理开销。而延迟性带来的好处是可以随时选择是否调用并获取结果，但这一点也完全可以通过简单的 <code>if</code> 加上普通函数实现。所以 <code>deferred</code> 策略并没有带来新的优势，它的语法价值大于实际工程价值，有点像是为了存在而存在。</p>
+<h1 id="6-std-shared-future"><a href="#6-std-shared-future" class="headerlink" title="6. std::shared_future"></a>6. std::shared_future</h1><p><code>std::shared_future</code> 是 <code>std::future</code> 的共享版本，允许多个线程同时访问同一个共享状态的结果。</p>
+<ul>
+<li>由 <code>future</code> 调用 <code>share()</code> 方法获取，原来的 <code>future</code> 会变为无效 （允许隐式转换）</li>
+<li><code>get()</code> <strong>可以被多次调用</strong>，内部使用引用计数管理共享状态</li>
+<li>其余方法与 <code>std::future</code> 相同（如 <code>wait()</code>、<code>wait_for()</code>、<code>wait_until()</code>）</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">auto</span> shared = future.<span class="hljs-built_in">share</span>();<br><span class="hljs-keyword">auto</span> shared = packaged_task.<span class="hljs-built_in">get_future</span>().<span class="hljs-built_in">share</span>();<br><span class="hljs-keyword">auto</span> shared = std::<span class="hljs-built_in">async</span>(...).<span class="hljs-built_in">share</span>();<br></code></pre></td></tr></table></figure>
+
+<p>使用 <code>std::shared_future</code> 可以让多个线程等待同一个结果：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    std::promise&lt;<span class="hljs-type">int</span>&gt; promise;<br>    std::shared_future&lt;<span class="hljs-type">int</span>&gt; shared = promise.<span class="hljs-built_in">get_future</span>().<span class="hljs-built_in">share</span>();<br><br>    <span class="hljs-comment">// 多个线程等待同一个结果</span><br>    std::vector&lt;std::thread&gt; threads;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">3</span>; ++i) &#123;<br>         threads.<span class="hljs-built_in">emplace_back</span>([shared, i] &#123;<br>            <span class="hljs-type">int</span> val = shared.<span class="hljs-built_in">get</span>();  <span class="hljs-comment">// 可多次调用</span><br>            std::cout &lt;&lt; <span class="hljs-string">&quot;  thread &quot;</span> &lt;&lt; i &lt;&lt; <span class="hljs-string">&quot; got: &quot;</span> &lt;&lt; val &lt;&lt; <span class="hljs-string">&quot;\n&quot;</span>;<br>        &#125;);<br>    &#125;<br><br>    promise.<span class="hljs-built_in">set_value</span>(<span class="hljs-number">999</span>);<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span>&amp; t : threads) t.<span class="hljs-built_in">join</span>();<br>&#125;<br></code></pre></td></tr></table></figure>
+  </div>
+
+  
+  <div class="post-copyright">
+    <p><strong>Shionyori</strong></p>
+    <p>/2025/03/03/C++%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/</p>
+    <p>&amp;copy; 2025 Shionyori. 保留所有权利。</p>
+  </div>
+  
+
+  <footer class="post-footer">
+    
+    <div class="post-tags-footer">
+      
+        <a class="tag-link" href="/tags/C/">C++</a>
+      
+        <a class="tag-link" href="/tags/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/">异步编程</a>
+      
+        <a class="tag-link" href="/tags/future/">future</a>
+      
+        <a class="tag-link" href="/tags/promise/">promise</a>
+      
+        <a class="tag-link" href="/tags/packaged-task/">packaged_task</a>
+      
+        <a class="tag-link" href="/tags/async/">async</a>
+      
+    </div>
+    
+
+    
+<div class="post-share">
+  <div class="share-buttons">
+    
+    
+    
+
+    
+    <a class="share-btn share-twitter" href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fshionyori.github.io%2F2025%2F03%2F03%2FC%2B%2B%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%2F&text=C%2B%2B%20%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B" target="_blank" rel="noopener" aria-label="分享到 Twitter">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fshionyori.github.io%2F2025%2F03%2F03%2FC%2B%2B%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fshionyori.github.io%2F2025%2F03%2F03%2FC%2B%2B%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%2F" target="_blank" rel="noopener" aria-label="分享到 LinkedIn">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    
+
+    
+    <button class="share-btn share-copy" aria-label="复制链接" data-url="https://shionyori.github.io/2025/03/03/C++异步编程/">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    </button>
+    
+  </div>
+</div>
+
+
+  </footer>
+</article>
+
+
+
+<nav class="post-nav">
+  
+    <a class="post-nav-item post-nav-prev has-cover" href="/2025/03/08/C++%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/" style='background-image: url(/images/posts/C++%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/cover.png)'>
+      <span class="nav-label">上一篇</span>
+      <span class="nav-title">C++ 智能指针</span>
+    </a>
+  
+  
+    <a class="post-nav-item post-nav-next has-cover" href="/2025/03/03/C++%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style='background-image: url(/images/posts/C++%E5%A4%9A%E7%BA%BF%E7%A8%8B/cover.png)'>
+      <span class="nav-label">下一篇</span>
+      <span class="nav-title">C++ 多线程</span>
+    </a>
+  
+</nav>
+
+
+
+
+
+      </main>
+
+      
+    </div>
+  </div>
+</div>
+
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+
+<nav class="mobile-nav" id="mobile-nav">
+  <div class="mobile-nav-inner">
+    <div class="mobile-nav-header">
+      <span class="mobile-nav-title">首页</span>
+      <button class="btn-icon mobile-nav-close" id="mobile-nav-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <ul class="mobile-nav-menu">
+      
+        <li>
+          <a class="mobile-nav-link" href="/">首页</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/archives/">归档</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/tags/">标签</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/categories/">分类</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/friends/">友链</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/about/">关于</a>
+        </li>
+      
+    </ul>
+
+    
+    <div class="mobile-nav-social">
+      
+        <a class="social-icon" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+  </div>
+</nav>
+
+  <footer class="site-footer">
+  <div class="footer-inner">
+    
+    <div class="footer-social">
+      
+        <a class="social-link" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+
+    <div class="footer-info">
+      <span class="copyright">
+        &copy;
+        
+          2025 &ndash;
+        
+        2026
+        Shionyori
+      </span>
+
+      
+        <span class="powered-by">由 <a href="https://hexo.io/" target="_blank">Hexo</a> 驱动</span>
+      
+
+      
+        <span class="theme-by">主题 Shion</span>
+      
+
+      
+    </div>
+
+    
+
+  </div>
+</footer>
+
+
+
+  
+<div class="search-overlay" id="search-overlay"
+     data-i18n-found="关于「{query}」，找到了 {count} 条记录"
+     data-i18n-not-found="关于「{query}」，没有找到任何记录呢">
+  <div class="search-container">
+    <img class="search-decoration" src="/images/shion/search.png" alt="">
+    <div class="search-header">
+      <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" class="search-input" id="search-input" placeholder="输入关键词搜索..." autocomplete="off">
+      <button class="search-close" id="search-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="search-info" id="search-info"></div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+
+
+  
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/contrib/auto-render.min.js"></script>
+
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

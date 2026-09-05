@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>反射机制 - Shionyori&#39;s Blog</title>
+
+
+<meta name="description" content="Gorgeous blooming flowers will eventually elegantly scattered.">
+
+
+<meta property="og:title" content="反射机制">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://shionyori.github.io/2026/08/01/反射机制/">
+<meta property="og:site_name" content="Shionyori&#39;s Blog">
+
+
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="反射机制">
+
+
+<link rel="canonical" href="https://shionyori.github.io/2026/08/01/反射机制/">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "name": "反射机制",
+  "url": "https://shionyori.github.io/2026/08/01/反射机制/",
+  "datePublished": "2026-08-02T00:00:00+08:00",
+  "author": { "@type": "Person", "name": "Shionyori" }
+  
+}
+</script>
+
+<meta name="theme-color" content="#6b7eb5">
+<link rel="icon" type="image/png" href="/images/shion/favicon.png">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+
+
+<script>
+  (function() {
+    var mode = 'auto';
+    var saved = localStorage.getItem('shion-theme');
+    if (saved) { mode = saved; }
+    else if (mode === 'auto') {
+      mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    if (mode === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+    (function() {
+      var fonts = {"heading":"'Noto Serif SC', 'Source Han Serif SC', Georgia, serif","body":"'Noto Sans SC', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif","code":"'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace","size_root":"15px"};
+      var legacySize = '';
+      var sizeRoot = fonts.size_root || legacySize;
+
+      if (fonts.heading) {
+        document.documentElement.style.setProperty('--font-heading', fonts.heading);
+      }
+      if (fonts.body) {
+        document.documentElement.style.setProperty('--font-body', fonts.body);
+      }
+      if (fonts.code) {
+        document.documentElement.style.setProperty('--font-code', fonts.code);
+      }
+      if (sizeRoot) {
+        document.documentElement.style.setProperty('--font-size-root', sizeRoot);
+      }
+    })();
+  })();
+</script>
+
+
+<noscript>
+  <style>
+    .sidebar-inner,
+    .content-card,
+    .post,
+    .page,
+    .archive-item,
+    .category-item,
+    .pagination,
+    .comments,
+    .not-found-content,
+    .widget,
+    .tag-cloud-item,
+    .post-card-wrapper,
+    .post-content,
+    .post-tags-footer,
+    .post-share,
+    .post-copyright,
+    .post-nav {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  </style>
+</noscript>
+
+  <script>
+    window.__shionConfig = {
+      katexCDN: 'https://cdn.jsdelivr.net/npm/katex@0',
+      katexDelimiters: [{"left":"$$","right":"$$","display":true},{"left":"$","right":"$","display":false}]
+    };
+  </script>
+<meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a class="site-logo" href="/">
+      
+        <span class="logo-text">Shionyori&#39;s Blog</span>
+      
+    </a>
+
+    <nav class="site-nav" id="site-nav">
+      
+        <a class="nav-item" href="/">首页</a>
+      
+        <a class="nav-item" href="/archives/">归档</a>
+      
+        <a class="nav-item" href="/tags/">标签</a>
+      
+        <a class="nav-item" href="/categories/">分类</a>
+      
+        <a class="nav-item" href="/friends/">友链</a>
+      
+        <a class="nav-item" href="/about/">关于</a>
+      
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn-icon search-toggle" id="search-toggle" aria-label="搜索">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon theme-toggle" id="theme-toggle" aria-label="深色模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon sidebar-toggle" id="sidebar-toggle" aria-label="sidebar_toggle">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+
+  
+<div class="reading-progress" id="reading-progress">
+  <div class="reading-progress-bar" id="reading-progress-bar"></div>
+</div>
+
+
+
+<div id="pjax-container">
+  
+  
+  
+  <div class="page-bg">
+  
+    <img src="/images/posts/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/cover.png" alt="">
+  </div>
+  
+
+  
+  
+  
+  <section class="page-hero">
+    <h1 class="hero-title">反射机制</h1>
+    <div class="hero-subtitle">
+      <div class="post-meta">
+    
+    <time class="post-date" datetime="2026-08-02T00:00:00+08:00">
+      2026-08-02
+    </time>
+    
+
+    
+    <time class="post-updated" datetime="2026-08-02T00:00:00+08:00">
+      更新于 2026-08-02
+    </time>
+    
+
+    
+    <span class="post-word-count">1882 words</span>
+    
+
+    
+    <span class="post-reading-time">8 min read</span>
+    
+
+    
+    <span class="post-categories">
+      
+        <a class="category-link" href="/categories/C/">C++</a>
+      
+        <a class="category-link" href="/categories/C/Go/">Go</a>
+      
+        <a class="category-link" href="/categories/C/Go/Java/">Java</a>
+      
+    </span>
+    
+
+</div>
+
+    </div>
+    
+    <div class="hero-tags">
+      
+        <a class="tag-link" href="/tags/C/">C++</a>
+      
+        <a class="tag-link" href="/tags/Go/">Go</a>
+      
+        <a class="tag-link" href="/tags/Java/">Java</a>
+      
+        <a class="tag-link" href="/tags/%E8%BF%90%E8%A1%8C%E6%97%B6%E5%8F%8D%E5%B0%84/">运行时反射</a>
+      
+        <a class="tag-link" href="/tags/%E9%9D%99%E6%80%81%E5%8F%8D%E5%B0%84/">静态反射</a>
+      
+        <a class="tag-link" href="/tags/Go-%E7%BB%93%E6%9E%84%E4%BD%93%E6%A0%87%E7%AD%BE/">Go 结构体标签</a>
+      
+        <a class="tag-link" href="/tags/Java-%E6%B3%A8%E8%A7%A3/">Java 注解</a>
+      
+    </div>
+    
+  </section>
+  
+  
+
+  
+<div class="container">
+    <div class="content-wrapper">
+      
+      
+<aside class="site-sidebar sidebar-post" id="site-sidebar" data-position="left">
+
+  
+  
+
+  <div class="sidebar-sticky-group">
+    
+    <section class="sidebar-card sidebar-music">
+      
+<div class="music-player" data-playlist='[{"name":"奏穹のラプソディア (狂想曲)","artist":"瑶山百霊","url":"/music/瑶山百霊 - 奏穹のラプソディア (狂想曲).ogg","cover":"/music/covers/soukyuu-no-rhapsody.jpg"},{"name":"Graveyard Memory","artist":"GET IN THE RING","url":"/music/GET IN THE RING - Graveyard Memory.ogg","cover":"/music/covers/graveyard-memory.jpg"},{"name":"ポラリス (北极星)","artist":"GET IN THE RING","url":"/music/GET IN THE RING - ポラリス (北极星).ogg","cover":"/music/covers/polaris.jpg"},{"name":"その唄の名は…","artist":"yukina / GET IN THE RING","url":"/music/yukina _ GET IN THE RING - その唄の名は….ogg","cover":"/music/covers/sono-uta-no-na-wa.jpg"},{"name":"over the moon","artist":"Forest306","url":"/music/Forest306 - over the moon.ogg","cover":"/music/covers/over-the-moon.jpg"},{"name":"21時の探しモノ (21时寻找的东西)","artist":"minimum electric design","url":"/music/minimum electric design - 21時の探しモノ (21时寻找的东西).ogg","cover":"/music/covers/21ji-no-sagashimono.jpg"},{"name":"Freak Report 01 ~他愛も無い二人の博物誌~","artist":"凛","url":"/music/凛 - Freak Report 01 ~他愛も無い二人の博物誌~.ogg","cover":"/music/covers/freak-report-01.jpg"},{"name":"かぜのいろ (カゼノイロ)","artist":"森羅万象","url":"/music/森羅万象 - かぜのいろ (カゼノイロ).ogg","cover":"/music/covers/kaze-no-iro.jpg"},{"name":"Onisan Dochira!","artist":"狐の工作室","url":"/music/狐の工作室 - Onisan Dochira!.ogg","cover":"/music/covers/onisan-dochira.jpg"},{"name":"Skip in the byway","artist":"神乃木製作所","url":"/music/神乃木製作所 - Skip in the byway.ogg","cover":"/music/covers/skip-in-the-byway.jpg"}]'>
+  
+  <div class="music-body">
+    <div class="music-cover">
+      
+      
+      <img src="/music/covers/soukyuu-no-rhapsody.jpg" alt="cover" class="music-cover-img" onerror="if(!this.dataset.failed){this.dataset.failed='1';this.src='/images/shion/404.png'}">
+      
+    </div>
+    <div class="music-info">
+      <div class="music-title-row">
+        <span class="music-title">奏穹のラプソディア (狂想曲)</span>
+        <span class="music-counter">1 / 10</span>
+      </div>
+      <span class="music-artist">瑶山百霊</span>
+      <div class="music-progress">
+        <div class="music-progress-bar">
+          <div class="music-progress-fill"></div>
+        </div>
+        <div class="music-time">
+          <span class="music-time-current">0:00</span>
+          <span class="music-time-total">0:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="music-controls">
+    <button class="music-btn music-btn-mode" aria-label="Play mode" data-mode="sequential" title="Sequential">
+      <svg class="music-mode-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+    <button class="music-btn music-btn-prev" aria-label="Previous track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+    </button>
+    <button class="music-btn music-btn-play" aria-label="Play">
+      <svg class="music-icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <svg class="music-icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="6" height="16"/><rect x="14" y="4" width="6" height="16"/></svg>
+    </button>
+    <button class="music-btn music-btn-next" aria-label="Next track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+    </button>
+    <button class="music-btn music-btn-list" aria-label="Playlist">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="music-playlist">
+    
+    <button class="music-playlist-item active" data-index="0">
+      <span class="music-playlist-name">奏穹のラプソディア (狂想曲)</span>
+      <span class="music-playlist-artist">瑶山百霊</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="1">
+      <span class="music-playlist-name">Graveyard Memory</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="2">
+      <span class="music-playlist-name">ポラリス (北极星)</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="3">
+      <span class="music-playlist-name">その唄の名は…</span>
+      <span class="music-playlist-artist">yukina / GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="4">
+      <span class="music-playlist-name">over the moon</span>
+      <span class="music-playlist-artist">Forest306</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="5">
+      <span class="music-playlist-name">21時の探しモノ (21时寻找的东西)</span>
+      <span class="music-playlist-artist">minimum electric design</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="6">
+      <span class="music-playlist-name">Freak Report 01 ~他愛も無い二人の博物誌~</span>
+      <span class="music-playlist-artist">凛</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="7">
+      <span class="music-playlist-name">かぜのいろ (カゼノイロ)</span>
+      <span class="music-playlist-artist">森羅万象</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="8">
+      <span class="music-playlist-name">Onisan Dochira!</span>
+      <span class="music-playlist-artist">狐の工作室</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="9">
+      <span class="music-playlist-name">Skip in the byway</span>
+      <span class="music-playlist-artist">神乃木製作所</span>
+    </button>
+    
+  </div>
+  
+</div>
+
+    </section>
+    
+
+    <section class="sidebar-card sidebar-toc">
+      <div class="sidebar-toc-header">
+        <a class="sidebar-back-home" href="/" title="首页">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </a>
+        <span class="sidebar-toc-label">反射机制</span>
+      </div>
+      <div class="sidebar-scroll">
+      
+      
+      <nav class="sidebar-toc">
+        <ol class="toc-list"><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%8D%E5%B0%84"><span class="toc-list-text">1. 什么是反射</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#2-Go-%E7%9A%84%E8%BF%90%E8%A1%8C%E6%97%B6%E5%8F%8D%E5%B0%84"><span class="toc-list-text">2. Go 的运行时反射</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#2-1-%E8%8E%B7%E5%8F%96%E7%B1%BB%E5%9E%8B%E5%92%8C%E5%80%BC"><span class="toc-list-text">2.1 获取类型和值</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#2-2-%E4%BF%AE%E6%94%B9%E5%80%BC"><span class="toc-list-text">2.2 修改值</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#2-3-%E7%BB%93%E6%9E%84%E4%BD%93%E6%A0%87%E7%AD%BE%EF%BC%88Struct-Tags%EF%BC%89"><span class="toc-list-text">2.3 结构体标签（Struct Tags）</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#3-Java-%E7%9A%84%E8%BF%90%E8%A1%8C%E6%97%B6%E5%8F%8D%E5%B0%84"><span class="toc-list-text">3. Java 的运行时反射</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#3-1-%E8%8E%B7%E5%8F%96-Class-%E5%AF%B9%E8%B1%A1"><span class="toc-list-text">3.1 获取 Class 对象</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#3-2-%E8%8E%B7%E5%8F%96%E5%AD%97%E6%AE%B5%E4%BF%A1%E6%81%AF"><span class="toc-list-text">3.2 获取字段信息</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#3-3-%E8%8E%B7%E5%8F%96%E6%96%B9%E6%B3%95%E4%BF%A1%E6%81%AF"><span class="toc-list-text">3.3 获取方法信息</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#3-4-%E6%B3%A8%E8%A7%A3%EF%BC%88Annotations%EF%BC%89"><span class="toc-list-text">3.4 注解（Annotations）</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#4-C-26-%E7%9A%84%E9%9D%99%E6%80%81%E5%8F%8D%E5%B0%84"><span class="toc-list-text">4. C++26 的静态反射</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#4-1-%E5%8F%8D%E5%B0%84%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="toc-list-text">4.1 反射运算符</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#4-2-%E6%8B%BC%E6%8E%A5%E7%AC%A6%EF%BC%88Splice%EF%BC%89"><span class="toc-list-text">4.2 拼接符（Splice）</span></a></li></ol></li></ol>
+      </nav>
+      
+      </div>
+      <a class="sidebar-back-home-bottom" href="/">← 首页</a>
+    </section>
+  </div>
+
+  
+</aside>
+
+      
+
+      <main class="site-main">
+        <article class="post">
+
+  <div class="post-content">
+    
+  
+  
+  
+
+
+    <h1 id="1-什么是反射"><a href="#1-什么是反射" class="headerlink" title="1. 什么是反射"></a>1. 什么是反射</h1><p>反射是指程序在运行时（或编译期）能够检查和操作自身结构的能力。它允许程序动态地获取类型信息、访问对象的字段和方法，从而实现更灵活的编程模式。</p>
+<p>根据执行时机的不同，可分为以下两类：</p>
+<ul>
+<li><strong>运行时反射（Runtime Reflection）</strong>：如 Go、Java，程序运行期间动态查阅类型元数据，灵活但有一定性能开销</li>
+<li><strong>编译期静态反射（Compile-time Static Reflection）</strong>：如 C++26，类型信息在编译阶段被遍历并生成代码，运行时无额外开销</li>
+</ul>
+<h1 id="2-Go-的运行时反射"><a href="#2-Go-的运行时反射" class="headerlink" title="2. Go 的运行时反射"></a>2. Go 的运行时反射</h1><p>Go 语言的反射机制主要依赖于 <code>reflect</code> 标准库包。它的设计哲学是：编译器在编译时埋入类型元数据，程序在运行时通过 <code>interface{}</code> 这个“万能容器”将类型信息提取出来。</p>
+<p>主要涉及两个核心类型：</p>
+<ul>
+<li><code>reflect.Type</code>：表示 Go 语言中的类型信息，通过 <code>reflect.TypeOf()</code> 函数获取</li>
+<li><code>reflect.Value</code>：表示 Go 语言中的值信息，通过 <code>reflect.ValueOf()</code> 函数获取</li>
+</ul>
+<h2 id="2-1-获取类型和值"><a href="#2-1-获取类型和值" class="headerlink" title="2.1 获取类型和值"></a>2.1 获取类型和值</h2><ol>
+<li>普通变量</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>    x := <span class="hljs-number">42</span><br>    fmt.Println(reflect.TypeOf(x))<br>    fmt.Println(reflect.ValueOf(x))<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>结构体</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> Person <span class="hljs-keyword">struct</span> &#123;<br>    Name <span class="hljs-type">string</span><br>    Age  <span class="hljs-type">int</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>    p := Person&#123;<br>        Name: <span class="hljs-string">&quot;Alice&quot;</span>, <br>        Age: <span class="hljs-number">30</span><br>    &#125;<br>    fmt.Println(reflect.TypeOf(p))<br>    fmt.Println(reflect.ValueOf(p))<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-2-修改值"><a href="#2-2-修改值" class="headerlink" title="2.2 修改值"></a>2.2 修改值</h2><p>Go 规定只有可寻址（Addressable）的值才能被修改。所以我们需要先传入指针，然后再通过 Elem() 解引用来获取可寻址的值。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>    p := Person&#123;<br>        Name: <span class="hljs-string">&quot;Alice&quot;</span>, <br>        Age: <span class="hljs-number">30</span><br>    &#125;<br>    v := reflect.ValueOf(&amp;p).Elem() <span class="hljs-comment">// 获取可寻址的值</span><br>    v.FieldByName(<span class="hljs-string">&quot;Age&quot;</span>).SetInt(<span class="hljs-number">31</span>) <span class="hljs-comment">// 修改 Age 字段</span><br>    fmt.Println(p.Age)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="2-3-结构体标签（Struct-Tags）"><a href="#2-3-结构体标签（Struct-Tags）" class="headerlink" title="2.3 结构体标签（Struct Tags）"></a>2.3 结构体标签（Struct Tags）</h2><p>在 Go 语言中，结构体字段可以使用标签来附加元信息，这些标签在运行时可以通过反射获取。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> Person <span class="hljs-keyword">struct</span> &#123;<br>    Name <span class="hljs-type">string</span> <span class="hljs-string">`json:&quot;name&quot; db:&quot;person_name&quot;`</span><br>    Age  <span class="hljs-type">int</span>    <span class="hljs-string">`json:&quot;age&quot; db:&quot;person_age&quot;`</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>    t := reflect.TypeOf(Person&#123;&#125;)<br>    <span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; t.NumField(); i++ &#123;<br>        field := t.Field(i)<br>        fmt.Println(<span class="hljs-string">&quot;JSON Tag:&quot;</span>, field.Tag.Get(<span class="hljs-string">&quot;json&quot;</span>)) <span class="hljs-comment">// 获取 json 标签</span><br>        fmt.Println(<span class="hljs-string">&quot;DB Tag:&quot;</span>, field.Tag.Get(<span class="hljs-string">&quot;db&quot;</span>))     <span class="hljs-comment">// 获取 db 标签</span><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>在 Go 的 web 框架（如 Gin、Echo）中，结构体标签被广泛用于绑定请求参数和验证数据。通过反射，框架可以在运行时解析结构体的标签信息，从而实现自动绑定和验证。</p>
+<h1 id="3-Java-的运行时反射"><a href="#3-Java-的运行时反射" class="headerlink" title="3. Java 的运行时反射"></a>3. Java 的运行时反射</h1><p>Java 的反射机制允许程序在运行时动态地获取类的信息、创建对象、调用方法和访问字段。Java 的反射主要通过 <code>java.lang.reflect</code> 包提供的类来实现，包括 <code>Class</code>、<code>Method</code>、<code>Field</code>、<code>Constructor</code> 等对象。</p>
+<h2 id="3-1-获取-Class-对象"><a href="#3-1-获取-Class-对象" class="headerlink" title="3.1 获取 Class 对象"></a>3.1 获取 Class 对象</h2><p>在 Java 中，每个类在类加载器加载时都会在 JVM 的元空间中生成一个唯一的 <code>Class</code> 对象，它是反射操作的入口。</p>
+<p>获取 <code>Class</code> 对象有三种常见方式：</p>
+<ol>
+<li>通过类名获取</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java">Class&lt;?&gt; clazz = Class.forName(<span class="hljs-string">&quot;com.example.MyClass&quot;</span>);<br></code></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>通过类的字面量获取</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java">Class&lt;?&gt; clazz = MyClass.class;<br></code></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>通过对象实例获取</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">MyClass</span> <span class="hljs-variable">obj</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">MyClass</span>();<br>Class&lt;?&gt; clazz = obj.getClass();<br></code></pre></td></tr></table></figure>
+
+<h2 id="3-2-获取字段信息"><a href="#3-2-获取字段信息" class="headerlink" title="3.2 获取字段信息"></a>3.2 获取字段信息</h2><p>通过 <code>Class</code> 对象可以获取类的字段信息（字段名、类型、修饰符等）。</p>
+<ul>
+<li><code>getDeclaredFields()</code>：获取类中所有声明字段（包括私有字段）</li>
+<li><code>getDeclaredField(String name)</code>：获取指定名称的字段（包括私有字段）</li>
+<li><code>getFields()</code>：获取类中所有公共字段（包括继承的公共字段）</li>
+<li><code>getField(String name)</code>：获取指定名称的公共字段（包括继承的公共字段）</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Person</span> &#123;<br>    <span class="hljs-keyword">private</span> String name;<br>    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> age;<br>&#125;<br><br>Field[] fields = Person.class.getDeclaredFields();<br><span class="hljs-keyword">for</span> (Field field : fields) &#123;<br>    System.out.println(field.getName() + <span class="hljs-string">&quot; - &quot;</span> + field.getType()); <span class="hljs-comment">// 输出字段名和类型</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>通过 <code>Field</code> 对象，我们可以使用 <code>get()</code> 和 <code>set()</code> 方法来读取和写入字段的值。Java 的反射机制允许修改私有字段，但需要先调用 <code>setAccessible(true)</code> 来绕过访问控制检查。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">Person</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Person</span>();<br><span class="hljs-type">Field</span> <span class="hljs-variable">nameField</span> <span class="hljs-operator">=</span> Person.class.getDeclaredField(<span class="hljs-string">&quot;name&quot;</span>);<br>nameField.setAccessible(<span class="hljs-literal">true</span>);<br>nameField.set(p, <span class="hljs-string">&quot;Alice&quot;</span>); <span class="hljs-comment">// 设置 name 字段</span><br><span class="hljs-type">String</span> <span class="hljs-variable">name</span> <span class="hljs-operator">=</span> (String) nameField.get(p); <span class="hljs-comment">// get() 返回的是 Object 类型，需要强制转换</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="3-3-获取方法信息"><a href="#3-3-获取方法信息" class="headerlink" title="3.3 获取方法信息"></a>3.3 获取方法信息</h2><p>通过 <code>Class</code> 对象可以获取类的方法信息（方法名、参数类型、返回类型等）。</p>
+<ul>
+<li><code>getDeclaredMethods()</code>：获取类中所有声明方法（包括私有方法）</li>
+<li><code>getDeclaredMethod(String name, Class&lt;?&gt;... parameterTypes)</code>：获取指定名称和参数类型的方法（包括私有方法）</li>
+<li><code>getMethods()</code>：获取类中所有公共方法（包括继承的公共方法）</li>
+<li><code>getMethod(String name, Class&lt;?&gt;... parameterTypes)</code>：获取指定名称和参数类型的公共方法（包括继承的公共方法）</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Person</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">greet</span><span class="hljs-params">()</span> &#123;<br>        System.out.println(<span class="hljs-string">&quot;Hello!&quot;</span>);<br>    &#125;<br>    <br>    <span class="hljs-keyword">private</span> String <span class="hljs-title function_">getName</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Alice&quot;</span>;<br>    &#125;<br>&#125;<br><br>Method[] methods = Person.class.getDeclaredMethods();<br><span class="hljs-keyword">for</span> (Method method : methods) &#123;<br>    System.out.println(method.getName() + <span class="hljs-string">&quot; - &quot;</span> + method.getReturnType());<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>通过 <code>Method</code> 对象，我们可以使用 <code>invoke()</code> 方法来调用方法。Java 的反射机制允许调用私有方法，但同样需要先调用 <code>setAccessible(true)</code> 来绕过访问控制检查。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">Method</span> <span class="hljs-variable">getNameMethod</span> <span class="hljs-operator">=</span> Person.class.getDeclaredMethod(<span class="hljs-string">&quot;getName&quot;</span>);<br>getNameMethod.setAccessible(<span class="hljs-literal">true</span>);<br><span class="hljs-type">String</span> <span class="hljs-variable">name</span> <span class="hljs-operator">=</span> (String) getNameMethod.invoke(p); <span class="hljs-comment">// invoke() 返回的是 Object 类型，需要强制转换</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="3-4-注解（Annotations）"><a href="#3-4-注解（Annotations）" class="headerlink" title="3.4 注解（Annotations）"></a>3.4 注解（Annotations）</h2><p>在 Java 中，注解（Annotations）是一种元数据，可以附加到语言构造（类、方法、字段等）上。我们可以在运行时通过反射来获取这些注解信息，从而实现自定义的行为。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 定义一个自定义注解</span><br><span class="hljs-meta">@Retention(RetentionPolicy.RUNTIME)</span> <span class="hljs-comment">// 在运行时可见</span><br><span class="hljs-meta">@Target(ElementType.FIELD)</span>          <span class="hljs-comment">// 只能用于字段</span><br><span class="hljs-keyword">public</span> <span class="hljs-meta">@interface</span> JsonProperty &#123;    <span class="hljs-comment">// 使用 @interface 定义注解</span><br>    String <span class="hljs-title function_">value</span><span class="hljs-params">()</span>;<br>&#125;<br><br><span class="hljs-comment">// 使用注解</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Person</span> &#123;<br>    <span class="hljs-meta">@JsonProperty(&quot;name&quot;)</span><br>    <span class="hljs-keyword">private</span> String name;<br>    <br>    <span class="hljs-meta">@JsonProperty(&quot;age&quot;)</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> age;<br>&#125;<br><br><span class="hljs-comment">// 获取注解信息</span><br><span class="hljs-type">Field</span> <span class="hljs-variable">nameField</span> <span class="hljs-operator">=</span> Person.class.getDeclaredField(<span class="hljs-string">&quot;name&quot;</span>);<br><span class="hljs-type">JsonProperty</span> <span class="hljs-variable">jsonProperty</span> <span class="hljs-operator">=</span> nameField.getAnnotation(JsonProperty.class);<br><span class="hljs-keyword">if</span> (jsonProperty != <span class="hljs-literal">null</span>) &#123;<br>    System.out.println(<span class="hljs-string">&quot;JSON Property: &quot;</span> + jsonProperty.value());<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>在 Spring 框架中，注解被广泛用于配置和<strong>依赖注入</strong>。通过反射，Spring 可以在运行时扫描类的注解信息，从而实现自动装配和配置。</p>
+<h1 id="4-C-26-的静态反射"><a href="#4-C-26-的静态反射" class="headerlink" title="4. C++26 的静态反射"></a>4. C++26 的静态反射</h1><p>C++26 引入了编译期静态反射，我们可以在编译期获取各种语言构造的元信息，用于生成代码或进行编译期检查。</p>
+<ul>
+<li>在编译期完成，<strong>运行时零开销</strong></li>
+<li><strong>无法处理运行时动态类型</strong>（运行时动态生成的类、动态加载的共享库、网络传输的未知结构等），不支持运行时修改</li>
+</ul>
+<h2 id="4-1-反射运算符"><a href="#4-1-反射运算符" class="headerlink" title="4.1 反射运算符"></a>4.1 反射运算符</h2><p>反射运算符 <code>^^</code>，用于生成指定的语言构造的反射值（反射值的类型为 <code>std::meta::info</code>）。</p>
+<p>我们可以通过反射值来获取语言构造的各种信息：</p>
+<ul>
+<li><code>std::meta::info::kind()</code> 返回语言构造的种类（如 <code>class</code>、<code>struct</code>、<code>enum</code> 等）</li>
+<li><code>std::meta::info::name()</code> 返回语言构造的名称</li>
+<li><code>std::meta::info::type()</code> 返回语言构造的类型</li>
+<li><code>std::nonstatic_data_members_of</code> &#x2F; <code>std::static_data_members_of</code> <ul>
+<li>返回给定类型的非静态数据成员 &#x2F; 静态数据成员的反射值列表</li>
+<li>具体的返回类型为 <code>std::meta::info_list</code>，可以通过索引访问每个成员的反射值</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">Point</span> &#123; <span class="hljs-type">int</span> x; <span class="hljs-type">int</span> y; &#125;;<br><br><span class="hljs-comment">// 获取 Point 的所有非静态数据成员的反射信息</span><br><span class="hljs-keyword">constexpr</span> <span class="hljs-keyword">auto</span> members = std::meta::<span class="hljs-built_in">nonstatic_data_members_of</span>(^^Point);<br><span class="hljs-comment">// members[0] 代表 Point::x</span><br><span class="hljs-comment">// members[1] 代表 Point::y</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="4-2-拼接符（Splice）"><a href="#4-2-拼接符（Splice）" class="headerlink" title="4.2 拼接符（Splice）"></a>4.2 拼接符（Splice）</h2><p>拼接符 <code>[: expression :]</code>，用于将反射值对应的语言构造注入到代码中。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 利用反射生成枚举转字符串的代码（编译期完成）</span><br><span class="hljs-function"><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span> E&gt;</span><br><span class="hljs-function"><span class="hljs-keyword">constexpr</span> std::string_view <span class="hljs-title">enum_to_string</span><span class="hljs-params">(E value)</span> </span>&#123;<br>    <span class="hljs-keyword">constexpr</span> <span class="hljs-keyword">auto</span> members = std::meta::<span class="hljs-built_in">nonstatic_data_members_of</span>(^^E); <span class="hljs-comment">// 获取枚举的所有成员</span><br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">const</span> <span class="hljs-keyword">auto</span>&amp; member : members) &#123;<br>        <span class="hljs-keyword">if</span> (value == member) &#123;<br>            <span class="hljs-keyword">return</span> [: member.name :]; <span class="hljs-comment">// 将成员名注入为字符串，注入后相当于 return &quot;成员名&quot;;</span><br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Unknown&quot;</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+  </div>
+
+  
+  <div class="post-copyright">
+    <p><strong>Shionyori</strong></p>
+    <p>/2026/08/01/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/</p>
+    <p>&amp;copy; 2026 Shionyori. 保留所有权利。</p>
+  </div>
+  
+
+  <footer class="post-footer">
+    
+    <div class="post-tags-footer">
+      
+        <a class="tag-link" href="/tags/C/">C++</a>
+      
+        <a class="tag-link" href="/tags/Go/">Go</a>
+      
+        <a class="tag-link" href="/tags/Java/">Java</a>
+      
+        <a class="tag-link" href="/tags/%E8%BF%90%E8%A1%8C%E6%97%B6%E5%8F%8D%E5%B0%84/">运行时反射</a>
+      
+        <a class="tag-link" href="/tags/%E9%9D%99%E6%80%81%E5%8F%8D%E5%B0%84/">静态反射</a>
+      
+        <a class="tag-link" href="/tags/Go-%E7%BB%93%E6%9E%84%E4%BD%93%E6%A0%87%E7%AD%BE/">Go 结构体标签</a>
+      
+        <a class="tag-link" href="/tags/Java-%E6%B3%A8%E8%A7%A3/">Java 注解</a>
+      
+    </div>
+    
+
+    
+<div class="post-share">
+  <div class="share-buttons">
+    
+    
+    
+
+    
+    <a class="share-btn share-twitter" href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fshionyori.github.io%2F2026%2F08%2F01%2F%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6%2F&text=%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6" target="_blank" rel="noopener" aria-label="分享到 Twitter">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fshionyori.github.io%2F2026%2F08%2F01%2F%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fshionyori.github.io%2F2026%2F08%2F01%2F%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6%2F" target="_blank" rel="noopener" aria-label="分享到 LinkedIn">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    
+
+    
+    <button class="share-btn share-copy" aria-label="复制链接" data-url="https://shionyori.github.io/2026/08/01/反射机制/">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    </button>
+    
+  </div>
+</div>
+
+
+  </footer>
+</article>
+
+
+
+<nav class="post-nav">
+  
+    <a class="post-nav-item post-nav-prev has-cover" href="/2026/08/11/WSL2%20%E7%9A%84%20localhost%20%E8%AE%BF%E9%97%AE%E6%9C%BA%E5%88%B6/" style='background-image: url(/images/posts/WSL2%20%E7%9A%84%20localhost%20%E8%AE%BF%E9%97%AE%E6%9C%BA%E5%88%B6/cover.png)'>
+      <span class="nav-label">上一篇</span>
+      <span class="nav-title">WSL2 的 localhost 访问机制</span>
+    </a>
+  
+  
+    <a class="post-nav-item post-nav-next has-cover" href="/2026/07/04/hexo-theme-shion%20%E7%BB%84%E4%BB%B6%E6%BC%94%E7%A4%BA/" style='background-image: url(/images/posts/hexo-theme-shion%20%E7%BB%84%E4%BB%B6%E6%BC%94%E7%A4%BA/cover.png)'>
+      <span class="nav-label">下一篇</span>
+      <span class="nav-title">hexo-theme-shion 组件演示</span>
+    </a>
+  
+</nav>
+
+
+
+
+
+      </main>
+
+      
+    </div>
+  </div>
+</div>
+
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+
+<nav class="mobile-nav" id="mobile-nav">
+  <div class="mobile-nav-inner">
+    <div class="mobile-nav-header">
+      <span class="mobile-nav-title">首页</span>
+      <button class="btn-icon mobile-nav-close" id="mobile-nav-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <ul class="mobile-nav-menu">
+      
+        <li>
+          <a class="mobile-nav-link" href="/">首页</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/archives/">归档</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/tags/">标签</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/categories/">分类</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/friends/">友链</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/about/">关于</a>
+        </li>
+      
+    </ul>
+
+    
+    <div class="mobile-nav-social">
+      
+        <a class="social-icon" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+  </div>
+</nav>
+
+  <footer class="site-footer">
+  <div class="footer-inner">
+    
+    <div class="footer-social">
+      
+        <a class="social-link" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+
+    <div class="footer-info">
+      <span class="copyright">
+        &copy;
+        
+          2025 &ndash;
+        
+        2026
+        Shionyori
+      </span>
+
+      
+        <span class="powered-by">由 <a href="https://hexo.io/" target="_blank">Hexo</a> 驱动</span>
+      
+
+      
+        <span class="theme-by">主题 Shion</span>
+      
+
+      
+    </div>
+
+    
+
+  </div>
+</footer>
+
+
+
+  
+<div class="search-overlay" id="search-overlay"
+     data-i18n-found="关于「{query}」，找到了 {count} 条记录"
+     data-i18n-not-found="关于「{query}」，没有找到任何记录呢">
+  <div class="search-container">
+    <img class="search-decoration" src="/images/shion/search.png" alt="">
+    <div class="search-header">
+      <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" class="search-input" id="search-input" placeholder="输入关键词搜索..." autocomplete="off">
+      <button class="search-close" id="search-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="search-info" id="search-info"></div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+
+
+  
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/contrib/auto-render.min.js"></script>
+
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>hexo-theme-shion 组件演示 - Shionyori&#39;s Blog</title>
+
+
+<meta name="description" content="Gorgeous blooming flowers will eventually elegantly scattered.">
+
+
+<meta property="og:title" content="hexo-theme-shion 组件演示">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://shionyori.github.io/2026/07/04/hexo-theme-shion 组件演示/">
+<meta property="og:site_name" content="Shionyori&#39;s Blog">
+
+
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="hexo-theme-shion 组件演示">
+
+
+<link rel="canonical" href="https://shionyori.github.io/2026/07/04/hexo-theme-shion 组件演示/">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "name": "hexo-theme-shion 组件演示",
+  "url": "https://shionyori.github.io/2026/07/04/hexo-theme-shion 组件演示/",
+  "datePublished": "2026-07-05T00:00:00+08:00",
+  "author": { "@type": "Person", "name": "Shionyori" }
+  
+}
+</script>
+
+<meta name="theme-color" content="#6b7eb5">
+<link rel="icon" type="image/png" href="/images/shion/favicon.png">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+
+
+<script>
+  (function() {
+    var mode = 'auto';
+    var saved = localStorage.getItem('shion-theme');
+    if (saved) { mode = saved; }
+    else if (mode === 'auto') {
+      mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    if (mode === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+    (function() {
+      var fonts = {"heading":"'Noto Serif SC', 'Source Han Serif SC', Georgia, serif","body":"'Noto Sans SC', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif","code":"'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace","size_root":"15px"};
+      var legacySize = '';
+      var sizeRoot = fonts.size_root || legacySize;
+
+      if (fonts.heading) {
+        document.documentElement.style.setProperty('--font-heading', fonts.heading);
+      }
+      if (fonts.body) {
+        document.documentElement.style.setProperty('--font-body', fonts.body);
+      }
+      if (fonts.code) {
+        document.documentElement.style.setProperty('--font-code', fonts.code);
+      }
+      if (sizeRoot) {
+        document.documentElement.style.setProperty('--font-size-root', sizeRoot);
+      }
+    })();
+  })();
+</script>
+
+
+<noscript>
+  <style>
+    .sidebar-inner,
+    .content-card,
+    .post,
+    .page,
+    .archive-item,
+    .category-item,
+    .pagination,
+    .comments,
+    .not-found-content,
+    .widget,
+    .tag-cloud-item,
+    .post-card-wrapper,
+    .post-content,
+    .post-tags-footer,
+    .post-share,
+    .post-copyright,
+    .post-nav {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  </style>
+</noscript>
+
+  <script>
+    window.__shionConfig = {
+      katexCDN: 'https://cdn.jsdelivr.net/npm/katex@0',
+      katexDelimiters: [{"left":"$$","right":"$$","display":true},{"left":"$","right":"$","display":false}]
+    };
+  </script>
+<meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a class="site-logo" href="/">
+      
+        <span class="logo-text">Shionyori&#39;s Blog</span>
+      
+    </a>
+
+    <nav class="site-nav" id="site-nav">
+      
+        <a class="nav-item" href="/">首页</a>
+      
+        <a class="nav-item" href="/archives/">归档</a>
+      
+        <a class="nav-item" href="/tags/">标签</a>
+      
+        <a class="nav-item" href="/categories/">分类</a>
+      
+        <a class="nav-item" href="/friends/">友链</a>
+      
+        <a class="nav-item" href="/about/">关于</a>
+      
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn-icon search-toggle" id="search-toggle" aria-label="搜索">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon theme-toggle" id="theme-toggle" aria-label="深色模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon sidebar-toggle" id="sidebar-toggle" aria-label="sidebar_toggle">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+
+  
+<div class="reading-progress" id="reading-progress">
+  <div class="reading-progress-bar" id="reading-progress-bar"></div>
+</div>
+
+
+
+<div id="pjax-container">
+  
+  
+  
+  <div class="page-bg">
+  
+    <img src="/images/posts/hexo-theme-shion%20%E7%BB%84%E4%BB%B6%E6%BC%94%E7%A4%BA/cover.png" alt="">
+  </div>
+  
+
+  
+  
+  
+  <section class="page-hero">
+    <h1 class="hero-title">hexo-theme-shion 组件演示</h1>
+    <div class="hero-subtitle">
+      <div class="post-meta">
+    
+    <time class="post-date" datetime="2026-07-05T00:00:00+08:00">
+      2026-07-05
+    </time>
+    
+
+    
+    <time class="post-updated" datetime="2026-07-06T00:00:00+08:00">
+      更新于 2026-07-06
+    </time>
+    
+
+    
+    <span class="post-word-count">1573 words</span>
+    
+
+    
+    <span class="post-reading-time">6 min read</span>
+    
+
+    
+    <span class="post-categories">
+      
+        <a class="category-link" href="/categories/%E5%85%B6%E4%BB%96/">其他</a>
+      
+    </span>
+    
+
+</div>
+
+    </div>
+    
+    <div class="hero-tags">
+      
+        <a class="tag-link" href="/tags/Hexo/">Hexo</a>
+      
+        <a class="tag-link" href="/tags/%E4%B8%BB%E9%A2%98/">主题</a>
+      
+        <a class="tag-link" href="/tags/%E6%95%99%E7%A8%8B/">教程</a>
+      
+        <a class="tag-link" href="/tags/Shion/">Shion</a>
+      
+        <a class="tag-link" href="/tags/%E6%A0%87%E7%AD%BE%E7%BB%84%E4%BB%B6/">标签组件</a>
+      
+    </div>
+    
+  </section>
+  
+  
+
+  
+<div class="container">
+    <div class="content-wrapper">
+      
+      
+<aside class="site-sidebar sidebar-post" id="site-sidebar" data-position="left">
+
+  
+  
+
+  <div class="sidebar-sticky-group">
+    
+    <section class="sidebar-card sidebar-music">
+      
+<div class="music-player" data-playlist='[{"name":"奏穹のラプソディア (狂想曲)","artist":"瑶山百霊","url":"/music/瑶山百霊 - 奏穹のラプソディア (狂想曲).ogg","cover":"/music/covers/soukyuu-no-rhapsody.jpg"},{"name":"Graveyard Memory","artist":"GET IN THE RING","url":"/music/GET IN THE RING - Graveyard Memory.ogg","cover":"/music/covers/graveyard-memory.jpg"},{"name":"ポラリス (北极星)","artist":"GET IN THE RING","url":"/music/GET IN THE RING - ポラリス (北极星).ogg","cover":"/music/covers/polaris.jpg"},{"name":"その唄の名は…","artist":"yukina / GET IN THE RING","url":"/music/yukina _ GET IN THE RING - その唄の名は….ogg","cover":"/music/covers/sono-uta-no-na-wa.jpg"},{"name":"over the moon","artist":"Forest306","url":"/music/Forest306 - over the moon.ogg","cover":"/music/covers/over-the-moon.jpg"},{"name":"21時の探しモノ (21时寻找的东西)","artist":"minimum electric design","url":"/music/minimum electric design - 21時の探しモノ (21时寻找的东西).ogg","cover":"/music/covers/21ji-no-sagashimono.jpg"},{"name":"Freak Report 01 ~他愛も無い二人の博物誌~","artist":"凛","url":"/music/凛 - Freak Report 01 ~他愛も無い二人の博物誌~.ogg","cover":"/music/covers/freak-report-01.jpg"},{"name":"かぜのいろ (カゼノイロ)","artist":"森羅万象","url":"/music/森羅万象 - かぜのいろ (カゼノイロ).ogg","cover":"/music/covers/kaze-no-iro.jpg"},{"name":"Onisan Dochira!","artist":"狐の工作室","url":"/music/狐の工作室 - Onisan Dochira!.ogg","cover":"/music/covers/onisan-dochira.jpg"},{"name":"Skip in the byway","artist":"神乃木製作所","url":"/music/神乃木製作所 - Skip in the byway.ogg","cover":"/music/covers/skip-in-the-byway.jpg"}]'>
+  
+  <div class="music-body">
+    <div class="music-cover">
+      
+      
+      <img src="/music/covers/soukyuu-no-rhapsody.jpg" alt="cover" class="music-cover-img" onerror="if(!this.dataset.failed){this.dataset.failed='1';this.src='/images/shion/404.png'}">
+      
+    </div>
+    <div class="music-info">
+      <div class="music-title-row">
+        <span class="music-title">奏穹のラプソディア (狂想曲)</span>
+        <span class="music-counter">1 / 10</span>
+      </div>
+      <span class="music-artist">瑶山百霊</span>
+      <div class="music-progress">
+        <div class="music-progress-bar">
+          <div class="music-progress-fill"></div>
+        </div>
+        <div class="music-time">
+          <span class="music-time-current">0:00</span>
+          <span class="music-time-total">0:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="music-controls">
+    <button class="music-btn music-btn-mode" aria-label="Play mode" data-mode="sequential" title="Sequential">
+      <svg class="music-mode-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+    <button class="music-btn music-btn-prev" aria-label="Previous track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+    </button>
+    <button class="music-btn music-btn-play" aria-label="Play">
+      <svg class="music-icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <svg class="music-icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="6" height="16"/><rect x="14" y="4" width="6" height="16"/></svg>
+    </button>
+    <button class="music-btn music-btn-next" aria-label="Next track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+    </button>
+    <button class="music-btn music-btn-list" aria-label="Playlist">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="music-playlist">
+    
+    <button class="music-playlist-item active" data-index="0">
+      <span class="music-playlist-name">奏穹のラプソディア (狂想曲)</span>
+      <span class="music-playlist-artist">瑶山百霊</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="1">
+      <span class="music-playlist-name">Graveyard Memory</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="2">
+      <span class="music-playlist-name">ポラリス (北极星)</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="3">
+      <span class="music-playlist-name">その唄の名は…</span>
+      <span class="music-playlist-artist">yukina / GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="4">
+      <span class="music-playlist-name">over the moon</span>
+      <span class="music-playlist-artist">Forest306</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="5">
+      <span class="music-playlist-name">21時の探しモノ (21时寻找的东西)</span>
+      <span class="music-playlist-artist">minimum electric design</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="6">
+      <span class="music-playlist-name">Freak Report 01 ~他愛も無い二人の博物誌~</span>
+      <span class="music-playlist-artist">凛</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="7">
+      <span class="music-playlist-name">かぜのいろ (カゼノイロ)</span>
+      <span class="music-playlist-artist">森羅万象</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="8">
+      <span class="music-playlist-name">Onisan Dochira!</span>
+      <span class="music-playlist-artist">狐の工作室</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="9">
+      <span class="music-playlist-name">Skip in the byway</span>
+      <span class="music-playlist-artist">神乃木製作所</span>
+    </button>
+    
+  </div>
+  
+</div>
+
+    </section>
+    
+
+    <section class="sidebar-card sidebar-toc">
+      <div class="sidebar-toc-header">
+        <a class="sidebar-back-home" href="/" title="首页">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </a>
+        <span class="sidebar-toc-label">hexo-theme-shion 组件演示</span>
+      </div>
+      <div class="sidebar-scroll">
+      
+      
+      <nav class="sidebar-toc">
+        <ol class="toc-list"><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E6%A0%87%E7%AD%BE%E7%BB%84%E4%BB%B6"><span class="toc-list-text">标签组件</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#Note-%E6%8F%90%E7%A4%BA%E6%A1%86"><span class="toc-list-text">Note 提示框</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#Image-%E5%9B%BE%E7%89%87"><span class="toc-list-text">Image 图片</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#Quote-%E5%BC%95%E7%94%A8%E5%9D%97"><span class="toc-list-text">Quote 引用块</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#Details-%E6%8A%98%E5%8F%A0%E9%9D%A2%E6%9D%BF"><span class="toc-list-text">Details 折叠面板</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#Tabs-%E6%A0%87%E7%AD%BE%E9%A1%B5"><span class="toc-list-text">Tabs 标签页</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#LinkCard-%E9%93%BE%E6%8E%A5%E5%8D%A1%E7%89%87"><span class="toc-list-text">LinkCard 链接卡片</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#PostLinkCard-%E6%96%87%E7%AB%A0%E5%86%85%E9%93%BE%E5%8D%A1%E7%89%87"><span class="toc-list-text">PostLinkCard 文章内链卡片</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E5%86%85%E5%AE%B9%E6%8E%92%E7%89%88"><span class="toc-list-text">内容排版</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E4%BB%A3%E7%A0%81%E5%9D%97"><span class="toc-list-text">代码块</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E8%A1%A8%E6%A0%BC"><span class="toc-list-text">表格</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E6%95%B0%E5%AD%A6%E5%85%AC%E5%BC%8F"><span class="toc-list-text">数学公式</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E4%B8%BB%E9%A2%98%E5%8A%9F%E8%83%BD"><span class="toc-list-text">主题功能</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E6%90%9C%E7%B4%A2"><span class="toc-list-text">搜索</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E6%9A%97%E8%89%B2%E6%A8%A1%E5%BC%8F"><span class="toc-list-text">暗色模式</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E9%9F%B3%E4%B9%90%E6%92%AD%E6%94%BE%E5%99%A8"><span class="toc-list-text">音乐播放器</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E8%BF%87%E6%9C%9F%E6%8F%90%E9%86%92"><span class="toc-list-text">过期提醒</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E7%89%88%E6%9D%83%E5%A3%B0%E6%98%8E"><span class="toc-list-text">版权声明</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E9%98%85%E8%AF%BB%E8%BF%9B%E5%BA%A6%E6%9D%A1"><span class="toc-list-text">阅读进度条</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%8F%8B%E9%93%BE%E9%A1%B5%E9%9D%A2"><span class="toc-list-text">友链页面</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E4%BE%A7%E8%BE%B9%E6%A0%8F%E6%8C%89%E9%A1%B5%E9%85%8D%E7%BD%AE"><span class="toc-list-text">侧边栏按页配置</span></a></li></ol></li></ol>
+      </nav>
+      
+      </div>
+      <a class="sidebar-back-home-bottom" href="/">← 首页</a>
+    </section>
+  </div>
+
+  
+</aside>
+
+      
+
+      <main class="site-main">
+        <article class="post">
+
+  <div class="post-content">
+    
+  
+  
+  
+
+
+    <p>逐一演示 hexo-theme-shion 内置的标签组件和主要功能特性。</p>
+<hr>
+<h1 id="标签组件"><a href="#标签组件" class="headerlink" title="标签组件"></a>标签组件</h1><h2 id="Note-提示框"><a href="#Note-提示框" class="headerlink" title="Note 提示框"></a>Note 提示框</h2><p>四种语义的提示框：<code>info</code>（信息）、<code>warning</code>（警告）、<code>success</code>（成功）、<code>danger</code>（危险）。</p>
+<div class="note note-info"><p>补充说明或背景信息。适合放在正文中提供额外上下文。</p>
+</div>
+
+<div class="note note-warning"><p>提醒注意潜在风险或重要事项。不要过度使用，否则会降低警示效果。</p>
+</div>
+
+<div class="note note-success"><p>操作完成、结论总结时使用。比如”以上配置完成后即可正常运行”。</p>
+</div>
+
+<div class="note note-danger"><p>可能导致数据丢失或系统异常的严重警告。例如”此操作不可逆，执行前请备份”。</p>
+</div>
+
+<p>语法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs njk">&#123;% note info %&#125;<br>补充说明内容。<br>&#123;% endnote %&#125;<br></code></pre></td></tr></table></figure>
+
+<p>四种样式通过 <code>info</code> &#x2F; <code>warning</code> &#x2F; <code>success</code> &#x2F; <code>danger</code> 切换。</p>
+<hr>
+<h2 id="Image-图片"><a href="#Image-图片" class="headerlink" title="Image 图片"></a>Image 图片</h2><p>图片标签支持命名参数模式。未设置 <code>nozoom</code> 的图片可点击放大。</p>
+<figure class="image-figure"><img src="https://shionyori.github.io/images/shion/hero.png" alt="Hero" loading="lazy" onerror="this.src='/images/shion/404.png';this.classList.add('img-error')"><figcaption>带标题的图片，点击可放大</figcaption></figure>
+
+<p>指定宽度的图片：</p>
+<figure class="image-figure"><img src="https://shionyori.github.io/images/shion/hero.png" alt="Hero" loading="lazy" style="width:300px" onerror="this.src='/images/shion/404.png';this.classList.add('img-error')"><figcaption>宽度 300 像素</figcaption></figure>
+
+<p>居中显示：</p>
+<figure class="image-figure align-center"><img src="https://shionyori.github.io/images/shion/hero.png" alt="Hero" loading="lazy" class="align-center" style="width:300px" onerror="this.src='/images/shion/404.png';this.classList.add('img-error')"><figcaption>居中对齐</figcaption></figure>
+
+<p>禁用点击缩放（适合图标类小图）：</p>
+<figure class="image-figure no-zoom"><img src="https://shionyori.github.io/images/shion/favicon.png" alt="Favicon" loading="lazy" class="no-zoom" onerror="this.src='/images/shion/404.png';this.classList.add('img-error')"></figure>
+
+<p>语法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs njk">&#123;% image src=image.png alt=描述 caption=标题 %&#125;<br>&#123;% image src=image.png size=&quot;400&quot; %&#125;<br>&#123;% image src=image.png size=&quot;600 400&quot; %&#125;<br>&#123;% image src=image.png align=center %&#125;<br>&#123;% image src=image.png nozoom=true %&#125;<br>&#123;% image src=icon.png inline=true %&#125;<br></code></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>src</code></td>
+<td>图片路径，必填</td>
+</tr>
+<tr>
+<td><code>alt</code></td>
+<td>替代文本</td>
+</tr>
+<tr>
+<td><code>caption</code></td>
+<td>图片下方标题</td>
+</tr>
+<tr>
+<td><code>size</code></td>
+<td><code>&quot;宽 高&quot;</code> 格式，单值表示宽度</td>
+</tr>
+<tr>
+<td><code>align</code></td>
+<td><code>left</code> &#x2F; <code>center</code> &#x2F; <code>right</code></td>
+</tr>
+<tr>
+<td><code>nozoom</code></td>
+<td><code>true</code> 禁用点击放大</td>
+</tr>
+<tr>
+<td><code>inline</code></td>
+<td><code>true</code> 内联展示</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="Quote-引用块"><a href="#Quote-引用块" class="headerlink" title="Quote 引用块"></a>Quote 引用块</h2><p>带作者和来源标注的引用样式。</p>
+<blockquote class="styled-blockquote">Stay hungry, stay foolish.<footer class="blockquote-footer">&mdash; Steve Jobs, <cite>Apple Special Event (2005)</cite></footer></blockquote>
+
+<blockquote class="styled-blockquote">安得广厦千万间，大庇天下寒士俱欢颜。<footer class="blockquote-footer">&mdash; 杜甫, <cite>茅屋为秋风所破歌</cite></footer></blockquote>
+
+<p>语法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs njk">&#123;% blockquote &quot;作者&quot; &quot;出处&quot; %&#125;<br>引用文字。<br>&#123;% endblockquote %&#125;<br></code></pre></td></tr></table></figure>
+
+<p>第二个参数（来源）可省略，两个参数都省略时退化为普通引用块样式。</p>
+<hr>
+<h2 id="Details-折叠面板"><a href="#Details-折叠面板" class="headerlink" title="Details 折叠面板"></a>Details 折叠面板</h2><details class="tag-details"><summary>点击展开：环境配置步骤</summary><ol>
+<li>安装 Node.js 20+</li>
+<li>全局安装 Hexo CLI：<code>npm i -g hexo-cli</code></li>
+<li>初始化站点：<code>hexo init blog &amp;&amp; cd blog</code></li>
+<li>安装主题：<code>git clone https://github.com/Shionyori/hexo-theme-shion themes/shion</code></li>
+<li>构建主题：<code>cd themes/shion &amp;&amp; npm install &amp;&amp; npm run build</code></li>
+<li>启动开发服务器：<code>cd ../.. &amp;&amp; hexo server</code></li>
+</ol>
+</details>
+
+<p>语法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs njk">&#123;% details &quot;点击展开的标题&quot; %&#125;<br>折叠内容，支持 Markdown、代码块等。<br>&#123;% enddetails %&#125;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Tabs-标签页"><a href="#Tabs-标签页" class="headerlink" title="Tabs 标签页"></a>Tabs 标签页</h2><p>适合并排展示同类内容的变体。</p>
+<div class="tabs"><div class="tabs-header"><button class="tab-btn active" data-tab="0">Tab 1</button></div><div class="tabs-content"><div class="tab-panel active" data-tab="0"><!-- tab TypeScript -->
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-keyword">interface</span> <span class="hljs-title class_">SiteConfig</span> &#123;<br>  <span class="hljs-attr">title</span>: <span class="hljs-built_in">string</span><br>  <span class="hljs-attr">author</span>: <span class="hljs-built_in">string</span><br>  <span class="hljs-attr">theme</span>: <span class="hljs-built_in">string</span><br>&#125;<br><br><span class="hljs-keyword">function</span> <span class="hljs-title function_">loadConfig</span>(<span class="hljs-params"></span>): <span class="hljs-title class_">SiteConfig</span> &#123;<br>  <span class="hljs-keyword">return</span> <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;./_config.yml&#x27;</span>) <span class="hljs-keyword">as</span> <span class="hljs-title class_">SiteConfig</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<!-- tab JavaScript -->
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">loadConfig</span>(<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">const</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;fs&#x27;</span>)<br>  <span class="hljs-keyword">const</span> yaml = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;js-yaml&#x27;</span>)<br>  <span class="hljs-keyword">const</span> raw = fs.<span class="hljs-title function_">readFileSync</span>(<span class="hljs-string">&#x27;./_config.yml&#x27;</span>, <span class="hljs-string">&#x27;utf8&#x27;</span>)<br>  <span class="hljs-keyword">return</span> yaml.<span class="hljs-title function_">load</span>(raw)<br>&#125;<br></code></pre></td></tr></table></figure>
+<!-- tab Python -->
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> yaml<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">load_config</span>():<br>    <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;_config.yml&#x27;</span>, <span class="hljs-string">&#x27;r&#x27;</span>) <span class="hljs-keyword">as</span> f:<br>        <span class="hljs-keyword">return</span> yaml.safe_load(f)<br></code></pre></td></tr></table></figure></div></div></div>
+
+<p>指定默认激活的标签页（从 0 计数）：</p>
+<div class="tabs"><div class="tabs-header"><button class="tab-btn" data-tab="0">Tab 1</button></div><div class="tabs-content"><div class="tab-panel" data-tab="0"><!-- tab 第一项 -->
+默认不显示的内容。
+<!-- tab 第二项 -->
+默认显示的内容。</div></div></div>
+
+<p>语法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs njk">&#123;% tabs %&#125;<br>&lt;!-- tab &quot;标签名&quot; --&gt;<br>标签内容<br>&lt;!-- tab &quot;另一个标签&quot; --&gt;<br>另一个标签内容<br>&#123;% endtabs %&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>&#123;% tabs 1 %&#125;</code> 中的数字指定默认激活的 tab 索引。</p>
+<hr>
+<h2 id="LinkCard-链接卡片"><a href="#LinkCard-链接卡片" class="headerlink" title="LinkCard 链接卡片"></a>LinkCard 链接卡片</h2>
+    <a class="tag-link-card" href="https://hexo.io" target="_blank" rel="noopener">
+      <span class="link-card-title">Hexo</span>
+      <span class="link-card-desc">A fast, simple & powerful blog framework</span>
+      <span class="link-card-url">https://hexo.io</span>
+    </a>
+
+
+    <a class="tag-link-card" href="https://github.com/Shionyori/hexo-theme-shion" target="_blank" rel="noopener">
+      <span class="link-card-title">hexo-theme-shion</span>
+      <span class="link-card-desc">A clean, content-first Hexo blog theme themed around Shion Yorigami</span>
+      <span class="link-card-url">https://github.com/Shionyori/hexo-theme-shion</span>
+    </a>
+
+<p>语法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs njk">&#123;% linkCard &quot;标题&quot; &quot;https://url&quot; &quot;描述（可选）&quot; %&#125;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="PostLinkCard-文章内链卡片"><a href="#PostLinkCard-文章内链卡片" class="headerlink" title="PostLinkCard 文章内链卡片"></a>PostLinkCard 文章内链卡片</h2><p>Post not found: hexo-theme-shion-setup</p>
+
+<p>参数为文章的文件名（不含日期前缀和 <code>.md</code> 后缀）。渲染效果为可点击的卡片，包含标题和日期。</p>
+<p>语法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs njk">&#123;% postLinkCard &quot;文章文件名&quot; %&#125;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="内容排版"><a href="#内容排版" class="headerlink" title="内容排版"></a>内容排版</h1><h2 id="代码块"><a href="#代码块" class="headerlink" title="代码块"></a>代码块</h2><p>主题集成 highlight.js，支持 190+ 种语言的语法高亮。默认显示行号和复制按钮。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-comment">// 带有高亮、行号和复制按钮的代码块</span><br><span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">fetchPosts</span>(<span class="hljs-params"><span class="hljs-attr">page</span>: <span class="hljs-built_in">number</span></span>): <span class="hljs-title class_">Promise</span>&lt;<span class="hljs-title class_">Post</span>[]&gt; &#123;<br>  <span class="hljs-keyword">const</span> res = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(<span class="hljs-string">`/api/posts?page=<span class="hljs-subst">$&#123;page&#125;</span>`</span>)<br>  <span class="hljs-keyword">if</span> (!res.<span class="hljs-property">ok</span>) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">`HTTP <span class="hljs-subst">$&#123;res.status&#125;</span>`</span>)<br>  <span class="hljs-keyword">return</span> res.<span class="hljs-title function_">json</span>()<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>也可以通过配置关闭行号或复制按钮：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">post:</span><br>  <span class="hljs-attr">code:</span><br>    <span class="hljs-attr">line_numbers:</span> <span class="hljs-literal">false</span><br>    <span class="hljs-attr">copy_button:</span> <span class="hljs-literal">false</span><br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="表格"><a href="#表格" class="headerlink" title="表格"></a>表格</h2><p>Markdown 表格直接渲染，自动适配主题配色：</p>
+<table>
+<thead>
+<tr>
+<th>评论系统</th>
+<th>类型</th>
+<th align="center">配置复杂度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Giscus</td>
+<td>GitHub Discussions</td>
+<td align="center">低</td>
+</tr>
+<tr>
+<td>Waline</td>
+<td>自托管</td>
+<td align="center">中</td>
+</tr>
+<tr>
+<td>Disqus</td>
+<td>SaaS</td>
+<td align="center">低</td>
+</tr>
+<tr>
+<td>Twikoo</td>
+<td>腾讯云</td>
+<td align="center">中</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="数学公式"><a href="#数学公式" class="headerlink" title="数学公式"></a>数学公式</h2><p>主题内置 KaTeX 渲染。在 frontmatter 中设置 <code>math: true</code> 后，用 <code>$</code> 包裹行内公式，<code>$$</code> 包裹块级公式。</p>
+<p>行内公式举例：$E &#x3D; mc^2$</p>
+<p>块级公式：</p>
+<p>$$\int_{a}^{b} f(x) , dx &#x3D; F(b) - F(a)$$</p>
+<p>$$\sum_{n&#x3D;1}^{\infty} \frac{1}{n^2} &#x3D; \frac{\pi^2}{6}$$</p>
+<p>没有 <code>math: true</code> 的文章不会加载 KaTeX，以减少页面体积。</p>
+<hr>
+<h1 id="主题功能"><a href="#主题功能" class="headerlink" title="主题功能"></a>主题功能</h1><h2 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h2><p>按下 <code>Ctrl+K</code>（macOS 为 <code>Cmd+K</code>）或点击导航栏搜索图标唤出搜索框。基于 Fuse.js 实现本地模糊搜索，不需要后端服务。</p>
+<p>需要确保配置中开启：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">search:</span><br>  <span class="hljs-attr">enable:</span> <span class="hljs-literal">true</span><br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="暗色模式"><a href="#暗色模式" class="headerlink" title="暗色模式"></a>暗色模式</h2><p>导航栏的调色板按钮切换三种模式：跟随系统、浅色、深色。选择保存在 localStorage 中，刷新不丢失。</p>
+<p>默认模式配置：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">appearance:</span><br>  <span class="hljs-attr">default_mode:</span> <span class="hljs-string">auto</span><br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="音乐播放器"><a href="#音乐播放器" class="headerlink" title="音乐播放器"></a>音乐播放器</h2><p>侧边栏底部内置音乐播放器，支持播放列表、四种播放模式（顺序、列表循环、单曲循环、随机）。</p>
+<p>键盘快捷键（输入框聚焦时不触发）：</p>
+<table>
+<thead>
+<tr>
+<th>快捷键</th>
+<th>操作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Space</code></td>
+<td>播放 &#x2F; 暂停</td>
+</tr>
+<tr>
+<td><code>Ctrl+→</code></td>
+<td>下一首</td>
+</tr>
+<tr>
+<td><code>Ctrl+←</code></td>
+<td>上一首</td>
+</tr>
+</tbody></table>
+<p>播放进度、音量、当前曲目和播放模式跨页面保持。</p>
+<hr>
+<h2 id="过期提醒"><a href="#过期提醒" class="headerlink" title="过期提醒"></a>过期提醒</h2><p>超过设定天数的文章会在顶部显示提醒横幅：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">outdate:</span><br>  <span class="hljs-attr">enable:</span> <span class="hljs-literal">true</span><br>  <span class="hljs-attr">days:</span> <span class="hljs-number">365</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="版权声明"><a href="#版权声明" class="headerlink" title="版权声明"></a>版权声明</h2><p>文章末尾自动生成版权信息，许可协议可在配置中自定义。</p>
+<hr>
+<h2 id="阅读进度条"><a href="#阅读进度条" class="headerlink" title="阅读进度条"></a>阅读进度条</h2><p>页面顶部显示阅读进度条，基于 <code>IntersectionObserver</code> 实现，随页面滚动实时更新。通过配置开关：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">appearance:</span><br>  <span class="hljs-attr">reading_progress:</span> <span class="hljs-literal">true</span><br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="友链页面"><a href="#友链页面" class="headerlink" title="友链页面"></a>友链页面</h2><p>主题内置友链页面（<code>layout: friends</code>），以双列卡片网格展示外部链接。每张卡片包含头像、名称和简介，加载时带有依次浮现的入场动画。</p>
+<p>创建 <code>source/friends/index.md</code>：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-meta">---</span><br><span class="hljs-attr">title:</span> <span class="hljs-string">友链</span><br><span class="hljs-attr">layout:</span> <span class="hljs-string">friends</span><br><span class="hljs-attr">friends:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Example</span> <span class="hljs-string">Blog</span><br>    <span class="hljs-attr">url:</span> <span class="hljs-string">https://example.com</span><br>    <span class="hljs-attr">avatar:</span> <span class="hljs-string">https://example.com/avatar.jpg</span><br>    <span class="hljs-attr">description:</span> <span class="hljs-string">A</span> <span class="hljs-string">great</span> <span class="hljs-string">tech</span> <span class="hljs-string">blog</span><br><span class="hljs-meta">---</span><br></code></pre></td></tr></table></figure>
+
+<p>头像加载失败时自动回落为首字母占位图标。未填写 URL 的卡片变为静态展示（无悬浮效果、不可点击）。</p>
+<hr>
+<h2 id="侧边栏按页配置"><a href="#侧边栏按页配置" class="headerlink" title="侧边栏按页配置"></a>侧边栏按页配置</h2><p>侧边栏组件（个人信息、音乐、小部件）可以按页面类型独立配置。在 <code>_config.shion.yml</code> 的 <code>sidebar.layouts</code> 中统一管理：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">sidebar:</span><br>  <span class="hljs-attr">widgets:</span>                    <span class="hljs-comment"># 全局默认</span><br>    <span class="hljs-bullet">-</span> <span class="hljs-string">recent-posts</span><br>  <span class="hljs-attr">layouts:</span><br>    <span class="hljs-attr">index:</span>                    <span class="hljs-comment"># 主页</span><br>    <span class="hljs-attr">archive:</span>                  <span class="hljs-comment"># 归档</span><br>      <span class="hljs-attr">widgets:</span> []<br>    <span class="hljs-attr">friends:</span>                  <span class="hljs-comment"># 友链</span><br>      <span class="hljs-attr">widgets:</span> []<br>    <span class="hljs-attr">tags:</span>                     <span class="hljs-comment"># 标签</span><br>      <span class="hljs-attr">widgets:</span> []<br>    <span class="hljs-attr">categories:</span>               <span class="hljs-comment"># 分类</span><br>      <span class="hljs-attr">widgets:</span> []<br>    <span class="hljs-attr">about:</span>                    <span class="hljs-comment"># 关于</span><br>      <span class="hljs-attr">widgets:</span> []<br></code></pre></td></tr></table></figure>
+
+<p>每个 layout 支持 <code>enable</code>、<code>profile</code>、<code>music</code>、<code>widgets</code> 四个键，未设自动沿用全局值。主页和归档页由 Hexo 自动生成，只能通过 <code>layouts</code> 配置。</p>
+
+  </div>
+
+  
+  <div class="post-copyright">
+    <p><strong>Shionyori</strong></p>
+    <p>/2026/07/04/hexo-theme-shion%20%E7%BB%84%E4%BB%B6%E6%BC%94%E7%A4%BA/</p>
+    <p>&amp;copy; 2026 Shionyori. 保留所有权利。</p>
+  </div>
+  
+
+  <footer class="post-footer">
+    
+    <div class="post-tags-footer">
+      
+        <a class="tag-link" href="/tags/Hexo/">Hexo</a>
+      
+        <a class="tag-link" href="/tags/%E4%B8%BB%E9%A2%98/">主题</a>
+      
+        <a class="tag-link" href="/tags/%E6%95%99%E7%A8%8B/">教程</a>
+      
+        <a class="tag-link" href="/tags/Shion/">Shion</a>
+      
+        <a class="tag-link" href="/tags/%E6%A0%87%E7%AD%BE%E7%BB%84%E4%BB%B6/">标签组件</a>
+      
+    </div>
+    
+
+    
+<div class="post-share">
+  <div class="share-buttons">
+    
+    
+    
+
+    
+    <a class="share-btn share-twitter" href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fshionyori.github.io%2F2026%2F07%2F04%2Fhexo-theme-shion%20%E7%BB%84%E4%BB%B6%E6%BC%94%E7%A4%BA%2F&text=hexo-theme-shion%20%E7%BB%84%E4%BB%B6%E6%BC%94%E7%A4%BA" target="_blank" rel="noopener" aria-label="分享到 Twitter">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fshionyori.github.io%2F2026%2F07%2F04%2Fhexo-theme-shion%20%E7%BB%84%E4%BB%B6%E6%BC%94%E7%A4%BA%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fshionyori.github.io%2F2026%2F07%2F04%2Fhexo-theme-shion%20%E7%BB%84%E4%BB%B6%E6%BC%94%E7%A4%BA%2F" target="_blank" rel="noopener" aria-label="分享到 LinkedIn">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    
+
+    
+    <button class="share-btn share-copy" aria-label="复制链接" data-url="https://shionyori.github.io/2026/07/04/hexo-theme-shion 组件演示/">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    </button>
+    
+  </div>
+</div>
+
+
+  </footer>
+</article>
+
+
+
+<nav class="post-nav">
+  
+    <a class="post-nav-item post-nav-prev has-cover" href="/2026/08/01/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/" style='background-image: url(/images/posts/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/cover.png)'>
+      <span class="nav-label">上一篇</span>
+      <span class="nav-title">反射机制</span>
+    </a>
+  
+  
+    <a class="post-nav-item post-nav-next has-cover" href="/2026/07/04/hexo-theme-shion%20%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97/" style='background-image: url(/images/posts/hexo-theme-shion%20%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97/cover.png)'>
+      <span class="nav-label">下一篇</span>
+      <span class="nav-title">hexo-theme-shion 配置指南</span>
+    </a>
+  
+</nav>
+
+
+
+
+
+      </main>
+
+      
+    </div>
+  </div>
+</div>
+
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+
+<nav class="mobile-nav" id="mobile-nav">
+  <div class="mobile-nav-inner">
+    <div class="mobile-nav-header">
+      <span class="mobile-nav-title">首页</span>
+      <button class="btn-icon mobile-nav-close" id="mobile-nav-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <ul class="mobile-nav-menu">
+      
+        <li>
+          <a class="mobile-nav-link" href="/">首页</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/archives/">归档</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/tags/">标签</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/categories/">分类</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/friends/">友链</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/about/">关于</a>
+        </li>
+      
+    </ul>
+
+    
+    <div class="mobile-nav-social">
+      
+        <a class="social-icon" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+  </div>
+</nav>
+
+  <footer class="site-footer">
+  <div class="footer-inner">
+    
+    <div class="footer-social">
+      
+        <a class="social-link" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+
+    <div class="footer-info">
+      <span class="copyright">
+        &copy;
+        
+          2025 &ndash;
+        
+        2026
+        Shionyori
+      </span>
+
+      
+        <span class="powered-by">由 <a href="https://hexo.io/" target="_blank">Hexo</a> 驱动</span>
+      
+
+      
+        <span class="theme-by">主题 Shion</span>
+      
+
+      
+    </div>
+
+    
+
+  </div>
+</footer>
+
+
+
+  
+<div class="search-overlay" id="search-overlay"
+     data-i18n-found="关于「{query}」，找到了 {count} 条记录"
+     data-i18n-not-found="关于「{query}」，没有找到任何记录呢">
+  <div class="search-container">
+    <img class="search-decoration" src="/images/shion/search.png" alt="">
+    <div class="search-header">
+      <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" class="search-input" id="search-input" placeholder="输入关键词搜索..." autocomplete="off">
+      <button class="search-close" id="search-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="search-info" id="search-info"></div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+
+
+  
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/contrib/auto-render.min.js"></script>
+
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

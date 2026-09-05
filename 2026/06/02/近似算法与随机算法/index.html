@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>近似算法与随机算法 - Shionyori&#39;s Blog</title>
+
+
+<meta name="description" content="Gorgeous blooming flowers will eventually elegantly scattered.">
+
+
+<meta property="og:title" content="近似算法与随机算法">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://shionyori.github.io/2026/06/02/近似算法与随机算法/">
+<meta property="og:site_name" content="Shionyori&#39;s Blog">
+
+
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="近似算法与随机算法">
+
+
+<link rel="canonical" href="https://shionyori.github.io/2026/06/02/近似算法与随机算法/">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "name": "近似算法与随机算法",
+  "url": "https://shionyori.github.io/2026/06/02/近似算法与随机算法/",
+  "datePublished": "2026-06-03T00:00:00+08:00",
+  "author": { "@type": "Person", "name": "Shionyori" }
+  
+}
+</script>
+
+<meta name="theme-color" content="#6b7eb5">
+<link rel="icon" type="image/png" href="/images/shion/favicon.png">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+
+
+<script>
+  (function() {
+    var mode = 'auto';
+    var saved = localStorage.getItem('shion-theme');
+    if (saved) { mode = saved; }
+    else if (mode === 'auto') {
+      mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    if (mode === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+    (function() {
+      var fonts = {"heading":"'Noto Serif SC', 'Source Han Serif SC', Georgia, serif","body":"'Noto Sans SC', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif","code":"'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace","size_root":"15px"};
+      var legacySize = '';
+      var sizeRoot = fonts.size_root || legacySize;
+
+      if (fonts.heading) {
+        document.documentElement.style.setProperty('--font-heading', fonts.heading);
+      }
+      if (fonts.body) {
+        document.documentElement.style.setProperty('--font-body', fonts.body);
+      }
+      if (fonts.code) {
+        document.documentElement.style.setProperty('--font-code', fonts.code);
+      }
+      if (sizeRoot) {
+        document.documentElement.style.setProperty('--font-size-root', sizeRoot);
+      }
+    })();
+  })();
+</script>
+
+
+<noscript>
+  <style>
+    .sidebar-inner,
+    .content-card,
+    .post,
+    .page,
+    .archive-item,
+    .category-item,
+    .pagination,
+    .comments,
+    .not-found-content,
+    .widget,
+    .tag-cloud-item,
+    .post-card-wrapper,
+    .post-content,
+    .post-tags-footer,
+    .post-share,
+    .post-copyright,
+    .post-nav {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  </style>
+</noscript>
+
+  <script>
+    window.__shionConfig = {
+      katexCDN: 'https://cdn.jsdelivr.net/npm/katex@0',
+      katexDelimiters: [{"left":"$$","right":"$$","display":true},{"left":"$","right":"$","display":false}]
+    };
+  </script>
+<meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a class="site-logo" href="/">
+      
+        <span class="logo-text">Shionyori&#39;s Blog</span>
+      
+    </a>
+
+    <nav class="site-nav" id="site-nav">
+      
+        <a class="nav-item" href="/">首页</a>
+      
+        <a class="nav-item" href="/archives/">归档</a>
+      
+        <a class="nav-item" href="/tags/">标签</a>
+      
+        <a class="nav-item" href="/categories/">分类</a>
+      
+        <a class="nav-item" href="/friends/">友链</a>
+      
+        <a class="nav-item" href="/about/">关于</a>
+      
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn-icon search-toggle" id="search-toggle" aria-label="搜索">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon theme-toggle" id="theme-toggle" aria-label="深色模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon sidebar-toggle" id="sidebar-toggle" aria-label="sidebar_toggle">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+
+  
+<div class="reading-progress" id="reading-progress">
+  <div class="reading-progress-bar" id="reading-progress-bar"></div>
+</div>
+
+
+
+<div id="pjax-container">
+  
+  
+  
+  <div class="page-bg">
+  
+    <img src="/images/posts/%E8%BF%91%E4%BC%BC%E7%AE%97%E6%B3%95%E4%B8%8E%E9%9A%8F%E6%9C%BA%E7%AE%97%E6%B3%95/cover.png" alt="">
+  </div>
+  
+
+  
+  
+  
+  <section class="page-hero">
+    <h1 class="hero-title">近似算法与随机算法</h1>
+    <div class="hero-subtitle">
+      <div class="post-meta">
+    
+    <time class="post-date" datetime="2026-06-03T00:00:00+08:00">
+      2026-06-03
+    </time>
+    
+
+    
+    <time class="post-updated" datetime="2026-06-07T00:00:00+08:00">
+      更新于 2026-06-07
+    </time>
+    
+
+    
+    <span class="post-word-count">3005 words</span>
+    
+
+    
+    <span class="post-reading-time">11 min read</span>
+    
+
+    
+    <span class="post-categories">
+      
+        <a class="category-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a>
+      
+    </span>
+    
+
+</div>
+
+    </div>
+    
+    <div class="hero-tags">
+      
+        <a class="tag-link" href="/tags/%E8%BF%91%E4%BC%BC%E7%AE%97%E6%B3%95/">近似算法</a>
+      
+        <a class="tag-link" href="/tags/%E9%9A%8F%E6%9C%BA%E7%AE%97%E6%B3%95/">随机算法</a>
+      
+        <a class="tag-link" href="/tags/TSP/">TSP</a>
+      
+        <a class="tag-link" href="/tags/%E6%A8%A1%E6%8B%9F%E9%80%80%E7%81%AB/">模拟退火</a>
+      
+        <a class="tag-link" href="/tags/%E6%9C%80%E8%BF%91%E7%82%B9%E5%AF%B9/">最近点对</a>
+      
+    </div>
+    
+  </section>
+  
+  
+
+  
+<div class="container">
+    <div class="content-wrapper">
+      
+      
+<aside class="site-sidebar sidebar-post" id="site-sidebar" data-position="left">
+
+  
+  
+
+  <div class="sidebar-sticky-group">
+    
+    <section class="sidebar-card sidebar-music">
+      
+<div class="music-player" data-playlist='[{"name":"奏穹のラプソディア (狂想曲)","artist":"瑶山百霊","url":"/music/瑶山百霊 - 奏穹のラプソディア (狂想曲).ogg","cover":"/music/covers/soukyuu-no-rhapsody.jpg"},{"name":"Graveyard Memory","artist":"GET IN THE RING","url":"/music/GET IN THE RING - Graveyard Memory.ogg","cover":"/music/covers/graveyard-memory.jpg"},{"name":"ポラリス (北极星)","artist":"GET IN THE RING","url":"/music/GET IN THE RING - ポラリス (北极星).ogg","cover":"/music/covers/polaris.jpg"},{"name":"その唄の名は…","artist":"yukina / GET IN THE RING","url":"/music/yukina _ GET IN THE RING - その唄の名は….ogg","cover":"/music/covers/sono-uta-no-na-wa.jpg"},{"name":"over the moon","artist":"Forest306","url":"/music/Forest306 - over the moon.ogg","cover":"/music/covers/over-the-moon.jpg"},{"name":"21時の探しモノ (21时寻找的东西)","artist":"minimum electric design","url":"/music/minimum electric design - 21時の探しモノ (21时寻找的东西).ogg","cover":"/music/covers/21ji-no-sagashimono.jpg"},{"name":"Freak Report 01 ~他愛も無い二人の博物誌~","artist":"凛","url":"/music/凛 - Freak Report 01 ~他愛も無い二人の博物誌~.ogg","cover":"/music/covers/freak-report-01.jpg"},{"name":"かぜのいろ (カゼノイロ)","artist":"森羅万象","url":"/music/森羅万象 - かぜのいろ (カゼノイロ).ogg","cover":"/music/covers/kaze-no-iro.jpg"},{"name":"Onisan Dochira!","artist":"狐の工作室","url":"/music/狐の工作室 - Onisan Dochira!.ogg","cover":"/music/covers/onisan-dochira.jpg"},{"name":"Skip in the byway","artist":"神乃木製作所","url":"/music/神乃木製作所 - Skip in the byway.ogg","cover":"/music/covers/skip-in-the-byway.jpg"}]'>
+  
+  <div class="music-body">
+    <div class="music-cover">
+      
+      
+      <img src="/music/covers/soukyuu-no-rhapsody.jpg" alt="cover" class="music-cover-img" onerror="if(!this.dataset.failed){this.dataset.failed='1';this.src='/images/shion/404.png'}">
+      
+    </div>
+    <div class="music-info">
+      <div class="music-title-row">
+        <span class="music-title">奏穹のラプソディア (狂想曲)</span>
+        <span class="music-counter">1 / 10</span>
+      </div>
+      <span class="music-artist">瑶山百霊</span>
+      <div class="music-progress">
+        <div class="music-progress-bar">
+          <div class="music-progress-fill"></div>
+        </div>
+        <div class="music-time">
+          <span class="music-time-current">0:00</span>
+          <span class="music-time-total">0:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="music-controls">
+    <button class="music-btn music-btn-mode" aria-label="Play mode" data-mode="sequential" title="Sequential">
+      <svg class="music-mode-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+    <button class="music-btn music-btn-prev" aria-label="Previous track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+    </button>
+    <button class="music-btn music-btn-play" aria-label="Play">
+      <svg class="music-icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <svg class="music-icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="6" height="16"/><rect x="14" y="4" width="6" height="16"/></svg>
+    </button>
+    <button class="music-btn music-btn-next" aria-label="Next track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+    </button>
+    <button class="music-btn music-btn-list" aria-label="Playlist">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="music-playlist">
+    
+    <button class="music-playlist-item active" data-index="0">
+      <span class="music-playlist-name">奏穹のラプソディア (狂想曲)</span>
+      <span class="music-playlist-artist">瑶山百霊</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="1">
+      <span class="music-playlist-name">Graveyard Memory</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="2">
+      <span class="music-playlist-name">ポラリス (北极星)</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="3">
+      <span class="music-playlist-name">その唄の名は…</span>
+      <span class="music-playlist-artist">yukina / GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="4">
+      <span class="music-playlist-name">over the moon</span>
+      <span class="music-playlist-artist">Forest306</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="5">
+      <span class="music-playlist-name">21時の探しモノ (21时寻找的东西)</span>
+      <span class="music-playlist-artist">minimum electric design</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="6">
+      <span class="music-playlist-name">Freak Report 01 ~他愛も無い二人の博物誌~</span>
+      <span class="music-playlist-artist">凛</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="7">
+      <span class="music-playlist-name">かぜのいろ (カゼノイロ)</span>
+      <span class="music-playlist-artist">森羅万象</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="8">
+      <span class="music-playlist-name">Onisan Dochira!</span>
+      <span class="music-playlist-artist">狐の工作室</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="9">
+      <span class="music-playlist-name">Skip in the byway</span>
+      <span class="music-playlist-artist">神乃木製作所</span>
+    </button>
+    
+  </div>
+  
+</div>
+
+    </section>
+    
+
+    <section class="sidebar-card sidebar-toc">
+      <div class="sidebar-toc-header">
+        <a class="sidebar-back-home" href="/" title="首页">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </a>
+        <span class="sidebar-toc-label">近似算法与随机算法</span>
+      </div>
+      <div class="sidebar-scroll">
+      
+      
+      <nav class="sidebar-toc">
+        <ol class="toc-list"><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#1-%E6%97%85%E8%A1%8C%E5%95%86%E9%97%AE%E9%A2%98%EF%BC%882-%E8%BF%91%E4%BC%BC%E7%AE%97%E6%B3%95%EF%BC%89"><span class="toc-list-text">1. 旅行商问题（2-近似算法）</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="toc-list-text">问题描述</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E6%80%9D%E8%80%83%E8%BF%87%E7%A8%8B"><span class="toc-list-text">思考过程</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E7%AE%97%E6%B3%95%E6%AD%A5%E9%AA%A4"><span class="toc-list-text">算法步骤</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-3"><a class="toc-list-link" href="#1-%E6%B1%82%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91"><span class="toc-list-text">1. 求最小生成树</span></a></li><li class="toc-list-item toc-list-level-3"><a class="toc-list-link" href="#2-%E5%A4%8D%E5%88%B6-MST-%E7%9A%84%E6%89%80%E6%9C%89%E8%BE%B9"><span class="toc-list-text">2. 复制 MST 的所有边</span></a></li><li class="toc-list-item toc-list-level-3"><a class="toc-list-link" href="#3-%E6%9E%84%E9%80%A0%E6%AC%A7%E6%8B%89%E5%9B%9E%E8%B7%AF"><span class="toc-list-text">3. 构造欧拉回路</span></a></li><li class="toc-list-item toc-list-level-3"><a class="toc-list-link" href="#4-%E8%B7%B3%E8%BF%87%E9%87%8D%E5%A4%8D%E9%A1%B6%E7%82%B9"><span class="toc-list-text">4. 跳过重复顶点</span></a></li></ol></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E8%BF%91%E4%BC%BC%E6%AF%94%E5%88%86%E6%9E%90"><span class="toc-list-text">近似比分析</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#2-%E6%A8%A1%E6%8B%9F%E9%80%80%E7%81%AB%E7%AE%97%E6%B3%95%EF%BC%88%E9%9A%8F%E6%9C%BA%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95%EF%BC%89"><span class="toc-list-text">2. 模拟退火算法（随机优化算法）</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0-1"><span class="toc-list-text">问题描述</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E6%80%9D%E8%80%83%E8%BF%87%E7%A8%8B-1"><span class="toc-list-text">思考过程</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E7%AE%97%E6%B3%95%E6%AD%A5%E9%AA%A4-1"><span class="toc-list-text">算法步骤</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-3"><a class="toc-list-link" href="#1-%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-list-text">1. 初始化</span></a></li><li class="toc-list-item toc-list-level-3"><a class="toc-list-link" href="#2-%E4%BA%A7%E7%94%9F%E6%96%B0%E8%A7%A3"><span class="toc-list-text">2. 产生新解</span></a></li><li class="toc-list-item toc-list-level-3"><a class="toc-list-link" href="#3-%E5%AF%B9%E6%96%B0%E8%A7%A3%E7%9A%84%E6%8E%A5%E5%8F%97%E5%88%A4%E5%88%AB"><span class="toc-list-text">3. 对新解的接受判别</span></a></li><li class="toc-list-item toc-list-level-3"><a class="toc-list-link" href="#4-%E5%86%85%E5%BE%AA%E7%8E%AF%E4%B8%8E%E9%99%8D%E6%B8%A9"><span class="toc-list-text">4. 内循环与降温</span></a></li><li class="toc-list-item toc-list-level-3"><a class="toc-list-link" href="#5-%E7%BB%88%E6%AD%A2%E6%9D%A1%E4%BB%B6"><span class="toc-list-text">5. 终止条件</span></a></li></ol></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#3-%E5%AF%BB%E6%89%BE%E6%9C%80%E8%BF%91%E7%82%B9%E5%AF%B9%E9%97%AE%E9%A2%98%E7%9A%84%E9%9A%8F%E6%9C%BA%E7%AE%97%E6%B3%95"><span class="toc-list-text">3. 寻找最近点对问题的随机算法</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0-2"><span class="toc-list-text">问题描述</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E6%80%9D%E8%80%83%E8%BF%87%E7%A8%8B-2"><span class="toc-list-text">思考过程</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E7%AE%97%E6%B3%95%E6%AD%A5%E9%AA%A4-2"><span class="toc-list-text">算法步骤</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-3"><a class="toc-list-link" href="#1-%E9%9A%8F%E6%9C%BA%E6%89%93%E4%B9%B1"><span class="toc-list-text">1. 随机打乱</span></a></li><li class="toc-list-item toc-list-level-3"><a class="toc-list-link" href="#2-%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-list-text">2. 初始化</span></a></li><li class="toc-list-item toc-list-level-3"><a class="toc-list-link" href="#3-%E5%A2%9E%E9%87%8F%E5%BC%8F%E9%81%8D%E5%8E%86%E4%B8%8E%E6%9F%A5%E8%AF%A2"><span class="toc-list-text">3. 增量式遍历与查询</span></a></li><li class="toc-list-item toc-list-level-3"><a class="toc-list-link" href="#4-%E7%BD%91%E6%A0%BC%E9%87%8D%E6%9E%84"><span class="toc-list-text">4. 网格重构</span></a></li><li class="toc-list-item toc-list-level-3"><a class="toc-list-link" href="#5-%E7%BB%93%E6%9D%9F"><span class="toc-list-text">5. 结束</span></a></li></ol></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%A4%8D%E6%9D%82%E5%BA%A6%E4%B8%8E%E8%BF%91%E4%BC%BC%E6%AF%94%E5%88%86%E6%9E%90"><span class="toc-list-text">复杂度与近似比分析</span></a></li></ol></li></ol>
+      </nav>
+      
+      </div>
+      <a class="sidebar-back-home-bottom" href="/">← 首页</a>
+    </section>
+  </div>
+
+  
+</aside>
+
+      
+
+      <main class="site-main">
+        <article class="post">
+
+  <div class="post-content">
+    
+  
+  
+  
+
+
+    <h1 id="1-旅行商问题（2-近似算法）"><a href="#1-旅行商问题（2-近似算法）" class="headerlink" title="1. 旅行商问题（2-近似算法）"></a>1. 旅行商问题（2-近似算法）</h1><h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>旅行商问题（TSP）：给定一系列城市及每对城市之间的距离，求一条经过每个城市恰好一次并回到起点的最短回路。从图论角度看，也就是在带权完全图中寻找最短哈密顿环。</p>
+<p>这是一个著名的 NP-Hard 问题，想在多项式时间内找到绝对解几乎是不可能的。因此在实际问题中，我们往往退而求其次，寻找一个在多项式时间内能运行且理论可行的近似算法。</p>
+<p>对于满足<strong>三角不等式</strong>（Metric TSP）的情况：<br>$$d(u,w) \leq d(u,v) + d(v,w)$$<br>存在一个经典的 2-近似算法，其核心思想是利用最小生成树来构造一条可行的旅行路线。</p>
+<h2 id="思考过程"><a href="#思考过程" class="headerlink" title="思考过程"></a>思考过程</h2><p>如果我们已经知道最优哈密顿环（记作 $OPT$），那么把其中任意一条边删除，就会得到一棵连接所有顶点的生成树（记作 $MST$），显然他们各自的边权之和满足以下关系：<br>$$MST \leq OPT$$<br>也就是说，最小生成树的权值也一定不会超过最优旅行路线的长度。</p>
+<div class="note note-info"><p>虽然直接寻找最优哈密顿环很困难，但最小生成树却可以通过 Prim 或 Kruskal 算法在线性对数时间内求出，并且它天然提供了一个可靠的下界。</p>
+</div>
+
+<p>但是生成树并不是回路，我们应该如何利用最小生成树构造一个回路？</p>
+<blockquote>
+<p>不妨将生成树的每条边都复制一份</p>
+</blockquote>
+<p>这样每个顶点的度数都变成偶数，一定存在欧拉回路。</p>
+<p>于是我们就得到了一条经过所有边恰好一次的回路，但是它依旧不是哈密顿环。还记得原本的图是一个无向完全图，每个点之间都可以直达。因此我们可以跳过重复顶点，最后得到一个哈密顿环。</p>
+<h2 id="算法步骤"><a href="#算法步骤" class="headerlink" title="算法步骤"></a>算法步骤</h2><h3 id="1-求最小生成树"><a href="#1-求最小生成树" class="headerlink" title="1. 求最小生成树"></a>1. 求最小生成树</h3><p>利用 Prim 或 Kruskal 算法求出原图的最小生成树 $T$。</p>
+<p>设其权值为：<br>$$w(T)$$<br>由前面的分析可知：<br>$$w(T)≤OPT$$</p>
+<h3 id="2-复制-MST-的所有边"><a href="#2-复制-MST-的所有边" class="headerlink" title="2. 复制 MST 的所有边"></a>2. 复制 MST 的所有边</h3><p>将最小生成树中的每条边复制一次。</p>
+<p>此时新图中每条边出现两次，因此：<br>$$w(T^′)&#x3D;2w(T)$$<br>并且所有顶点的度数都变为偶数。</p>
+<p>根据欧拉图定理，该图一定存在欧拉回路。</p>
+<h3 id="3-构造欧拉回路"><a href="#3-构造欧拉回路" class="headerlink" title="3. 构造欧拉回路"></a>3. 构造欧拉回路</h3><p>在复制后的图中寻找一条欧拉回路。</p>
+<p>设得到的顶点访问序列为：<br>$$v_1,v_2,\ldots,v_k$$<br>由于树中的边被重复了一次，因此欧拉回路的总长度恰好为：<br>$$2w(T)$$</p>
+<h3 id="4-跳过重复顶点"><a href="#4-跳过重复顶点" class="headerlink" title="4. 跳过重复顶点"></a>4. 跳过重复顶点</h3><p>欧拉回路会多次经过同一个顶点，而 TSP 要求每个顶点只访问一次。</p>
+<p>因此按照欧拉回路的访问顺序遍历顶点：</p>
+<ul>
+<li>第一次出现时保留；</li>
+<li>后续再次出现时直接跳过。</li>
+</ul>
+<p>例如：<br>$$A\rightarrow B\rightarrow C\rightarrow E\rightarrow C\rightarrow B\rightarrow A\rightarrow D\rightarrow A$$<br>经过 Shortcut 后变成：<br>$$A\rightarrow B\rightarrow C\rightarrow E\rightarrow D\rightarrow A$$<br>得到一条合法的哈密顿环。</p>
+<h2 id="近似比分析"><a href="#近似比分析" class="headerlink" title="近似比分析"></a>近似比分析</h2><p>之所以可以像上面那样跳过重复点，是因为图满足三角不等式，例如原来路径：<br>$$u\rightarrow v\rightarrow w$$<br>如果顶点 $v$ 已经访问过，那么可以直接改成：<br>$$u\rightarrow w$$<br>并且有<br>$$d(u,w)\le d(u,v)+d(v,w)$$<br>因此不会增加路径长度，设最终得到的回路长度为 $ALG$，则有：<br>$$ALG\le 2w(T)$$<br>又因为：<br>$$w(T)\le OPT$$<br>所以：<br>$$ALG\le 2OPT$$<br>即：<br>$$\frac{ALG}{OPT}\le 2$$</p>
+<hr>
+<h1 id="2-模拟退火算法（随机优化算法）"><a href="#2-模拟退火算法（随机优化算法）" class="headerlink" title="2. 模拟退火算法（随机优化算法）"></a>2. 模拟退火算法（随机优化算法）</h1><h2 id="问题描述-1"><a href="#问题描述-1" class="headerlink" title="问题描述"></a>问题描述</h2><p>模拟退火算法是一种随机优化算法，可以用来在一个大的搜寻空间内寻找问题的全局近似最优解。</p>
+<p>在很多组合优化问题中，由于解空间巨大，且存在大量的<strong>局部最优解</strong>，传统的梯度下降法或爬山算法极易陷入这些局部陷阱而无法自拔。模拟退火算法通过引入物理学中的固体退火原理，为跳出局部最优提供了可能。</p>
+<h2 id="思考过程-1"><a href="#思考过程-1" class="headerlink" title="思考过程"></a>思考过程</h2><p>模拟退火的灵感来源于固体退火原理：将固体加热至充分高，其内部粒子随之变为无序状态，内能增大；然后逐渐冷却，粒子渐趋有序，在每个温度下达到平衡态，最后在绝对零度时达到晶体状态，内能减至最小。</p>
+<p>根据统计力学中的 Metropolis 准则：粒子在温度 $T$ 时趋于平衡态的概率分布中，能量为 $E$ 的状态概率为：<br>$$P(E) \propto \exp\left(-\frac{E}{k_B T}\right)$$<br>将其映射到算法中：</p>
+<ul>
+<li>物理状态 $\rightarrow$ 可行解</li>
+<li>内能 $E$ $\rightarrow$ 目标函数值（以求最小值为例）</li>
+<li>温度 $T$ $\rightarrow$ 控制参数（随着迭代进行逐渐降低）</li>
+</ul>
+<p>如果新解的质量比当前解好（$\Delta E &lt; 0$），我们<strong>绝对接受</strong>它。</p>
+<p>关键在于，如果新解比当前解差（$\Delta E &gt; 0$），算法并不是直接拒绝，而是以一定的概率 $P$ 接受它：<br>$$P &#x3D; \exp\left(-\frac{\Delta E}{T}\right)$$</p>
+<ul>
+<li>在<strong>高温</strong>下（迭代初期），$P$ 接近 1，算法几乎以随机游走的方式在大范围内探索，极易跳出局部最优。</li>
+<li>在<strong>低温</strong>下（迭代后期），$P$ 趋近于 0，算法逐渐退化为爬山法，专注于在当前区域进行精细搜索以趋于收敛。</li>
+</ul>
+<div class="note note-info"><p>模拟退火算法的关键点：</p>
+<ol>
+<li>随机产生新解（为跳出局部最优提供可能性）</li>
+<li>随机接受变差的新解（同上）</li>
+<li>越往后温度越低，接受变差的新解的可能性也越低（避免过多的不确定性，确保收敛）</li>
+</ol>
+</div>
+
+<h2 id="算法步骤-1"><a href="#算法步骤-1" class="headerlink" title="算法步骤"></a>算法步骤</h2><h3 id="1-初始化"><a href="#1-初始化" class="headerlink" title="1. 初始化"></a>1. 初始化</h3><ul>
+<li>设定初始温度 $T_0$（足够高），终止温度 $T_{end}$（接近 0）。</li>
+<li>设定每个温度下的最大迭代次数（或称马尔可夫链长度）$L$。</li>
+<li>随机生成一个初始解 $X_0$，计算其目标函数值 $E(X_0)$。令当前解 $X_{curr} &#x3D; X_0$。</li>
+</ul>
+<h3 id="2-产生新解"><a href="#2-产生新解" class="headerlink" title="2. 产生新解"></a>2. 产生新解</h3><ul>
+<li>在当前解 $X_{curr}$ 的<strong>邻域</strong>内通过某种扰动（例如在 TSP 中随机交换两个城市的顺序）产生一个新解 $X_{new}$。</li>
+<li>计算新解的目标函数值 $E(X_{new})$，并计算能量差：$$\Delta E &#x3D; E(X_{new}) - E(X_{curr})$$</li>
+</ul>
+<h3 id="3-对新解的接受判别"><a href="#3-对新解的接受判别" class="headerlink" title="3. 对新解的接受判别"></a>3. 对新解的接受判别</h3><ul>
+<li>如果 $\Delta E &lt; 0$（新解更优），则<strong>接受新解</strong>，令 $X_{curr} &#x3D; X_{new}$。        </li>
+<li>如果 $\Delta E \geq 0$（新解变差），则计算接受概率 $P &#x3D; \exp(-\Delta E &#x2F; T)$。</li>
+<li>产生一个 $[0, 1)$ 区间的随机数 $r$：<ul>
+<li>若 $r &lt; P$，则<strong>勉强接受新解</strong>，令 $X_{curr} &#x3D; X_{new}$；</li>
+<li>否则，<strong>拒绝新解</strong>，保持 $X_{curr}$ 不变。</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-内循环与降温"><a href="#4-内循环与降温" class="headerlink" title="4. 内循环与降温"></a>4. 内循环与降温</h3><ul>
+<li>在当前温度 $T$ 下重复步骤 2 和 3 共 $L$ 次。    </li>
+<li>完成当前温度的搜索后，按照降温函数更新温度，通常采用线性降温：$$T &#x3D; \alpha \cdot T \quad (0.8 \le \alpha &lt; 1)$$</li>
+</ul>
+<h3 id="5-终止条件"><a href="#5-终止条件" class="headerlink" title="5. 终止条件"></a>5. 终止条件</h3><ul>
+<li>检查温度是否达到终止温度 $T_{end}$，或连续若干个温度周期内解未发生显著改善。    </li>
+<li>若未满足，返回步骤 2；若满足，则输出搜索过程中遇到的<strong>历史最佳解</strong>。</li>
+</ul>
+<hr>
+<h1 id="3-寻找最近点对问题的随机算法"><a href="#3-寻找最近点对问题的随机算法" class="headerlink" title="3. 寻找最近点对问题的随机算法"></a>3. 寻找最近点对问题的随机算法</h1><h2 id="问题描述-2"><a href="#问题描述-2" class="headerlink" title="问题描述"></a>问题描述</h2><p>最近点对问题：给定二维平面上的 $n$ 个点，找出其中欧几里得距离最近的两个点。</p>
+<p>这是一个计算几何的经典问题。暴力枚举的复杂度为 $O(n^2)$，利用分治法可以将复杂度优化到 $O(n \log n)$。然而，通过引入随机化与网格化思想，我们可以在期望 $O(n)$ 的时间内解决该问题。</p>
+<h2 id="思考过程-2"><a href="#思考过程-2" class="headerlink" title="思考过程"></a>思考过程</h2><p>假设我们知道前 $i$ 个点的最近距离是 $\delta$。当第 $i+1$ 个点加入时，如果它能与之前的某个点更新最近距离，那么这个新点与目标点的距离一定小于 $\delta$。</p>
+<p>为了快速找出哪些点可能与新点的距离小于 $\delta$，我们可以将整个二维平面划分成大小为 $\frac{\delta}{2} \times \frac{\delta}{2}$ 的网格。</p>
+<div class="note note-info"><p>根据鸽巢原理，在任意一个 $\frac{\delta}{2} \times \frac{\delta}{2}$ 的网格内，最多只能容纳一个点。因为一旦有两点落入同一网格，它们的距离必然小于 $\delta \cdot \sqrt{(\frac{1}{2})^2 + (\frac{1}{2})^2} &#x3D; \frac{\sqrt{2}}{2}\delta \approx 0.707\delta &lt; \delta$，这与当前最近距离为 $\delta$ 矛盾。</p>
+</div>
+
+<p>因此，当一个新点 $p$ 试图更新当前全局最短距离 $\delta$ 时，我们只需要检查 $p$ 所在网格<strong>及其周围邻近的网格</strong>即可。</p>
+<p>为了避免最坏情况（例如点按特定顺序排列导致频繁重构网格），我们可以先将所有输入点进行<strong>随机打乱</strong>。这样可以保证每次加入新点时，更新全局最小距离的概率非常低，从而实现期望 $O(n)$ 的时间复杂度。</p>
+<h2 id="算法步骤-2"><a href="#算法步骤-2" class="headerlink" title="算法步骤"></a>算法步骤</h2><h3 id="1-随机打乱"><a href="#1-随机打乱" class="headerlink" title="1. 随机打乱"></a>1. 随机打乱</h3><ul>
+<li>随机打乱输入的 $n$ 个点，排列为 $p_1, p_2, \ldots, p_n$。</li>
+</ul>
+<h3 id="2-初始化"><a href="#2-初始化" class="headerlink" title="2. 初始化"></a>2. 初始化</h3><ul>
+<li>设前两个点 $p_1, p_2$ 的距离为当前最短距离：$$\delta &#x3D; \text{dist}(p_1, p_2)$$</li>
+<li>建立一个哈希表（网格容器），网格的边长设为 $r &#x3D; \frac{\delta}{2}$。  </li>
+<li>将点 $p_1$ 和 $p_2$ 映射到它们所在的网格坐标 $( \lfloor x&#x2F;r \rfloor, \lfloor y&#x2F;r \rfloor )$ 并存入哈希表中。</li>
+</ul>
+<h3 id="3-增量式遍历与查询"><a href="#3-增量式遍历与查询" class="headerlink" title="3. 增量式遍历与查询"></a>3. 增量式遍历与查询</h3><ul>
+<li>从 $i &#x3D; 3$ 到 $n$ 依次处理每个点 $p_i$：</li>
+<li>计算 $p_i$ 当前所在的网格坐标 $G &#x3D; ( \lfloor x_i&#x2F;r \rfloor, \lfloor y_i&#x2F;r \rfloor )$。</li>
+<li><strong>区域搜索</strong>：在哈希表中查找以 $G$ 为中心的 $5 \times 5$（或 $3 \times 3$ 的大扩展圈，根据网格边长定义，若边长为 $\delta$ 则为 $3 \times 3$，若边长为 $\frac{\delta}{2}$ 则通常只需检查周边及自身共 25 个小网格）区域内的所有已有顶点。    </li>
+<li>计算 $p_i$ 与这些邻近网格中点的距离：</li>
+<li>如果发现了更小的距离 $\delta’ &lt; \delta$。</li>
+</ul>
+<h3 id="4-网格重构"><a href="#4-网格重构" class="headerlink" title="4. 网格重构"></a>4. 网格重构</h3><ul>
+<li>一旦在步骤 3 中触发了更小距离 $\delta’$，意味着网格大小不再适用。</li>
+<li>令 $\delta &#x3D; \delta’$，更新新的网格边长为 $r &#x3D; \frac{\delta}{2}$。</li>
+<li><strong>清空原有的哈希表</strong>，将前 $i$ 个点按照新的网格大小重新建表。</li>
+</ul>
+<h3 id="5-结束"><a href="#5-结束" class="headerlink" title="5. 结束"></a>5. 结束</h3><ul>
+<li>当所有点遍历完毕，最后的 $\delta$ 即为全图最近点对的距离。</li>
+</ul>
+<h2 id="复杂度与近似比分析"><a href="#复杂度与近似比分析" class="headerlink" title="复杂度与近似比分析"></a>复杂度与近似比分析</h2><p>该算法是一个拉斯维加斯形式（Las Vegas）的精确随机算法，其输出结果是绝对正确的，随机性仅影响运行时间。</p>
+<ul>
+<li>空间复杂度：存储哈希表需要 $O(n)$ 的空间。</li>
+<li>时间复杂度分析：<ul>
+<li>当插入第 $i$ 个点时，如果在邻近网格内查找，由于每个网格最多一个点，检查的邻居点数是个常数 $O(1)$，因此单次查询时间为 $O(1)$。</li>
+<li>如果没有更新 $\delta$，耗时 $O(1)$。</li>
+<li>如果触发了更新 $\delta$，需要将前面的 $i$ 个点重新插入哈希表，耗时 $O(i)$。</li>
+<li>根据概率几何分析，在随机打乱的前提下，第 $i$ 个点导致 $\delta$ 发生更新的概率仅为 $\frac{2}{i}$。</li>
+<li>因此，第 $i$ 步的<strong>期望时间复杂度</strong>为：$$E[T_i] &#x3D; 1 \cdot \left(1 - \frac{2}{i}\right) + O(i) \cdot \frac{2}{i} &#x3D; O(1)$$</li>
+<li>总期望时间复杂度为：    $$\sum_{i&#x3D;1}^n E[T_i] &#x3D; O(n)$$</li>
+</ul>
+</li>
+</ul>
+<div class="note note-info"><p>通过精妙地结合随机打乱与网格空间索引，算法成功将一个原本需要复杂分治的计算几何问题，在线性期望时间内精简解决。</p>
+</div>
+
+  </div>
+
+  
+  <div class="post-copyright">
+    <p><strong>Shionyori</strong></p>
+    <p>/2026/06/02/%E8%BF%91%E4%BC%BC%E7%AE%97%E6%B3%95%E4%B8%8E%E9%9A%8F%E6%9C%BA%E7%AE%97%E6%B3%95/</p>
+    <p>&amp;copy; 2026 Shionyori. 保留所有权利。</p>
+  </div>
+  
+
+  <footer class="post-footer">
+    
+    <div class="post-tags-footer">
+      
+        <a class="tag-link" href="/tags/%E8%BF%91%E4%BC%BC%E7%AE%97%E6%B3%95/">近似算法</a>
+      
+        <a class="tag-link" href="/tags/%E9%9A%8F%E6%9C%BA%E7%AE%97%E6%B3%95/">随机算法</a>
+      
+        <a class="tag-link" href="/tags/TSP/">TSP</a>
+      
+        <a class="tag-link" href="/tags/%E6%A8%A1%E6%8B%9F%E9%80%80%E7%81%AB/">模拟退火</a>
+      
+        <a class="tag-link" href="/tags/%E6%9C%80%E8%BF%91%E7%82%B9%E5%AF%B9/">最近点对</a>
+      
+    </div>
+    
+
+    
+<div class="post-share">
+  <div class="share-buttons">
+    
+    
+    
+
+    
+    <a class="share-btn share-twitter" href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fshionyori.github.io%2F2026%2F06%2F02%2F%E8%BF%91%E4%BC%BC%E7%AE%97%E6%B3%95%E4%B8%8E%E9%9A%8F%E6%9C%BA%E7%AE%97%E6%B3%95%2F&text=%E8%BF%91%E4%BC%BC%E7%AE%97%E6%B3%95%E4%B8%8E%E9%9A%8F%E6%9C%BA%E7%AE%97%E6%B3%95" target="_blank" rel="noopener" aria-label="分享到 Twitter">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fshionyori.github.io%2F2026%2F06%2F02%2F%E8%BF%91%E4%BC%BC%E7%AE%97%E6%B3%95%E4%B8%8E%E9%9A%8F%E6%9C%BA%E7%AE%97%E6%B3%95%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fshionyori.github.io%2F2026%2F06%2F02%2F%E8%BF%91%E4%BC%BC%E7%AE%97%E6%B3%95%E4%B8%8E%E9%9A%8F%E6%9C%BA%E7%AE%97%E6%B3%95%2F" target="_blank" rel="noopener" aria-label="分享到 LinkedIn">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    
+
+    
+    <button class="share-btn share-copy" aria-label="复制链接" data-url="https://shionyori.github.io/2026/06/02/近似算法与随机算法/">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    </button>
+    
+  </div>
+</div>
+
+
+  </footer>
+</article>
+
+
+
+<nav class="post-nav">
+  
+    <a class="post-nav-item post-nav-prev has-cover" href="/2026/07/04/hexo-theme-shion%20%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97/" style='background-image: url(/images/posts/hexo-theme-shion%20%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97/cover.png)'>
+      <span class="nav-label">上一篇</span>
+      <span class="nav-title">hexo-theme-shion 配置指南</span>
+    </a>
+  
+  
+    <a class="post-nav-item post-nav-next has-cover" href="/2026/02/24/%E4%BB%8E%E9%9B%B6%E5%AE%9E%E7%8E%B0%20C++%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/" style='background-image: url(/images/posts/%E4%BB%8E%E9%9B%B6%E5%AE%9E%E7%8E%B0%20C++%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/cover.png)'>
+      <span class="nav-label">下一篇</span>
+      <span class="nav-title">从零实现 C++ 智能指针</span>
+    </a>
+  
+</nav>
+
+
+
+
+
+      </main>
+
+      
+    </div>
+  </div>
+</div>
+
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+
+<nav class="mobile-nav" id="mobile-nav">
+  <div class="mobile-nav-inner">
+    <div class="mobile-nav-header">
+      <span class="mobile-nav-title">首页</span>
+      <button class="btn-icon mobile-nav-close" id="mobile-nav-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <ul class="mobile-nav-menu">
+      
+        <li>
+          <a class="mobile-nav-link" href="/">首页</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/archives/">归档</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/tags/">标签</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/categories/">分类</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/friends/">友链</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/about/">关于</a>
+        </li>
+      
+    </ul>
+
+    
+    <div class="mobile-nav-social">
+      
+        <a class="social-icon" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+  </div>
+</nav>
+
+  <footer class="site-footer">
+  <div class="footer-inner">
+    
+    <div class="footer-social">
+      
+        <a class="social-link" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+
+    <div class="footer-info">
+      <span class="copyright">
+        &copy;
+        
+          2025 &ndash;
+        
+        2026
+        Shionyori
+      </span>
+
+      
+        <span class="powered-by">由 <a href="https://hexo.io/" target="_blank">Hexo</a> 驱动</span>
+      
+
+      
+        <span class="theme-by">主题 Shion</span>
+      
+
+      
+    </div>
+
+    
+
+  </div>
+</footer>
+
+
+
+  
+<div class="search-overlay" id="search-overlay"
+     data-i18n-found="关于「{query}」，找到了 {count} 条记录"
+     data-i18n-not-found="关于「{query}」，没有找到任何记录呢">
+  <div class="search-container">
+    <img class="search-decoration" src="/images/shion/search.png" alt="">
+    <div class="search-header">
+      <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" class="search-input" id="search-input" placeholder="输入关键词搜索..." autocomplete="off">
+      <button class="search-close" id="search-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="search-info" id="search-info"></div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+
+
+  
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/contrib/auto-render.min.js"></script>
+
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

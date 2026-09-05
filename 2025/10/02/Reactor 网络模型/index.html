@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Reactor 网络模型 - Shionyori&#39;s Blog</title>
+
+
+<meta name="description" content="Gorgeous blooming flowers will eventually elegantly scattered.">
+
+
+<meta property="og:title" content="Reactor 网络模型">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://shionyori.github.io/2025/10/02/Reactor 网络模型/">
+<meta property="og:site_name" content="Shionyori&#39;s Blog">
+
+
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Reactor 网络模型">
+
+
+<link rel="canonical" href="https://shionyori.github.io/2025/10/02/Reactor 网络模型/">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "name": "Reactor 网络模型",
+  "url": "https://shionyori.github.io/2025/10/02/Reactor 网络模型/",
+  "datePublished": "2025-10-03T00:00:00+08:00",
+  "author": { "@type": "Person", "name": "Shionyori" }
+  
+}
+</script>
+
+<meta name="theme-color" content="#6b7eb5">
+<link rel="icon" type="image/png" href="/images/shion/favicon.png">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+
+
+<script>
+  (function() {
+    var mode = 'auto';
+    var saved = localStorage.getItem('shion-theme');
+    if (saved) { mode = saved; }
+    else if (mode === 'auto') {
+      mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    if (mode === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+    (function() {
+      var fonts = {"heading":"'Noto Serif SC', 'Source Han Serif SC', Georgia, serif","body":"'Noto Sans SC', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif","code":"'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace","size_root":"15px"};
+      var legacySize = '';
+      var sizeRoot = fonts.size_root || legacySize;
+
+      if (fonts.heading) {
+        document.documentElement.style.setProperty('--font-heading', fonts.heading);
+      }
+      if (fonts.body) {
+        document.documentElement.style.setProperty('--font-body', fonts.body);
+      }
+      if (fonts.code) {
+        document.documentElement.style.setProperty('--font-code', fonts.code);
+      }
+      if (sizeRoot) {
+        document.documentElement.style.setProperty('--font-size-root', sizeRoot);
+      }
+    })();
+  })();
+</script>
+
+
+<noscript>
+  <style>
+    .sidebar-inner,
+    .content-card,
+    .post,
+    .page,
+    .archive-item,
+    .category-item,
+    .pagination,
+    .comments,
+    .not-found-content,
+    .widget,
+    .tag-cloud-item,
+    .post-card-wrapper,
+    .post-content,
+    .post-tags-footer,
+    .post-share,
+    .post-copyright,
+    .post-nav {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  </style>
+</noscript>
+
+  <script>
+    window.__shionConfig = {
+      katexCDN: 'https://cdn.jsdelivr.net/npm/katex@0',
+      katexDelimiters: [{"left":"$$","right":"$$","display":true},{"left":"$","right":"$","display":false}]
+    };
+  </script>
+<meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a class="site-logo" href="/">
+      
+        <span class="logo-text">Shionyori&#39;s Blog</span>
+      
+    </a>
+
+    <nav class="site-nav" id="site-nav">
+      
+        <a class="nav-item" href="/">首页</a>
+      
+        <a class="nav-item" href="/archives/">归档</a>
+      
+        <a class="nav-item" href="/tags/">标签</a>
+      
+        <a class="nav-item" href="/categories/">分类</a>
+      
+        <a class="nav-item" href="/friends/">友链</a>
+      
+        <a class="nav-item" href="/about/">关于</a>
+      
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn-icon search-toggle" id="search-toggle" aria-label="搜索">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon theme-toggle" id="theme-toggle" aria-label="深色模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon sidebar-toggle" id="sidebar-toggle" aria-label="sidebar_toggle">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+
+  
+<div class="reading-progress" id="reading-progress">
+  <div class="reading-progress-bar" id="reading-progress-bar"></div>
+</div>
+
+
+
+<div id="pjax-container">
+  
+  
+  
+  <div class="page-bg">
+  
+    <img src="/images/posts/Reactor%20%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/cover.png" alt="">
+  </div>
+  
+
+  
+  
+  
+  <section class="page-hero">
+    <h1 class="hero-title">Reactor 网络模型</h1>
+    <div class="hero-subtitle">
+      <div class="post-meta">
+    
+    <time class="post-date" datetime="2025-10-03T00:00:00+08:00">
+      2025-10-03
+    </time>
+    
+
+    
+    <time class="post-updated" datetime="2026-07-06T00:00:00+08:00">
+      更新于 2026-07-06
+    </time>
+    
+
+    
+    <span class="post-word-count">1495 words</span>
+    
+
+    
+    <span class="post-reading-time">7 min read</span>
+    
+
+    
+    <span class="post-categories">
+      
+        <a class="category-link" href="/categories/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/">网络编程</a>
+      
+    </span>
+    
+
+</div>
+
+    </div>
+    
+    <div class="hero-tags">
+      
+        <a class="tag-link" href="/tags/C/">C++</a>
+      
+        <a class="tag-link" href="/tags/epoll/">epoll</a>
+      
+        <a class="tag-link" href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/">网络编程</a>
+      
+        <a class="tag-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/">多线程</a>
+      
+        <a class="tag-link" href="/tags/Reactor/">Reactor</a>
+      
+        <a class="tag-link" href="/tags/EventLoop/">EventLoop</a>
+      
+    </div>
+    
+  </section>
+  
+  
+
+  
+<div class="container">
+    <div class="content-wrapper">
+      
+      
+<aside class="site-sidebar sidebar-post" id="site-sidebar" data-position="left">
+
+  
+  
+
+  <div class="sidebar-sticky-group">
+    
+    <section class="sidebar-card sidebar-music">
+      
+<div class="music-player" data-playlist='[{"name":"奏穹のラプソディア (狂想曲)","artist":"瑶山百霊","url":"/music/瑶山百霊 - 奏穹のラプソディア (狂想曲).ogg","cover":"/music/covers/soukyuu-no-rhapsody.jpg"},{"name":"Graveyard Memory","artist":"GET IN THE RING","url":"/music/GET IN THE RING - Graveyard Memory.ogg","cover":"/music/covers/graveyard-memory.jpg"},{"name":"ポラリス (北极星)","artist":"GET IN THE RING","url":"/music/GET IN THE RING - ポラリス (北极星).ogg","cover":"/music/covers/polaris.jpg"},{"name":"その唄の名は…","artist":"yukina / GET IN THE RING","url":"/music/yukina _ GET IN THE RING - その唄の名は….ogg","cover":"/music/covers/sono-uta-no-na-wa.jpg"},{"name":"over the moon","artist":"Forest306","url":"/music/Forest306 - over the moon.ogg","cover":"/music/covers/over-the-moon.jpg"},{"name":"21時の探しモノ (21时寻找的东西)","artist":"minimum electric design","url":"/music/minimum electric design - 21時の探しモノ (21时寻找的东西).ogg","cover":"/music/covers/21ji-no-sagashimono.jpg"},{"name":"Freak Report 01 ~他愛も無い二人の博物誌~","artist":"凛","url":"/music/凛 - Freak Report 01 ~他愛も無い二人の博物誌~.ogg","cover":"/music/covers/freak-report-01.jpg"},{"name":"かぜのいろ (カゼノイロ)","artist":"森羅万象","url":"/music/森羅万象 - かぜのいろ (カゼノイロ).ogg","cover":"/music/covers/kaze-no-iro.jpg"},{"name":"Onisan Dochira!","artist":"狐の工作室","url":"/music/狐の工作室 - Onisan Dochira!.ogg","cover":"/music/covers/onisan-dochira.jpg"},{"name":"Skip in the byway","artist":"神乃木製作所","url":"/music/神乃木製作所 - Skip in the byway.ogg","cover":"/music/covers/skip-in-the-byway.jpg"}]'>
+  
+  <div class="music-body">
+    <div class="music-cover">
+      
+      
+      <img src="/music/covers/soukyuu-no-rhapsody.jpg" alt="cover" class="music-cover-img" onerror="if(!this.dataset.failed){this.dataset.failed='1';this.src='/images/shion/404.png'}">
+      
+    </div>
+    <div class="music-info">
+      <div class="music-title-row">
+        <span class="music-title">奏穹のラプソディア (狂想曲)</span>
+        <span class="music-counter">1 / 10</span>
+      </div>
+      <span class="music-artist">瑶山百霊</span>
+      <div class="music-progress">
+        <div class="music-progress-bar">
+          <div class="music-progress-fill"></div>
+        </div>
+        <div class="music-time">
+          <span class="music-time-current">0:00</span>
+          <span class="music-time-total">0:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="music-controls">
+    <button class="music-btn music-btn-mode" aria-label="Play mode" data-mode="sequential" title="Sequential">
+      <svg class="music-mode-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+    <button class="music-btn music-btn-prev" aria-label="Previous track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+    </button>
+    <button class="music-btn music-btn-play" aria-label="Play">
+      <svg class="music-icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <svg class="music-icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="6" height="16"/><rect x="14" y="4" width="6" height="16"/></svg>
+    </button>
+    <button class="music-btn music-btn-next" aria-label="Next track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+    </button>
+    <button class="music-btn music-btn-list" aria-label="Playlist">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="music-playlist">
+    
+    <button class="music-playlist-item active" data-index="0">
+      <span class="music-playlist-name">奏穹のラプソディア (狂想曲)</span>
+      <span class="music-playlist-artist">瑶山百霊</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="1">
+      <span class="music-playlist-name">Graveyard Memory</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="2">
+      <span class="music-playlist-name">ポラリス (北极星)</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="3">
+      <span class="music-playlist-name">その唄の名は…</span>
+      <span class="music-playlist-artist">yukina / GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="4">
+      <span class="music-playlist-name">over the moon</span>
+      <span class="music-playlist-artist">Forest306</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="5">
+      <span class="music-playlist-name">21時の探しモノ (21时寻找的东西)</span>
+      <span class="music-playlist-artist">minimum electric design</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="6">
+      <span class="music-playlist-name">Freak Report 01 ~他愛も無い二人の博物誌~</span>
+      <span class="music-playlist-artist">凛</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="7">
+      <span class="music-playlist-name">かぜのいろ (カゼノイロ)</span>
+      <span class="music-playlist-artist">森羅万象</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="8">
+      <span class="music-playlist-name">Onisan Dochira!</span>
+      <span class="music-playlist-artist">狐の工作室</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="9">
+      <span class="music-playlist-name">Skip in the byway</span>
+      <span class="music-playlist-artist">神乃木製作所</span>
+    </button>
+    
+  </div>
+  
+</div>
+
+    </section>
+    
+
+    <section class="sidebar-card sidebar-toc">
+      <div class="sidebar-toc-header">
+        <a class="sidebar-back-home" href="/" title="首页">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </a>
+        <span class="sidebar-toc-label">Reactor 网络模型</span>
+      </div>
+      <div class="sidebar-scroll">
+      
+      
+      <nav class="sidebar-toc">
+        <ol class="toc-list"><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#1-%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-list-text">1. 核心组件的实现</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#1-1-Poller%EF%BC%88%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E5%99%A8%EF%BC%89"><span class="toc-list-text">1.1 Poller（多路复用器）</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#1-2-Channel%EF%BC%88%E4%BA%8B%E4%BB%B6%E9%80%9A%E9%81%93%EF%BC%89"><span class="toc-list-text">1.2 Channel（事件通道）</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#1-3-EventLoop%EF%BC%88%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF%EF%BC%89"><span class="toc-list-text">1.3 EventLoop（事件循环）</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#1-4-Handler%EF%BC%88%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E5%99%A8%EF%BC%89"><span class="toc-list-text">1.4 Handler（事件处理器）</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#2-%E5%85%B6%E4%BB%96%E7%BB%84%E4%BB%B6"><span class="toc-list-text">2. 其他组件</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#2-1-Buffer"><span class="toc-list-text">2.1 Buffer</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#2-2-Connection"><span class="toc-list-text">2.2 Connection</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#3-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-list-text">3. 多线程服务器</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#3-1-EventLoopThread"><span class="toc-list-text">3.1 EventLoopThread</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#3-2-EventLoopThreadPool"><span class="toc-list-text">3.2 EventLoopThreadPool</span></a></li></ol></li></ol>
+      </nav>
+      
+      </div>
+      <a class="sidebar-back-home-bottom" href="/">← 首页</a>
+    </section>
+  </div>
+
+  
+</aside>
+
+      
+
+      <main class="site-main">
+        <article class="post">
+
+  <div class="post-content">
+    
+  
+  
+  
+
+
+    <p>前面我们提到 I&#x2F;O多路复用 + 非阻塞 可以实现服务器的一对多以及高并发性能，但是直接调用原生接口写起来十分不方便，且不便于管理和拓展，于是我们可以使用一种叫做 Reactor 架构模型。</p>
+<p>Reactor 的核心思想是<strong>事件驱动</strong>，它将 I&#x2F;O 事件的监听、分发和处理进行解耦：</p>
+<ul>
+<li><code>Poller</code>：负责统一监听所有 <code>fd</code> 的 I&#x2F;O 事件</li>
+<li><code>Channel</code>：对 <code>fd</code> 的抽象，封装了 <code>fd</code>、关注的事件以及对应的回调函数</li>
+<li><code>EventLoop</code>：事件循环的核心组件，负责调用 <code>Poller</code> 等待事件、分发就绪事件，并执行相应的回调函数</li>
+<li><code>Handler</code>：处理事件的具体逻辑，也就是上面提到的回调函数</li>
+</ul>
+<hr>
+<h1 id="1-核心组件的实现"><a href="#1-核心组件的实现" class="headerlink" title="1. 核心组件的实现"></a>1. 核心组件的实现</h1><h2 id="1-1-Poller（多路复用器）"><a href="#1-1-Poller（多路复用器）" class="headerlink" title="1.1 Poller（多路复用器）"></a>1.1 <code>Poller</code>（多路复用器）</h2><p><code>Epoll</code> 类是对 Linux <code>epoll</code> API 的封装，用于管理所有 fd 的事件监听。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Epoll</span> &#123;<br><span class="hljs-keyword">private</span>:<br>    <span class="hljs-type">int</span> epfd;<br>    std::vector&lt;epoll_event&gt; events;<br><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-built_in">Epoll</span>(<span class="hljs-type">int</span> maxEvents = <span class="hljs-number">1024</span>);<br>    ~<span class="hljs-built_in">Epoll</span>();<br><br>    <span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">add</span><span class="hljs-params">(Channel* channel)</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">mod</span><span class="hljs-params">(Channel* channel)</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">del</span><span class="hljs-params">(Channel* channel)</span></span>;<br><br>    <span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">wait</span><span class="hljs-params">(<span class="hljs-type">int</span> timeout = <span class="hljs-number">-1</span>)</span></span>;<br><br>    <span class="hljs-function">epoll_event <span class="hljs-title">getEvent</span><span class="hljs-params">(<span class="hljs-type">int</span> i)</span> <span class="hljs-type">const</span></span>;<br>    <span class="hljs-function">Channel* <span class="hljs-title">getChannel</span><span class="hljs-params">(<span class="hljs-type">int</span> i)</span> <span class="hljs-type">const</span></span>;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h2 id="1-2-Channel（事件通道）"><a href="#1-2-Channel（事件通道）" class="headerlink" title="1.2 Channel（事件通道）"></a>1.2 <code>Channel</code>（事件通道）</h2><p><code>Channel</code> 表示一个 fd 的事件对象，每个 socket 对应一个 Channel，它负责记录事件、保存回调函数。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Channel</span> &#123;<br><span class="hljs-keyword">private</span>:<br>    <span class="hljs-type">int</span> fd;<br><br>    <span class="hljs-type">uint32_t</span> events;<br>    <span class="hljs-type">uint32_t</span> revents;<br><br>    Socket* socket;<br><br>    std::function&lt;<span class="hljs-type">void</span>()&gt; readCallback;<br>    std::function&lt;<span class="hljs-type">void</span>()&gt; writeCallback;<br><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-built_in">Channel</span>(<span class="hljs-type">int</span> fd, Socket* sock = <span class="hljs-literal">nullptr</span>) : <span class="hljs-built_in">fd</span>(fd), <span class="hljs-built_in">socket</span>(sock), <span class="hljs-built_in">events</span>(<span class="hljs-number">0</span>), <span class="hljs-built_in">revents</span>(<span class="hljs-number">0</span>) &#123;&#125;<br><br>    <span class="hljs-comment">// 禁止拷贝，允许移动</span><br>    <span class="hljs-built_in">Channel</span>(<span class="hljs-type">const</span> Channel&amp;) = <span class="hljs-keyword">delete</span>;<br>    Channel&amp; <span class="hljs-keyword">operator</span>=(<span class="hljs-type">const</span> Channel&amp;) = <span class="hljs-keyword">delete</span>;<br>    <span class="hljs-built_in">Channel</span>(Channel&amp;&amp;) = <span class="hljs-keyword">default</span>;<br>    Channel&amp; <span class="hljs-keyword">operator</span>=(Channel&amp;&amp;) = <span class="hljs-keyword">default</span>;<br><br>    <span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">getFd</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> fd; &#125;<br>    <span class="hljs-function">Socket* <span class="hljs-title">getSocket</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> socket; &#125;<br><br>    <span class="hljs-function"><span class="hljs-type">uint32_t</span> <span class="hljs-title">getEvents</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> events; &#125;<br>    <span class="hljs-function"><span class="hljs-type">uint32_t</span> <span class="hljs-title">getRevents</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> revents; &#125;<br>    <br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setEvents</span><span class="hljs-params">(<span class="hljs-type">uint32_t</span> ev)</span> </span>&#123; events = ev; &#125;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setRevents</span><span class="hljs-params">(<span class="hljs-type">uint32_t</span> rev)</span> </span>&#123; revents = rev; &#125;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setReadCallback</span><span class="hljs-params">(<span class="hljs-type">const</span> std::function&lt;<span class="hljs-type">void</span>()&gt;&amp; cb)</span> </span>&#123; readCallback = cb; &#125;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setWriteCallback</span><span class="hljs-params">(<span class="hljs-type">const</span> std::function&lt;<span class="hljs-type">void</span>()&gt;&amp; cb)</span> </span>&#123; writeCallback = cb; &#125;<br>    <br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">handleEvent</span><span class="hljs-params">()</span> </span>&#123;<br>        <span class="hljs-keyword">if</span> ((revents &amp; EPOLLIN) &amp;&amp; readCallback) &#123;<br>            <span class="hljs-built_in">readCallback</span>();<br>        &#125;<br>        <span class="hljs-keyword">if</span> ((revents &amp; EPOLLOUT) &amp;&amp; writeCallback) &#123;<br>            <span class="hljs-built_in">writeCallback</span>();<br>        &#125;<br>    &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h2 id="1-3-EventLoop（事件循环）"><a href="#1-3-EventLoop（事件循环）" class="headerlink" title="1.3 EventLoop（事件循环）"></a>1.3 <code>EventLoop</code>（事件循环）</h2><p><code>EventLoop</code> 是 Reactor 的核心组件，负责事件循环、事件分发、任务调度。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">EventLoop</span> &#123;<br><span class="hljs-keyword">private</span>:<br>    Epoll epoll;<br><br>    std::vector&lt;Channel*&gt; activeChannels;<br><br>    std::atomic&lt;<span class="hljs-type">bool</span>&gt; looping;<br>    std::atomic&lt;<span class="hljs-type">bool</span>&gt; isQuit;<br>    std::atomic&lt;<span class="hljs-type">bool</span>&gt; callingPendingFunctors;<br><br>    std::thread::id threadId;<br><br>    <span class="hljs-type">int</span> wakeupFd;<br>    std::unique_ptr&lt;Channel&gt; wakeupChannel;<br><br>    std::mutex pendingMutex;<br>    std::vector&lt;std::function&lt;<span class="hljs-type">void</span>()&gt;&gt; pendingFunctors;<br><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-built_in">EventLoop</span>(<span class="hljs-type">int</span> maxEvents = <span class="hljs-number">1024</span>);<br>    ~<span class="hljs-built_in">EventLoop</span>();<br><br>    <span class="hljs-built_in">EventLoop</span>(<span class="hljs-type">const</span> EventLoop&amp;) = <span class="hljs-keyword">delete</span>;<br>    EventLoop&amp; <span class="hljs-keyword">operator</span>=(<span class="hljs-type">const</span> EventLoop&amp;) = <span class="hljs-keyword">delete</span>;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">loop</span><span class="hljs-params">()</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">quit</span><span class="hljs-params">()</span></span>;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">addChannel</span><span class="hljs-params">(Channel* channel)</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">updateChannel</span><span class="hljs-params">(Channel* channel)</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">removeChannel</span><span class="hljs-params">(Channel* channel)</span></span>;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">runInLoop</span><span class="hljs-params">(<span class="hljs-type">const</span> std::function&lt;<span class="hljs-type">void</span>()&gt;&amp; cb)</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">queueInLoop</span><span class="hljs-params">(<span class="hljs-type">const</span> std::function&lt;<span class="hljs-type">void</span>()&gt;&amp; cb)</span></span>;<br><br>    <span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">isInLoopThread</span><span class="hljs-params">()</span> <span class="hljs-type">const</span></span>;<br><br><span class="hljs-keyword">private</span>:<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">wakeup</span><span class="hljs-params">()</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">handleWakeupRead</span><span class="hljs-params">()</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">doPendingFunctors</span><span class="hljs-params">()</span></span>;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h2 id="1-4-Handler（事件处理器）"><a href="#1-4-Handler（事件处理器）" class="headerlink" title="1.4 Handler（事件处理器）"></a>1.4 <code>Handler</code>（事件处理器）</h2><p>负责执行具体的任务，在该案例中并没有将其专门抽象出来，而是直接 <strong>以回调函数（<code>std::function&lt;void()&gt;</code>）的形式嵌入在 <code>Channel</code> 类中</strong>。</p>
+<p>虽然代码中没有独立的 <code>Handler</code> 类，但回调函数承担了 Handler 的职责，例如在 <code>Channel</code> 类中有：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp">std::function&lt;<span class="hljs-type">void</span>()&gt; readCallback;<br>std::function&lt;<span class="hljs-type">void</span>()&gt; writeCallback;<br></code></pre></td></tr></table></figure>
+
+<p>通过以下方法设置回调函数的具体逻辑：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setReadCallback</span><span class="hljs-params">(<span class="hljs-type">const</span> std::function&lt;<span class="hljs-type">void</span>()&gt;&amp; cb)</span> </span>&#123; readCallback = cb; &#125;<br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setWriteCallback</span><span class="hljs-params">(<span class="hljs-type">const</span> std::function&lt;<span class="hljs-type">void</span>()&gt;&amp; cb)</span> </span>&#123; writeCallback = cb; &#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>Channel</code> 负责局部分发，调用具体的回调函数，事件触发的流程路线为 <code>EventLoop -&gt; Channel::handleEvent() -&gt; Callback()</code>。 </p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">handleEvent</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-keyword">if</span> ((revents &amp; EPOLLIN) &amp;&amp; readCallback) &#123;<br>        <span class="hljs-built_in">readCallback</span>();<br>    &#125;<br>    <span class="hljs-keyword">if</span> ((revents &amp; EPOLLOUT) &amp;&amp; writeCallback) &#123;<br>        <span class="hljs-built_in">writeCallback</span>();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="2-其他组件"><a href="#2-其他组件" class="headerlink" title="2. 其他组件"></a>2. 其他组件</h1><h2 id="2-1-Buffer"><a href="#2-1-Buffer" class="headerlink" title="2.1 Buffer"></a>2.1 <code>Buffer</code></h2><p>TCP是流式协议，无消息边界，因此可能会出现以下情况：</p>
+<ul>
+<li>拆包：一个完整信息分多次 <code>read</code> 到达</li>
+<li>粘包：多个消息在一次 <code>read</code> 中到达</li>
+<li>非阻塞写：<code>write</code> 可能只发送部分数据，剩余部分需缓存</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Buffer</span> &#123;<br><span class="hljs-keyword">private</span>:<br>    std::vector&lt;<span class="hljs-type">char</span>&gt; buffer;<br>    <span class="hljs-type">size_t</span> readIndex;<br>    <span class="hljs-type">size_t</span> writeIndex;<br><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-built_in">Buffer</span>(<span class="hljs-type">size_t</span> initSize = <span class="hljs-number">1024</span>);<br>    ~<span class="hljs-built_in">Buffer</span>();<br><br>    <span class="hljs-function"><span class="hljs-type">ssize_t</span> <span class="hljs-title">readFd</span><span class="hljs-params">(<span class="hljs-type">int</span> fd, <span class="hljs-type">int</span>* savedErrno)</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">ssize_t</span> <span class="hljs-title">writeFd</span><span class="hljs-params">(<span class="hljs-type">int</span> fd, <span class="hljs-type">int</span>* savedErrno)</span></span>;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">append</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">char</span>* data, <span class="hljs-type">size_t</span> len)</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">append</span><span class="hljs-params">(<span class="hljs-type">const</span> std::string&amp; data)</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">append</span><span class="hljs-params">(<span class="hljs-type">const</span> Buffer&amp; data)</span></span>;<br><br>    <span class="hljs-function"><span class="hljs-type">const</span> <span class="hljs-type">char</span>* <span class="hljs-title">peek</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> buffer.<span class="hljs-built_in">data</span>() + readIndex; &#125;<br>    <br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">retrieve</span><span class="hljs-params">(<span class="hljs-type">size_t</span> len)</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">retrieveAll</span><span class="hljs-params">()</span></span>;<br><br>    <span class="hljs-function"><span class="hljs-type">size_t</span> <span class="hljs-title">readableBytes</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> writeIndex - readIndex; &#125;<br>    <span class="hljs-function"><span class="hljs-type">size_t</span> <span class="hljs-title">writableBytes</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> buffer.<span class="hljs-built_in">size</span>() - writeIndex; &#125;<br>    <span class="hljs-function"><span class="hljs-type">size_t</span> <span class="hljs-title">prependBytes</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> readIndex; &#125;<br><br><span class="hljs-keyword">private</span>:<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">makeSpace</span><span class="hljs-params">(<span class="hljs-type">size_t</span> len)</span></span>;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+
+<h2 id="2-2-Connection"><a href="#2-2-Connection" class="headerlink" title="2.2 Connection"></a>2.2 <code>Connection</code></h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Connection</span> &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-keyword">using</span> ConnectionCallback = std::function&lt;<span class="hljs-built_in">void</span>(Connection*)&gt;;<br>    <span class="hljs-keyword">using</span> MessageCallback = std::function&lt;<span class="hljs-built_in">void</span>(Connection*, Buffer*)&gt;;<br>    <span class="hljs-keyword">using</span> CloseCallback = std::function&lt;<span class="hljs-built_in">void</span>(Connection*)&gt;;<br><br>    <span class="hljs-built_in">Connection</span>(EventLoop* loop, Socket&amp;&amp; socket);<br>    ~<span class="hljs-built_in">Connection</span>();<br><br>    <span class="hljs-built_in">Connection</span>(<span class="hljs-type">const</span> Connection&amp;) = <span class="hljs-keyword">delete</span>;<br>    Connection&amp; <span class="hljs-keyword">operator</span>=(<span class="hljs-type">const</span> Connection&amp;) = <span class="hljs-keyword">delete</span>;<br><br>    <span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">fd</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> socket.<span class="hljs-built_in">getFd</span>(); &#125;<br>    <span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">connected</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> state == State::Connected; &#125;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setConnectionCallback</span><span class="hljs-params">(<span class="hljs-type">const</span> ConnectionCallback&amp; cb)</span> </span>&#123; connectionCallback = cb; &#125;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setMessageCallback</span><span class="hljs-params">(<span class="hljs-type">const</span> MessageCallback&amp; cb)</span> </span>&#123; messageCallback = cb; &#125;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setCloseCallback</span><span class="hljs-params">(<span class="hljs-type">const</span> CloseCallback&amp; cb)</span> </span>&#123; closeCallback = cb; &#125;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">connectEstablished</span><span class="hljs-params">()</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">connectDestroyed</span><span class="hljs-params">()</span></span>;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">send</span><span class="hljs-params">(<span class="hljs-type">const</span> std::string&amp; data)</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">shutdown</span><span class="hljs-params">()</span></span>;<br><br>    <span class="hljs-function">Buffer* <span class="hljs-title">inputBufferPtr</span><span class="hljs-params">()</span> </span>&#123; <span class="hljs-keyword">return</span> &amp;inputBuffer; &#125;<br>    <span class="hljs-function">Buffer* <span class="hljs-title">outputBufferPtr</span><span class="hljs-params">()</span> </span>&#123; <span class="hljs-keyword">return</span> &amp;outputBuffer; &#125;<br><br><span class="hljs-keyword">private</span>:<br>    <span class="hljs-keyword">enum class</span> <span class="hljs-title class_">State</span> &#123;<br>        Connecting,<br>        Connected,<br>        Disconnecting,<br>        Disconnected,<br>    &#125;;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setState</span><span class="hljs-params">(State s)</span> </span>&#123; state = s; &#125;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">handleRead</span><span class="hljs-params">()</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">handleWrite</span><span class="hljs-params">()</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">handleClose</span><span class="hljs-params">()</span></span>;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">sendInLoop</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">char</span>* data, <span class="hljs-type">size_t</span> len)</span></span>;<br><br><span class="hljs-keyword">private</span>:<br>    EventLoop* loop;<br>    Socket socket;<br>    std::unique_ptr&lt;Channel&gt; channel;<br><br>    State state;<br>    Buffer inputBuffer;<br>    Buffer outputBuffer;<br><br>    ConnectionCallback connectionCallback;<br>    MessageCallback messageCallback;<br>    CloseCallback closeCallback;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="3-多线程服务器"><a href="#3-多线程服务器" class="headerlink" title="3. 多线程服务器"></a>3. 多线程服务器</h1><p>传统的多线程服务器的思路是给每个客户端请求都分配一个线程，这样的好处是结构简单，在低并发情况下可以有效利用CPU，但是由于会占用过多资源，所以并不适合高并发环境。更好的思路是与前面的I&#x2F;O多路复用相结合，每个线程负责一个 <code>epoll</code>，同时管理多个客户端请求，这样就可以大大提高并发处理能力。</p>
+<h2 id="3-1-EventLoopThread"><a href="#3-1-EventLoopThread" class="headerlink" title="3.1 EventLoopThread"></a>3.1 <code>EventLoopThread</code></h2><p>在Reactor模型中，<code>Poller (epoll)</code> 是由一个 <code>EventLoop</code> 实例所管理的。因此，我们可以让每个线程各自维护一个 <code>EventLoop</code> 实例，负责分别处理来自客户端的请求。为了方便使用，我们将线程这一概念封装为 <code>EventLoopThread</code>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">EventLoopThread</span> &#123;<br><span class="hljs-keyword">private</span>:<br>    std::unique_ptr&lt;EventLoop&gt; loop;<br>    std::thread thread;<br>    std::mutex mutex;<br>    std::condition_variable cond;<br>    std::function&lt;<span class="hljs-type">void</span>(EventLoop*)&gt; initCallback;<br><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-built_in">EventLoopThread</span>(std::function&lt;<span class="hljs-built_in">void</span>(EventLoop*)&gt; initCallback = <span class="hljs-literal">nullptr</span>);<br>    ~<span class="hljs-built_in">EventLoopThread</span>();<br><br>    <span class="hljs-built_in">EventLoopThread</span>(<span class="hljs-type">const</span> EventLoopThread&amp;) = <span class="hljs-keyword">delete</span>;<br>    EventLoopThread&amp; <span class="hljs-keyword">operator</span>=(<span class="hljs-type">const</span> EventLoopThread&amp;) = <span class="hljs-keyword">delete</span>;<br><br>    <span class="hljs-function">EventLoop* <span class="hljs-title">startLoop</span><span class="hljs-params">()</span></span>; <span class="hljs-comment">// 启动事件循环线程</span><br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<div class="note note-info"><p>需要注意的是，每个 <code>EventLoop</code> 只属于一个线程，且它只能在其所属线程中执行，这种约束可以避免多线程竞争 <code>epoll</code>（否则就需要加锁，但是这更麻烦且有性能损耗）。</p>
+</div>
+
+<h2 id="3-2-EventLoopThreadPool"><a href="#3-2-EventLoopThreadPool" class="headerlink" title="3.2 EventLoopThreadPool"></a>3.2 <code>EventLoopThreadPool</code></h2><p>为了更方便地调用线程并减少反复创建新线程导致的资源消耗，我们可以创建一个线程池 <code>EventLoopThreadPool</code>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">EventLoopThreadPool</span> &#123;<br><span class="hljs-keyword">private</span>:<br>    EventLoop* baseLoop;<br>    <span class="hljs-type">ssize_t</span> numThreads;<br>    std::vector&lt;std::unique_ptr&lt;EventLoopThread&gt;&gt; threads;<br>    std::vector&lt;EventLoop*&gt; loops;<br>    <span class="hljs-type">size_t</span> next; <span class="hljs-comment">// 轮询索引（指向池中下一个线程）</span><br><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-built_in">EventLoopThreadPool</span>(EventLoop* baseLoop, <span class="hljs-type">size_t</span> numThreads);<br>    ~<span class="hljs-built_in">EventLoopThreadPool</span>() = <span class="hljs-keyword">default</span>;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">start</span><span class="hljs-params">()</span></span>; <span class="hljs-comment">// 初始化线程池中的所有线程，同时启动它们的loop</span><br>    <br>    <span class="hljs-function">EventLoop* <span class="hljs-title">getNextLoop</span><span class="hljs-params">()</span></span>;<br>    <span class="hljs-function">std::vector&lt;EventLoop*&gt; <span class="hljs-title">getAllLoops</span><span class="hljs-params">()</span></span>;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+  </div>
+
+  
+  <div class="post-copyright">
+    <p><strong>Shionyori</strong></p>
+    <p>/2025/10/02/Reactor%20%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/</p>
+    <p>&amp;copy; 2025 Shionyori. 保留所有权利。</p>
+  </div>
+  
+
+  <footer class="post-footer">
+    
+    <div class="post-tags-footer">
+      
+        <a class="tag-link" href="/tags/C/">C++</a>
+      
+        <a class="tag-link" href="/tags/epoll/">epoll</a>
+      
+        <a class="tag-link" href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/">网络编程</a>
+      
+        <a class="tag-link" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/">多线程</a>
+      
+        <a class="tag-link" href="/tags/Reactor/">Reactor</a>
+      
+        <a class="tag-link" href="/tags/EventLoop/">EventLoop</a>
+      
+    </div>
+    
+
+    
+<div class="post-share">
+  <div class="share-buttons">
+    
+    
+    
+
+    
+    <a class="share-btn share-twitter" href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fshionyori.github.io%2F2025%2F10%2F02%2FReactor%20%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B%2F&text=Reactor%20%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B" target="_blank" rel="noopener" aria-label="分享到 Twitter">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fshionyori.github.io%2F2025%2F10%2F02%2FReactor%20%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fshionyori.github.io%2F2025%2F10%2F02%2FReactor%20%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B%2F" target="_blank" rel="noopener" aria-label="分享到 LinkedIn">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    
+
+    
+    <button class="share-btn share-copy" aria-label="复制链接" data-url="https://shionyori.github.io/2025/10/02/Reactor 网络模型/">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    </button>
+    
+  </div>
+</div>
+
+
+  </footer>
+</article>
+
+
+
+<nav class="post-nav">
+  
+    <a class="post-nav-item post-nav-prev has-cover" href="/2025/10/14/%E7%BC%96%E7%A8%8B%E5%85%A5%E9%97%A8%E5%89%8D%E7%9A%84%E5%87%86%E5%A4%87/" style='background-image: url(/images/posts/%E7%BC%96%E7%A8%8B%E5%85%A5%E9%97%A8%E5%89%8D%E7%9A%84%E5%87%86%E5%A4%87/cover.png)'>
+      <span class="nav-label">上一篇</span>
+      <span class="nav-title">编程入门前的准备</span>
+    </a>
+  
+  
+    <a class="post-nav-item post-nav-next has-cover" href="/2025/09/23/IO%20%E6%A8%A1%E5%9E%8B/" style='background-image: url(/images/posts/IO%20%E6%A8%A1%E5%9E%8B/cover.png)'>
+      <span class="nav-label">下一篇</span>
+      <span class="nav-title">IO 模型</span>
+    </a>
+  
+</nav>
+
+
+
+
+
+      </main>
+
+      
+    </div>
+  </div>
+</div>
+
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+
+<nav class="mobile-nav" id="mobile-nav">
+  <div class="mobile-nav-inner">
+    <div class="mobile-nav-header">
+      <span class="mobile-nav-title">首页</span>
+      <button class="btn-icon mobile-nav-close" id="mobile-nav-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <ul class="mobile-nav-menu">
+      
+        <li>
+          <a class="mobile-nav-link" href="/">首页</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/archives/">归档</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/tags/">标签</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/categories/">分类</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/friends/">友链</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/about/">关于</a>
+        </li>
+      
+    </ul>
+
+    
+    <div class="mobile-nav-social">
+      
+        <a class="social-icon" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+  </div>
+</nav>
+
+  <footer class="site-footer">
+  <div class="footer-inner">
+    
+    <div class="footer-social">
+      
+        <a class="social-link" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+
+    <div class="footer-info">
+      <span class="copyright">
+        &copy;
+        
+          2025 &ndash;
+        
+        2026
+        Shionyori
+      </span>
+
+      
+        <span class="powered-by">由 <a href="https://hexo.io/" target="_blank">Hexo</a> 驱动</span>
+      
+
+      
+        <span class="theme-by">主题 Shion</span>
+      
+
+      
+    </div>
+
+    
+
+  </div>
+</footer>
+
+
+
+  
+<div class="search-overlay" id="search-overlay"
+     data-i18n-found="关于「{query}」，找到了 {count} 条记录"
+     data-i18n-not-found="关于「{query}」，没有找到任何记录呢">
+  <div class="search-container">
+    <img class="search-decoration" src="/images/shion/search.png" alt="">
+    <div class="search-header">
+      <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" class="search-input" id="search-input" placeholder="输入关键词搜索..." autocomplete="off">
+      <button class="search-close" id="search-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="search-info" id="search-info"></div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+
+
+  
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/contrib/auto-render.min.js"></script>
+
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

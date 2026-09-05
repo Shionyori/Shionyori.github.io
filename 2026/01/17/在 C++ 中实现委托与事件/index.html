@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>在 C++ 中实现委托与事件 - Shionyori&#39;s Blog</title>
+
+
+<meta name="description" content="Gorgeous blooming flowers will eventually elegantly scattered.">
+
+
+<meta property="og:title" content="在 C++ 中实现委托与事件">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://shionyori.github.io/2026/01/17/在 C++ 中实现委托与事件/">
+<meta property="og:site_name" content="Shionyori&#39;s Blog">
+
+
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="在 C++ 中实现委托与事件">
+
+
+<link rel="canonical" href="https://shionyori.github.io/2026/01/17/在 C++ 中实现委托与事件/">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "name": "在 C++ 中实现委托与事件",
+  "url": "https://shionyori.github.io/2026/01/17/在 C++ 中实现委托与事件/",
+  "datePublished": "2026-01-18T00:00:00+08:00",
+  "author": { "@type": "Person", "name": "Shionyori" }
+  
+}
+</script>
+
+<meta name="theme-color" content="#6b7eb5">
+<link rel="icon" type="image/png" href="/images/shion/favicon.png">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+
+
+<script>
+  (function() {
+    var mode = 'auto';
+    var saved = localStorage.getItem('shion-theme');
+    if (saved) { mode = saved; }
+    else if (mode === 'auto') {
+      mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    if (mode === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+    (function() {
+      var fonts = {"heading":"'Noto Serif SC', 'Source Han Serif SC', Georgia, serif","body":"'Noto Sans SC', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif","code":"'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace","size_root":"15px"};
+      var legacySize = '';
+      var sizeRoot = fonts.size_root || legacySize;
+
+      if (fonts.heading) {
+        document.documentElement.style.setProperty('--font-heading', fonts.heading);
+      }
+      if (fonts.body) {
+        document.documentElement.style.setProperty('--font-body', fonts.body);
+      }
+      if (fonts.code) {
+        document.documentElement.style.setProperty('--font-code', fonts.code);
+      }
+      if (sizeRoot) {
+        document.documentElement.style.setProperty('--font-size-root', sizeRoot);
+      }
+    })();
+  })();
+</script>
+
+
+<noscript>
+  <style>
+    .sidebar-inner,
+    .content-card,
+    .post,
+    .page,
+    .archive-item,
+    .category-item,
+    .pagination,
+    .comments,
+    .not-found-content,
+    .widget,
+    .tag-cloud-item,
+    .post-card-wrapper,
+    .post-content,
+    .post-tags-footer,
+    .post-share,
+    .post-copyright,
+    .post-nav {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  </style>
+</noscript>
+
+  <script>
+    window.__shionConfig = {
+      katexCDN: 'https://cdn.jsdelivr.net/npm/katex@0',
+      katexDelimiters: [{"left":"$$","right":"$$","display":true},{"left":"$","right":"$","display":false}]
+    };
+  </script>
+<meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a class="site-logo" href="/">
+      
+        <span class="logo-text">Shionyori&#39;s Blog</span>
+      
+    </a>
+
+    <nav class="site-nav" id="site-nav">
+      
+        <a class="nav-item" href="/">首页</a>
+      
+        <a class="nav-item" href="/archives/">归档</a>
+      
+        <a class="nav-item" href="/tags/">标签</a>
+      
+        <a class="nav-item" href="/categories/">分类</a>
+      
+        <a class="nav-item" href="/friends/">友链</a>
+      
+        <a class="nav-item" href="/about/">关于</a>
+      
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn-icon search-toggle" id="search-toggle" aria-label="搜索">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon theme-toggle" id="theme-toggle" aria-label="深色模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon sidebar-toggle" id="sidebar-toggle" aria-label="sidebar_toggle">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+
+  
+<div class="reading-progress" id="reading-progress">
+  <div class="reading-progress-bar" id="reading-progress-bar"></div>
+</div>
+
+
+
+<div id="pjax-container">
+  
+  
+  
+  <div class="page-bg">
+  
+    <img src="/images/posts/%E5%9C%A8%20C++%20%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%A7%94%E6%89%98%E4%B8%8E%E4%BA%8B%E4%BB%B6/cover.png" alt="">
+  </div>
+  
+
+  
+  
+  
+  <section class="page-hero">
+    <h1 class="hero-title">在 C++ 中实现委托与事件</h1>
+    <div class="hero-subtitle">
+      <div class="post-meta">
+    
+    <time class="post-date" datetime="2026-01-18T00:00:00+08:00">
+      2026-01-18
+    </time>
+    
+
+    
+    <time class="post-updated" datetime="2026-07-07T00:00:00+08:00">
+      更新于 2026-07-07
+    </time>
+    
+
+    
+    <span class="post-word-count">2309 words</span>
+    
+
+    
+    <span class="post-reading-time">9 min read</span>
+    
+
+    
+    <span class="post-categories">
+      
+        <a class="category-link" href="/categories/C/">C++</a>
+      
+    </span>
+    
+
+</div>
+
+    </div>
+    
+    <div class="hero-tags">
+      
+        <a class="tag-link" href="/tags/C/">C++</a>
+      
+        <a class="tag-link" href="/tags/%E5%A7%94%E6%89%98/">委托</a>
+      
+        <a class="tag-link" href="/tags/%E4%BA%8B%E4%BB%B6/">事件</a>
+      
+        <a class="tag-link" href="/tags/%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F/">观察者模式</a>
+      
+        <a class="tag-link" href="/tags/%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85%E6%A8%A1%E5%BC%8F/">发布订阅模式</a>
+      
+    </div>
+    
+  </section>
+  
+  
+
+  
+<div class="container">
+    <div class="content-wrapper">
+      
+      
+<aside class="site-sidebar sidebar-post" id="site-sidebar" data-position="left">
+
+  
+  
+
+  <div class="sidebar-sticky-group">
+    
+    <section class="sidebar-card sidebar-music">
+      
+<div class="music-player" data-playlist='[{"name":"奏穹のラプソディア (狂想曲)","artist":"瑶山百霊","url":"/music/瑶山百霊 - 奏穹のラプソディア (狂想曲).ogg","cover":"/music/covers/soukyuu-no-rhapsody.jpg"},{"name":"Graveyard Memory","artist":"GET IN THE RING","url":"/music/GET IN THE RING - Graveyard Memory.ogg","cover":"/music/covers/graveyard-memory.jpg"},{"name":"ポラリス (北极星)","artist":"GET IN THE RING","url":"/music/GET IN THE RING - ポラリス (北极星).ogg","cover":"/music/covers/polaris.jpg"},{"name":"その唄の名は…","artist":"yukina / GET IN THE RING","url":"/music/yukina _ GET IN THE RING - その唄の名は….ogg","cover":"/music/covers/sono-uta-no-na-wa.jpg"},{"name":"over the moon","artist":"Forest306","url":"/music/Forest306 - over the moon.ogg","cover":"/music/covers/over-the-moon.jpg"},{"name":"21時の探しモノ (21时寻找的东西)","artist":"minimum electric design","url":"/music/minimum electric design - 21時の探しモノ (21时寻找的东西).ogg","cover":"/music/covers/21ji-no-sagashimono.jpg"},{"name":"Freak Report 01 ~他愛も無い二人の博物誌~","artist":"凛","url":"/music/凛 - Freak Report 01 ~他愛も無い二人の博物誌~.ogg","cover":"/music/covers/freak-report-01.jpg"},{"name":"かぜのいろ (カゼノイロ)","artist":"森羅万象","url":"/music/森羅万象 - かぜのいろ (カゼノイロ).ogg","cover":"/music/covers/kaze-no-iro.jpg"},{"name":"Onisan Dochira!","artist":"狐の工作室","url":"/music/狐の工作室 - Onisan Dochira!.ogg","cover":"/music/covers/onisan-dochira.jpg"},{"name":"Skip in the byway","artist":"神乃木製作所","url":"/music/神乃木製作所 - Skip in the byway.ogg","cover":"/music/covers/skip-in-the-byway.jpg"}]'>
+  
+  <div class="music-body">
+    <div class="music-cover">
+      
+      
+      <img src="/music/covers/soukyuu-no-rhapsody.jpg" alt="cover" class="music-cover-img" onerror="if(!this.dataset.failed){this.dataset.failed='1';this.src='/images/shion/404.png'}">
+      
+    </div>
+    <div class="music-info">
+      <div class="music-title-row">
+        <span class="music-title">奏穹のラプソディア (狂想曲)</span>
+        <span class="music-counter">1 / 10</span>
+      </div>
+      <span class="music-artist">瑶山百霊</span>
+      <div class="music-progress">
+        <div class="music-progress-bar">
+          <div class="music-progress-fill"></div>
+        </div>
+        <div class="music-time">
+          <span class="music-time-current">0:00</span>
+          <span class="music-time-total">0:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="music-controls">
+    <button class="music-btn music-btn-mode" aria-label="Play mode" data-mode="sequential" title="Sequential">
+      <svg class="music-mode-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+    <button class="music-btn music-btn-prev" aria-label="Previous track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+    </button>
+    <button class="music-btn music-btn-play" aria-label="Play">
+      <svg class="music-icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <svg class="music-icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="6" height="16"/><rect x="14" y="4" width="6" height="16"/></svg>
+    </button>
+    <button class="music-btn music-btn-next" aria-label="Next track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+    </button>
+    <button class="music-btn music-btn-list" aria-label="Playlist">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="music-playlist">
+    
+    <button class="music-playlist-item active" data-index="0">
+      <span class="music-playlist-name">奏穹のラプソディア (狂想曲)</span>
+      <span class="music-playlist-artist">瑶山百霊</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="1">
+      <span class="music-playlist-name">Graveyard Memory</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="2">
+      <span class="music-playlist-name">ポラリス (北极星)</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="3">
+      <span class="music-playlist-name">その唄の名は…</span>
+      <span class="music-playlist-artist">yukina / GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="4">
+      <span class="music-playlist-name">over the moon</span>
+      <span class="music-playlist-artist">Forest306</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="5">
+      <span class="music-playlist-name">21時の探しモノ (21时寻找的东西)</span>
+      <span class="music-playlist-artist">minimum electric design</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="6">
+      <span class="music-playlist-name">Freak Report 01 ~他愛も無い二人の博物誌~</span>
+      <span class="music-playlist-artist">凛</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="7">
+      <span class="music-playlist-name">かぜのいろ (カゼノイロ)</span>
+      <span class="music-playlist-artist">森羅万象</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="8">
+      <span class="music-playlist-name">Onisan Dochira!</span>
+      <span class="music-playlist-artist">狐の工作室</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="9">
+      <span class="music-playlist-name">Skip in the byway</span>
+      <span class="music-playlist-artist">神乃木製作所</span>
+    </button>
+    
+  </div>
+  
+</div>
+
+    </section>
+    
+
+    <section class="sidebar-card sidebar-toc">
+      <div class="sidebar-toc-header">
+        <a class="sidebar-back-home" href="/" title="首页">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </a>
+        <span class="sidebar-toc-label">在 C++ 中实现委托与事件</span>
+      </div>
+      <div class="sidebar-scroll">
+      
+      
+      <nav class="sidebar-toc">
+        <ol class="toc-list"><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#0-%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-list-text">0. 前置知识</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%87%BD%E6%95%B0%E7%AD%BE%E5%90%8D"><span class="toc-list-text">函数签名</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88"><span class="toc-list-text">函数指针</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#std-function"><span class="toc-list-text">std::function</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#std-bind"><span class="toc-list-text">std::bind</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%9B%9E%E8%B0%83%E6%9C%BA%E5%88%B6"><span class="toc-list-text">回调机制</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#1-%E5%A7%94%E6%89%98%E4%B8%8E%E4%BA%8B%E4%BB%B6"><span class="toc-list-text">1. 委托与事件</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#1-1-%E5%A7%94%E6%89%98-Delegate"><span class="toc-list-text">1.1 委托 Delegate</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-3"><a class="toc-list-link" href="#1-1-1-%E5%8D%95%E6%92%AD%E5%A7%94%E6%89%98"><span class="toc-list-text">1.1.1 单播委托</span></a></li><li class="toc-list-item toc-list-level-3"><a class="toc-list-link" href="#1-1-2-%E5%A4%9A%E6%92%AD%E5%A7%94%E6%89%98"><span class="toc-list-text">1.1.2 多播委托</span></a></li></ol></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#1-2-%E4%BA%8B%E4%BB%B6-Event"><span class="toc-list-text">1.2 事件 Event</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#2-%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F"><span class="toc-list-text">2. 观察者模式</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#3-%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85%E6%A8%A1%E5%BC%8F"><span class="toc-list-text">3. 发布订阅模式</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#4-%E5%85%B6%E4%BB%96%E9%97%AE%E9%A2%98"><span class="toc-list-text">4. 其他问题</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#4-1-%E5%AD%98%E5%9B%9E%E8%B0%83%E8%BF%98%E6%98%AF%E5%AD%98%E5%AF%B9%E8%B1%A1%EF%BC%9F"><span class="toc-list-text">4.1 存回调还是存对象？</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#4-2-%E5%A6%82%E4%BD%95%E7%AE%A1%E7%90%86%E4%B8%80%E4%B8%AA%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%A4%9A%E4%B8%AA%E4%BA%8B%E4%BB%B6%EF%BC%9F"><span class="toc-list-text">4.2 如何管理一个对象的多个事件？</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#4-3-%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E8%AE%A2%E9%98%85%E7%9A%84%E5%8F%96%E6%B6%88%EF%BC%9F"><span class="toc-list-text">4.3 如何实现订阅的取消？</span></a></li></ol></li></ol>
+      </nav>
+      
+      </div>
+      <a class="sidebar-back-home-bottom" href="/">← 首页</a>
+    </section>
+  </div>
+
+  
+</aside>
+
+      
+
+      <main class="site-main">
+        <article class="post">
+
+  <div class="post-content">
+    
+  
+  
+  
+
+
+    <p>C++ 并没有提供委托与事件的官方实现，但借助已有的特性，我们可以仿照 C# 的委托与事件来实现类似的功能。</p>
+<hr>
+<h1 id="0-前置知识"><a href="#0-前置知识" class="headerlink" title="0. 前置知识"></a>0. 前置知识</h1><h2 id="函数签名"><a href="#函数签名" class="headerlink" title="函数签名"></a>函数签名</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">返回类型 函数名(参数类型1, 参数类型2, ...)<br></code></pre></td></tr></table></figure>
+<p>例如以下 <code>add</code> 函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">add</span><span class="hljs-params">(<span class="hljs-type">int</span> a, <span class="hljs-type">int</span> b)</span></span>;<br></code></pre></td></tr></table></figure>
+<p>他的函数签名是 <code>int(int, int)</code>。</p>
+<h2 id="函数指针"><a href="#函数指针" class="headerlink" title="函数指针"></a>函数指针</h2><p>函数指针的定义与普通指针类似，但需要指定函数的返回类型和参数列表，也就是函数签名。<br>设计一个指针指向 <code>add</code>，然后可以通过它调用函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">int</span> (*fp)(<span class="hljs-type">int</span>, <span class="hljs-type">int</span>) = add;<br><span class="hljs-built_in">fp</span>(<span class="hljs-number">10</span>, <span class="hljs-number">20</span>);<br></code></pre></td></tr></table></figure>
+
+<p>在 C++ 中我们可以使用 <code>using</code> 简化函数指针的定义：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">using</span> FuncPtr = <span class="hljs-built_in">int</span>(*)(<span class="hljs-type">double</span>, <span class="hljs-type">double</span>);<br>FuncPtr fp;<br></code></pre></td></tr></table></figure>
+
+<h2 id="std-function"><a href="#std-function" class="headerlink" title="std::function"></a><code>std::function</code></h2><p><code>std::function</code> 是一个模板类，其模板参数是函数签名。<br>例如，存储一个返回 <code>int</code> 的无参函数，可以这样定义：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">std::function&lt;<span class="hljs-type">int</span>()&gt; myFunction;<br></code></pre></td></tr></table></figure>
+
+<p><code>std::function</code> 用于封装一个可调用对象，以一种通用的方式来存储和调用这些对象。<br>可封装的可调用对象包括：</p>
+<ul>
+<li>普通函数</li>
+<li>Lambda 表达式</li>
+<li>函数指针</li>
+<li>函数对象（仿函数）</li>
+</ul>
+<h2 id="std-bind"><a href="#std-bind" class="headerlink" title="std::bind"></a><code>std::bind</code></h2><p><code>std::bind</code> 用于将一个可调用对象与一些参数进行绑定，并返回一个新的可调用对象。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">std::<span class="hljs-built_in">bind</span>(Callable&amp;&amp; f, Args&amp;&amp;... args)<br></code></pre></td></tr></table></figure>
+<p>例如可以将 <code>printSum</code> 函数的第二个参数绑定为 10：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">printSum</span><span class="hljs-params">(<span class="hljs-type">int</span> a, <span class="hljs-type">int</span> b)</span> </span>&#123; <br>	std::cout &lt;&lt; <span class="hljs-string">&quot;Sum: &quot;</span> &lt;&lt; a + b &lt;&lt; std::endl; <br>&#125;<br><br><span class="hljs-keyword">auto</span> bf = std::<span class="hljs-built_in">bind</span>(printSum, std::placeholders::_1, <span class="hljs-number">10</span>)<br></code></pre></td></tr></table></figure>
+<p><code>printSum</code> 的参数 b 被绑定为10，相当于 <code>bf</code> 只有一个参数 a。<br>绑定后新的可调用对象 <code>bf</code> 的类型用 <code>std::function</code> 表示的话就是：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">std::function&lt;<span class="hljs-type">void</span>(<span class="hljs-type">int</span>)&gt; <br></code></pre></td></tr></table></figure>
+
+<h2 id="回调机制"><a href="#回调机制" class="headerlink" title="回调机制"></a>回调机制</h2><p>在 C++ 中回调机制允许将一个函数作为参数传递给另一个函数。这样当某个事件发生时，可以通过回调函数来处理它。回调函数通常用于异步操作、事件驱动、处理完成后的动作等场景，例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">using</span> Callback = <span class="hljs-built_in">void</span>(*)(<span class="hljs-type">int</span>);<br><br><span class="hljs-comment">// 接受回调函数作为参数的函数</span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">processData</span><span class="hljs-params">(<span class="hljs-type">int</span> value, Callback callback)</span> </span>&#123;<br>	cout &lt;&lt; value &lt;&lt; endl;<br>	<span class="hljs-built_in">callback</span>(value);<br>&#125;<br><br><span class="hljs-comment">// 实际的回调函数</span><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">onDataProcessed</span><span class="hljs-params">(<span class="hljs-type">int</span> value)</span> </span>&#123; cout &lt;&lt; <span class="hljs-string">&quot;This is a callback&quot;</span> &lt;&lt; endl;&#125;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>	<span class="hljs-built_in">processData</span>(<span class="hljs-number">10</span>, onDataProcessed);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h1 id="1-委托与事件"><a href="#1-委托与事件" class="headerlink" title="1. 委托与事件"></a>1. 委托与事件</h1><h2 id="1-1-委托-Delegate"><a href="#1-1-委托-Delegate" class="headerlink" title="1.1 委托 Delegate"></a>1.1 委托 Delegate</h2><p>委托其实就是一种类型安全的函数指针，用于封装一个或多个方法。<br>可以将其理解为一个装有方法的盒子，当需要时可以直接调用这个盒子，从而实现方法创建者和调用者的解耦。<br>在 C++ 中并没有原生的委托机制，需要我们自己通过 <code>std::function</code> 来实现。</p>
+<blockquote>
+<p>单播 &#x2F; 多播解决的是“调用数量问题”</p>
+</blockquote>
+<h3 id="1-1-1-单播委托"><a href="#1-1-1-单播委托" class="headerlink" title="1.1.1 单播委托"></a>1.1.1 单播委托</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Enemy</span> &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">taunt</span><span class="hljs-params">()</span> </span>&#123;<br>        std::cout &lt;&lt; <span class="hljs-string">&quot;Enemy roars!\n&quot;</span>;<br>        <span class="hljs-keyword">if</span> (onTaunt) <span class="hljs-built_in">onTaunt</span>();<br>    &#125;<br>    <br>    <span class="hljs-comment">// 单播委托</span><br>    std::function&lt;<span class="hljs-type">void</span>()&gt; onTaunt;<br>&#125;;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">callback</span><span class="hljs-params">()</span> </span>&#123;<br>    std::cout &lt;&lt; <span class="hljs-string">&quot;Enemy taunt handled\n&quot;</span>;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    Enemy e;<br>    e.onTaunt = callback;<br>    e.<span class="hljs-built_in">taunt</span>();<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="1-1-2-多播委托"><a href="#1-1-2-多播委托" class="headerlink" title="1.1.2 多播委托"></a>1.1.2 多播委托</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 多播委托</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">TauntDelegate</span> &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-keyword">using</span> Callback = std::function&lt;<span class="hljs-built_in">void</span>()&gt;;<br>    <br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">add</span><span class="hljs-params">(Callback cb)</span> </span>&#123;<br>        callbacks.<span class="hljs-built_in">push_back</span>(cb);<br>    &#125;<br>    <br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">invoke</span><span class="hljs-params">()</span> </span>&#123;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span>&amp; cb : callbacks) &#123;<br>	        <span class="hljs-built_in">cb</span>();<br>	    &#125;<br>    &#125;<br><span class="hljs-keyword">private</span>:<br>    std::vector&lt;Callback&gt; callbacks;<br>&#125;;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">callback1</span><span class="hljs-params">()</span> </span>&#123;<br>	std::cout &lt;&lt; <span class="hljs-string">&quot;1 handled\n&quot;</span>;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">callback2</span><span class="hljs-params">()</span> </span>&#123;<br>	std::cout &lt;&lt; <span class="hljs-string">&quot;2 handled\n&quot;</span>;<br>&#125;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Enemy</span> &#123;<br><span class="hljs-keyword">public</span>:<br>	<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">taunt</span><span class="hljs-params">()</span> </span>&#123;<br>		std::cout &lt;&lt; <span class="hljs-string">&quot;Enemy roars!\n&quot;</span>;<br>		onTaunt.<span class="hljs-built_in">invoke</span>();<br>	&#125;<br>	<br>	<span class="hljs-comment">// 多播委托</span><br>	TauntDelegate onTaunt;<br>&#125;;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>	Enemy e;<br>	e.onTaunt.<span class="hljs-built_in">add</span>(callback1);<br>	e.onTaunt.<span class="hljs-built_in">add</span>(callback2);<br>	e.<span class="hljs-built_in">taunt</span>();<br>	<span class="hljs-comment">// e.onTaunt.invoke() 可以直接被外部调用，存在风险</span><br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<h2 id="1-2-事件-Event"><a href="#1-2-事件-Event" class="headerlink" title="1.2 事件 Event"></a>1.2 事件 Event</h2><p>事件是一个特殊化的委托，它限制了如何使用委托。<br>一个对象的委托往往是直接暴露在外部的，这就导致我们可以在对象外直接调用它的委托。举个例子：一个Enemy对象调用战吼函数，进而调用用于处理战吼之后各种变化的委托，这是正常的。但是我们实际上可以在任何地方调用该委托，即使没有“调用战吼函数”这一前提，这就导致不规范的问题。</p>
+<blockquote>
+<p>委托 &#x2F; 事件解决的是“调用权限与语义问题”</p>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 事件</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">TauntEvent</span> &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-keyword">using</span> Callback = std::function&lt;<span class="hljs-built_in">void</span>()&gt;;<br>    <br>	<span class="hljs-comment">// 外部只能订阅</span><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">addListener</span><span class="hljs-params">(Callback cb)</span> </span>&#123;<br>        listeners.<span class="hljs-built_in">push_back</span>(cb);<br>    &#125;<br><span class="hljs-keyword">private</span>:<br>	<span class="hljs-comment">// 只有 Enemy 可以触发</span><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">broadcast</span><span class="hljs-params">()</span> </span>&#123;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span>&amp; cb : listeners) &#123;<br>            <span class="hljs-built_in">cb</span>();<br>        &#125;<br>    &#125;<br>    <br>    std::vector&lt;Callback&gt; listeners;<br>    <span class="hljs-keyword">friend</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Enemy</span>; <span class="hljs-comment">// 授权 Enemy</span><br>&#125;;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Enemy</span> &#123;<br><span class="hljs-keyword">public</span>:<br>	<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">addTauntListener</span><span class="hljs-params">(TauntEvent::Callback cb)</span> </span>&#123;<br>        onTaunt.<span class="hljs-built_in">addListener</span>(cb);<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">taunt</span><span class="hljs-params">()</span> </span>&#123;<br>        std::cout &lt;&lt; <span class="hljs-string">&quot;Enemy roars!\n&quot;</span>;<br>        onTaunt.<span class="hljs-built_in">broadcast</span>();<br>    &#125;<br><span class="hljs-keyword">private</span>:<br>	<span class="hljs-comment">// 事件</span><br>	TauntEvent onTaunt;<br>&#125;;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">callback1</span><span class="hljs-params">()</span> </span>&#123;<br>	std::cout &lt;&lt; <span class="hljs-string">&quot;1 handled\n&quot;</span>;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">callback2</span><span class="hljs-params">()</span> </span>&#123;<br>	std::cout &lt;&lt; <span class="hljs-string">&quot;2 handled\n&quot;</span>;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    Enemy e;<br>    e.<span class="hljs-built_in">addTauntListener</span>(callback1);<br>    e.<span class="hljs-built_in">addTauntListener</span>(callback2);<br>    e.<span class="hljs-built_in">taunt</span>();<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>以上的 <code>callback</code> 完全可以是其他类对象的接口函数，从而实现其他对象对该事件的监听与更新。</p>
+<h1 id="2-观察者模式"><a href="#2-观察者模式" class="headerlink" title="2. 观察者模式"></a>2. 观察者模式</h1><p>一个对象状态变化时，自动通知所有依赖它的对象。<br>观察者模式是一种行为模式，他没有固定的实现方式，只要是能够实现一对一或一对多的状态更新与同步，就可以算是一种观察者模式的实现。<br>观察者模式的一个特点是<mark>**被观察者**直接持有**观察者**的实例/回调（如 `std::function`、函数指针、接口指针等）</mark>，也就是被观察者“知道有谁在观察自己”。</p>
+<ol>
+<li>最经典的实现方式当属<strong>接口+多态</strong>，这种实现方式的问题是接口继承导致的<strong>强耦合</strong>：</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 1. 定义观察者接口</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">ITauntObserver</span> &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-keyword">virtual</span> ~<span class="hljs-built_in">ITauntObserver</span>() = <span class="hljs-keyword">default</span>;<br>    <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-type">void</span> <span class="hljs-title">onEnemyTaunt</span><span class="hljs-params">()</span> </span>= <span class="hljs-number">0</span>;<br>&#125;;<br><br><span class="hljs-comment">// 2. 被观察者</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Enemy</span> &#123;<br>    std::vector&lt;ITauntObserver*&gt; observers;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">addObserver</span><span class="hljs-params">(ITauntObserver* obs)</span> </span>&#123;<br>        observers.<span class="hljs-built_in">push_back</span>(obs);<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">taunt</span><span class="hljs-params">()</span> </span>&#123;<br>        std::cout &lt;&lt; <span class="hljs-string">&quot;Enemy roars!\n&quot;</span>;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span>* obs : observers) &#123;<br>            obs-&gt;<span class="hljs-built_in">onEnemyTaunt</span>(); <span class="hljs-comment">// 直接调用虚函数</span><br>        &#125;<br>    &#125;<br>&#125;;<br><br><span class="hljs-comment">// 3. 具体观察者</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">SoundSystem</span> : <span class="hljs-keyword">public</span> ITauntObserver &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">onEnemyTaunt</span><span class="hljs-params">()</span> <span class="hljs-keyword">override</span> </span>&#123;<br>        std::cout &lt;&lt; <span class="hljs-string">&quot;Play roar sound\n&quot;</span>;<br>    &#125;<br>&#125;;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">UISystem</span> &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">showTauntMessage</span><span class="hljs-params">()</span> </span>&#123;<br>        std::cout &lt;&lt; <span class="hljs-string">&quot;[UI] Enemy is taunting!\n&quot;</span>;<br>    &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>另一种实现自然就是基于<strong>委托&#x2F;事件</strong>：</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">class</span> <span class="hljs-title class_">TauntEvent</span> &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-keyword">using</span> Callback = std::function&lt;<span class="hljs-built_in">void</span>()&gt;;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">addListener</span><span class="hljs-params">(Callback cb)</span> </span>&#123;<br>        listeners.<span class="hljs-built_in">push_back</span>(std::<span class="hljs-built_in">move</span>(cb));<br>    &#125;<br><br><span class="hljs-keyword">private</span>:<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">notify</span><span class="hljs-params">()</span> </span>&#123;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span>&amp; cb : listeners) &#123;<br>            <span class="hljs-keyword">if</span> (cb) <span class="hljs-built_in">cb</span>(); <span class="hljs-comment">// 直接调用</span><br>        &#125;<br>    &#125;<br><br>    std::vector&lt;Callback&gt; listeners;<br>    <span class="hljs-keyword">friend</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Enemy</span>; <span class="hljs-comment">// 只允许 Enemy 触发</span><br>&#125;;<br><br><span class="hljs-comment">// 1. 被观察者</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Enemy</span> &#123;<br>    TauntEvent onTaunt;<br><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">addTauntListener</span><span class="hljs-params">(TauntEvent::Callback cb)</span> </span>&#123;<br>        onTaunt.<span class="hljs-built_in">addListener</span>(cb);<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">taunt</span><span class="hljs-params">()</span> </span>&#123;<br>        std::cout &lt;&lt; <span class="hljs-string">&quot;[Enemy] Roars fiercely!\n&quot;</span>;<br>        onTaunt.<span class="hljs-built_in">notify</span>(); <span class="hljs-comment">// 直接通知所有已知监听者</span><br>    &#125;<br>&#125;;<br><br><span class="hljs-comment">// 2. 观察者</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">SoundSystem</span> &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">playTauntSound</span><span class="hljs-params">()</span> </span>&#123;<br>        std::cout &lt;&lt; <span class="hljs-string">&quot;[Sound] Playing enemy roar sound\n&quot;</span>;<br>    &#125;<br>&#125;;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">UISystem</span> &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">showTauntMessage</span><span class="hljs-params">()</span> </span>&#123;<br>        std::cout &lt;&lt; <span class="hljs-string">&quot;[UI] Enemy is taunting!\n&quot;</span>;<br>    &#125;<br>&#125;;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    Enemy enemy;<br>    SoundSystem sound;<br>    UISystem ui;<br><br>    <span class="hljs-comment">// 注册监听</span><br>    enemy.<span class="hljs-built_in">addTauntListener</span>([&amp;sound]() &#123; sound.<span class="hljs-built_in">playTauntSound</span>(); &#125;);<br>    enemy.<span class="hljs-built_in">addTauntListener</span>([&amp;ui]() &#123; ui.<span class="hljs-built_in">showTauntMessage</span>(); &#125;);<br><br>    enemy.<span class="hljs-built_in">taunt</span>();<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h1 id="3-发布订阅模式"><a href="#3-发布订阅模式" class="headerlink" title="3. 发布订阅模式"></a>3. 发布订阅模式</h1><p>引入中间层，使得发布者与订阅者彻底解耦</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-comment">// 1. 全局事件总线</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">EventBus</span> &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-keyword">using</span> Callback = std::function&lt;<span class="hljs-built_in">void</span>()&gt;;<br><br>    <span class="hljs-function"><span class="hljs-type">static</span> <span class="hljs-type">void</span> <span class="hljs-title">subscribe</span><span class="hljs-params">(<span class="hljs-type">const</span> std::string&amp; topic, Callback cb)</span> </span>&#123;<br>        <span class="hljs-built_in">instance</span>().subscribers[topic].<span class="hljs-built_in">push_back</span>(std::<span class="hljs-built_in">move</span>(cb));<br>    &#125;<br><br>	<span class="hljs-function"><span class="hljs-type">static</span> <span class="hljs-type">void</span> unsubscribe</span><br><span class="hljs-function"></span><br><span class="hljs-function">    <span class="hljs-type">static</span> <span class="hljs-type">void</span> <span class="hljs-title">publish</span><span class="hljs-params">(<span class="hljs-type">const</span> std::string&amp; topic)</span> </span>&#123;<br>        <span class="hljs-keyword">auto</span>&amp; subs = <span class="hljs-built_in">instance</span>().subscribers[topic];<br>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span>&amp; cb : subs) &#123;<br>            <span class="hljs-keyword">if</span> (cb) <span class="hljs-built_in">cb</span>();<br>        &#125;<br>    &#125;<br><br><span class="hljs-keyword">private</span>:<br>    std::unordered_map&lt;std::string, std::vector&lt;Callback&gt;&gt; subscribers;<br><br>    <span class="hljs-function"><span class="hljs-type">static</span> EventBus&amp; <span class="hljs-title">instance</span><span class="hljs-params">()</span> </span>&#123;<br>        <span class="hljs-type">static</span> EventBus bus;<br>        <span class="hljs-keyword">return</span> bus;<br>    &#125;<br>&#125;;<br><br><span class="hljs-comment">// 2. 发布者</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Enemy</span> &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">taunt</span><span class="hljs-params">()</span> </span>&#123;<br>        std::cout &lt;&lt; <span class="hljs-string">&quot;[Enemy] Roars fiercely!\n&quot;</span>;<br>        EventBus::<span class="hljs-built_in">publish</span>(<span class="hljs-string">&quot;enemy.taunt&quot;</span>); <span class="hljs-comment">// 只发消息，不关心谁听</span><br>    &#125;<br>&#125;;<br><br><span class="hljs-comment">// 3. 订阅者</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">SoundSystem</span> &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-built_in">SoundSystem</span>() &#123;<br>        EventBus::<span class="hljs-built_in">subscribe</span>(<span class="hljs-string">&quot;enemy.taunt&quot;</span>, [<span class="hljs-keyword">this</span>]() &#123;<br>            <span class="hljs-built_in">playTauntSound</span>();<br>        &#125;);<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">playTauntSound</span><span class="hljs-params">()</span> </span>&#123;<br>        std::cout &lt;&lt; <span class="hljs-string">&quot;[Sound] Playing enemy roar sound\n&quot;</span>;<br>    &#125;<br>&#125;;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">UISystem</span> &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-built_in">UISystem</span>() &#123;<br>        EventBus::<span class="hljs-built_in">subscribe</span>(<span class="hljs-string">&quot;enemy.taunt&quot;</span>, [<span class="hljs-keyword">this</span>]() &#123;<br>            <span class="hljs-built_in">showTauntMessage</span>();<br>        &#125;);<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">showTauntMessage</span><span class="hljs-params">()</span> </span>&#123;<br>        std::cout &lt;&lt; <span class="hljs-string">&quot;[UI] Enemy is taunting!\n&quot;</span>;<br>    &#125;<br>&#125;;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-comment">// Enemy 完全不知道 SoundSystem 和 UISystem 的存在！</span><br>    Enemy enemy;<br>    SoundSystem sound;   <span class="hljs-comment">// 构造时自动订阅</span><br>    UISystem ui;         <span class="hljs-comment">// 构造时自动订阅</span><br>    enemy.<span class="hljs-built_in">taunt</span>();<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h1 id="4-其他问题"><a href="#4-其他问题" class="headerlink" title="4. 其他问题"></a>4. 其他问题</h1><h2 id="4-1-存回调还是存对象？"><a href="#4-1-存回调还是存对象？" class="headerlink" title="4.1 存回调还是存对象？"></a>4.1 存回调还是存对象？</h2><p>以上示例中，委托与事件的实现通常存储的是回调函数（如 <code>std::function</code>）。<br>另一种做法是存储观察者对象本身（如接口指针或对象指针）。</p>
+<p>两种方式各有取舍：</p>
+<ul>
+<li><strong>存回调</strong>：更加灵活、解耦性更强，但对象生命周期难以管理，容易产生悬空引用。</li>
+<li><strong>存对象</strong>：便于识别订阅者身份和取消订阅，但会引入接口依赖或对象耦合。</li>
+</ul>
+<p>是否存对象，并不存在绝对优劣，取决于系统对<strong>解耦性</strong>与<strong>生命周期可控性</strong>的侧重。</p>
+<h2 id="4-2-如何管理一个对象的多个事件？"><a href="#4-2-如何管理一个对象的多个事件？" class="headerlink" title="4.2 如何管理一个对象的多个事件？"></a>4.2 如何管理一个对象的多个事件？</h2><p>对于可能存在多个事件的对象，有两种常见做法：</p>
+<ol>
+<li><strong>直接在对象内部定义多个事件成员</strong><br> 适用于事件数量固定、语义明确的情况，代码直观、类型安全。</li>
+<li><strong>引入统一的事件管理器</strong><br> 适用于事件种类较多、需要动态扩展或按名称&#x2F;ID 分发的场景，但会牺牲一定的类型安全性。</li>
+</ol>
+<p>选择哪种方式，取决于系统规模和事件的稳定性。</p>
+<h2 id="4-3-如何实现订阅的取消？"><a href="#4-3-如何实现订阅的取消？" class="headerlink" title="4.3 如何实现订阅的取消？"></a>4.3 如何实现订阅的取消？</h2><ul>
+<li>当某个对象被销毁时，它的回调函数指针依旧存放在Enemy的列表中，可能导致悬空引用。</li>
+<li>为了解决这一问题，必须让回调函数在对象销毁前被清除出列表。<br>在 C++ 中，如果使用 <code>std::function</code> 和 lambda 实现<strong>委托或事件</strong>：</li>
+<li>回调对象本身没有身份</li>
+<li><code>std::function</code> 不可比较</li>
+<li>lambda 表达式类型匿名<br>因此，语言层面<strong>并不存在“取消订阅”的概念</strong>。</li>
+</ul>
+<p>实现手动“unsubscribe”：</p>
+<ol>
+<li>给每个加入的回调函数都加上标签&#x2F; ID（最简单）</li>
+<li>保存迭代器，让每个函数都返回迭代器，通过迭代器定位需要删除的回调函数</li>
+<li>存对象而非回调（但正如上面所说，存对象会导致耦合加强）</li>
+</ol>
+<p>实现自动“unsubscribe”： 想要做到对象在销毁时自动“退订”，需要自己实现RAII机制</p>
+
+  </div>
+
+  
+  <div class="post-copyright">
+    <p><strong>Shionyori</strong></p>
+    <p>/2026/01/17/%E5%9C%A8%20C++%20%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%A7%94%E6%89%98%E4%B8%8E%E4%BA%8B%E4%BB%B6/</p>
+    <p>&amp;copy; 2026 Shionyori. 保留所有权利。</p>
+  </div>
+  
+
+  <footer class="post-footer">
+    
+    <div class="post-tags-footer">
+      
+        <a class="tag-link" href="/tags/C/">C++</a>
+      
+        <a class="tag-link" href="/tags/%E5%A7%94%E6%89%98/">委托</a>
+      
+        <a class="tag-link" href="/tags/%E4%BA%8B%E4%BB%B6/">事件</a>
+      
+        <a class="tag-link" href="/tags/%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F/">观察者模式</a>
+      
+        <a class="tag-link" href="/tags/%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85%E6%A8%A1%E5%BC%8F/">发布订阅模式</a>
+      
+    </div>
+    
+
+    
+<div class="post-share">
+  <div class="share-buttons">
+    
+    
+    
+
+    
+    <a class="share-btn share-twitter" href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fshionyori.github.io%2F2026%2F01%2F17%2F%E5%9C%A8%20C%2B%2B%20%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%A7%94%E6%89%98%E4%B8%8E%E4%BA%8B%E4%BB%B6%2F&text=%E5%9C%A8%20C%2B%2B%20%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%A7%94%E6%89%98%E4%B8%8E%E4%BA%8B%E4%BB%B6" target="_blank" rel="noopener" aria-label="分享到 Twitter">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fshionyori.github.io%2F2026%2F01%2F17%2F%E5%9C%A8%20C%2B%2B%20%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%A7%94%E6%89%98%E4%B8%8E%E4%BA%8B%E4%BB%B6%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fshionyori.github.io%2F2026%2F01%2F17%2F%E5%9C%A8%20C%2B%2B%20%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%A7%94%E6%89%98%E4%B8%8E%E4%BA%8B%E4%BB%B6%2F" target="_blank" rel="noopener" aria-label="分享到 LinkedIn">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    
+
+    
+    <button class="share-btn share-copy" aria-label="复制链接" data-url="https://shionyori.github.io/2026/01/17/在 C++ 中实现委托与事件/">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    </button>
+    
+  </div>
+</div>
+
+
+  </footer>
+</article>
+
+
+
+<nav class="post-nav">
+  
+    <a class="post-nav-item post-nav-prev has-cover" href="/2026/02/24/%E4%BB%8E%E9%9B%B6%E5%AE%9E%E7%8E%B0%20C++%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/" style='background-image: url(/images/posts/%E4%BB%8E%E9%9B%B6%E5%AE%9E%E7%8E%B0%20C++%20%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/cover.png)'>
+      <span class="nav-label">上一篇</span>
+      <span class="nav-title">从零实现 C++ 智能指针</span>
+    </a>
+  
+  
+    <a class="post-nav-item post-nav-next has-cover" href="/2026/01/10/C++%E7%A7%BB%E5%8A%A8%E8%AF%AD%E4%B9%89/" style='background-image: url(/images/posts/C++%E7%A7%BB%E5%8A%A8%E8%AF%AD%E4%B9%89/cover.png)'>
+      <span class="nav-label">下一篇</span>
+      <span class="nav-title">C++ 移动语义</span>
+    </a>
+  
+</nav>
+
+
+
+
+
+      </main>
+
+      
+    </div>
+  </div>
+</div>
+
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+
+<nav class="mobile-nav" id="mobile-nav">
+  <div class="mobile-nav-inner">
+    <div class="mobile-nav-header">
+      <span class="mobile-nav-title">首页</span>
+      <button class="btn-icon mobile-nav-close" id="mobile-nav-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <ul class="mobile-nav-menu">
+      
+        <li>
+          <a class="mobile-nav-link" href="/">首页</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/archives/">归档</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/tags/">标签</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/categories/">分类</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/friends/">友链</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/about/">关于</a>
+        </li>
+      
+    </ul>
+
+    
+    <div class="mobile-nav-social">
+      
+        <a class="social-icon" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+  </div>
+</nav>
+
+  <footer class="site-footer">
+  <div class="footer-inner">
+    
+    <div class="footer-social">
+      
+        <a class="social-link" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+
+    <div class="footer-info">
+      <span class="copyright">
+        &copy;
+        
+          2025 &ndash;
+        
+        2026
+        Shionyori
+      </span>
+
+      
+        <span class="powered-by">由 <a href="https://hexo.io/" target="_blank">Hexo</a> 驱动</span>
+      
+
+      
+        <span class="theme-by">主题 Shion</span>
+      
+
+      
+    </div>
+
+    
+
+  </div>
+</footer>
+
+
+
+  
+<div class="search-overlay" id="search-overlay"
+     data-i18n-found="关于「{query}」，找到了 {count} 条记录"
+     data-i18n-not-found="关于「{query}」，没有找到任何记录呢">
+  <div class="search-container">
+    <img class="search-decoration" src="/images/shion/search.png" alt="">
+    <div class="search-header">
+      <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" class="search-input" id="search-input" placeholder="输入关键词搜索..." autocomplete="off">
+      <button class="search-close" id="search-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="search-info" id="search-info"></div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+
+
+  
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/contrib/auto-render.min.js"></script>
+
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

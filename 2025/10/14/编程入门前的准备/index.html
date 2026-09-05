@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>编程入门前的准备 - Shionyori&#39;s Blog</title>
+
+
+<meta name="description" content="Gorgeous blooming flowers will eventually elegantly scattered.">
+
+
+<meta property="og:title" content="编程入门前的准备">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://shionyori.github.io/2025/10/14/编程入门前的准备/">
+<meta property="og:site_name" content="Shionyori&#39;s Blog">
+
+
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="编程入门前的准备">
+
+
+<link rel="canonical" href="https://shionyori.github.io/2025/10/14/编程入门前的准备/">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "name": "编程入门前的准备",
+  "url": "https://shionyori.github.io/2025/10/14/编程入门前的准备/",
+  "datePublished": "2025-10-15T00:00:00+08:00",
+  "author": { "@type": "Person", "name": "Shionyori" }
+  
+}
+</script>
+
+<meta name="theme-color" content="#6b7eb5">
+<link rel="icon" type="image/png" href="/images/shion/favicon.png">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+
+
+<script>
+  (function() {
+    var mode = 'auto';
+    var saved = localStorage.getItem('shion-theme');
+    if (saved) { mode = saved; }
+    else if (mode === 'auto') {
+      mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    if (mode === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+    (function() {
+      var fonts = {"heading":"'Noto Serif SC', 'Source Han Serif SC', Georgia, serif","body":"'Noto Sans SC', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif","code":"'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace","size_root":"15px"};
+      var legacySize = '';
+      var sizeRoot = fonts.size_root || legacySize;
+
+      if (fonts.heading) {
+        document.documentElement.style.setProperty('--font-heading', fonts.heading);
+      }
+      if (fonts.body) {
+        document.documentElement.style.setProperty('--font-body', fonts.body);
+      }
+      if (fonts.code) {
+        document.documentElement.style.setProperty('--font-code', fonts.code);
+      }
+      if (sizeRoot) {
+        document.documentElement.style.setProperty('--font-size-root', sizeRoot);
+      }
+    })();
+  })();
+</script>
+
+
+<noscript>
+  <style>
+    .sidebar-inner,
+    .content-card,
+    .post,
+    .page,
+    .archive-item,
+    .category-item,
+    .pagination,
+    .comments,
+    .not-found-content,
+    .widget,
+    .tag-cloud-item,
+    .post-card-wrapper,
+    .post-content,
+    .post-tags-footer,
+    .post-share,
+    .post-copyright,
+    .post-nav {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  </style>
+</noscript>
+
+  <script>
+    window.__shionConfig = {
+      katexCDN: 'https://cdn.jsdelivr.net/npm/katex@0',
+      katexDelimiters: [{"left":"$$","right":"$$","display":true},{"left":"$","right":"$","display":false}]
+    };
+  </script>
+<meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a class="site-logo" href="/">
+      
+        <span class="logo-text">Shionyori&#39;s Blog</span>
+      
+    </a>
+
+    <nav class="site-nav" id="site-nav">
+      
+        <a class="nav-item" href="/">首页</a>
+      
+        <a class="nav-item" href="/archives/">归档</a>
+      
+        <a class="nav-item" href="/tags/">标签</a>
+      
+        <a class="nav-item" href="/categories/">分类</a>
+      
+        <a class="nav-item" href="/friends/">友链</a>
+      
+        <a class="nav-item" href="/about/">关于</a>
+      
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn-icon search-toggle" id="search-toggle" aria-label="搜索">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon theme-toggle" id="theme-toggle" aria-label="深色模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon sidebar-toggle" id="sidebar-toggle" aria-label="sidebar_toggle">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+
+  
+<div class="reading-progress" id="reading-progress">
+  <div class="reading-progress-bar" id="reading-progress-bar"></div>
+</div>
+
+
+
+<div id="pjax-container">
+  
+  
+  
+  <div class="page-bg">
+  
+    <img src="/images/posts/%E7%BC%96%E7%A8%8B%E5%85%A5%E9%97%A8%E5%89%8D%E7%9A%84%E5%87%86%E5%A4%87/cover.png" alt="">
+  </div>
+  
+
+  
+  
+  
+  <section class="page-hero">
+    <h1 class="hero-title">编程入门前的准备</h1>
+    <div class="hero-subtitle">
+      <div class="post-meta">
+    
+    <time class="post-date" datetime="2025-10-15T00:00:00+08:00">
+      2025-10-15
+    </time>
+    
+
+    
+    <time class="post-updated" datetime="2025-10-15T00:00:00+08:00">
+      更新于 2025-10-15
+    </time>
+    
+
+    
+    <span class="post-word-count">2542 words</span>
+    
+
+    
+    <span class="post-reading-time">9 min read</span>
+    
+
+    
+    <span class="post-categories">
+      
+        <a class="category-link" href="/categories/%E5%85%B6%E4%BB%96/">其他</a>
+      
+    </span>
+    
+
+</div>
+
+    </div>
+    
+    <div class="hero-tags">
+      
+        <a class="tag-link" href="/tags/%E5%85%A5%E9%97%A8/">入门</a>
+      
+        <a class="tag-link" href="/tags/%E5%B8%B8%E8%AF%86/">常识</a>
+      
+        <a class="tag-link" href="/tags/%E6%96%B9%E8%8D%89%E5%9C%B0/">方草地</a>
+      
+    </div>
+    
+  </section>
+  
+  
+
+  
+<div class="container">
+    <div class="content-wrapper">
+      
+      
+<aside class="site-sidebar sidebar-post" id="site-sidebar" data-position="left">
+
+  
+  
+
+  <div class="sidebar-sticky-group">
+    
+    <section class="sidebar-card sidebar-music">
+      
+<div class="music-player" data-playlist='[{"name":"奏穹のラプソディア (狂想曲)","artist":"瑶山百霊","url":"/music/瑶山百霊 - 奏穹のラプソディア (狂想曲).ogg","cover":"/music/covers/soukyuu-no-rhapsody.jpg"},{"name":"Graveyard Memory","artist":"GET IN THE RING","url":"/music/GET IN THE RING - Graveyard Memory.ogg","cover":"/music/covers/graveyard-memory.jpg"},{"name":"ポラリス (北极星)","artist":"GET IN THE RING","url":"/music/GET IN THE RING - ポラリス (北极星).ogg","cover":"/music/covers/polaris.jpg"},{"name":"その唄の名は…","artist":"yukina / GET IN THE RING","url":"/music/yukina _ GET IN THE RING - その唄の名は….ogg","cover":"/music/covers/sono-uta-no-na-wa.jpg"},{"name":"over the moon","artist":"Forest306","url":"/music/Forest306 - over the moon.ogg","cover":"/music/covers/over-the-moon.jpg"},{"name":"21時の探しモノ (21时寻找的东西)","artist":"minimum electric design","url":"/music/minimum electric design - 21時の探しモノ (21时寻找的东西).ogg","cover":"/music/covers/21ji-no-sagashimono.jpg"},{"name":"Freak Report 01 ~他愛も無い二人の博物誌~","artist":"凛","url":"/music/凛 - Freak Report 01 ~他愛も無い二人の博物誌~.ogg","cover":"/music/covers/freak-report-01.jpg"},{"name":"かぜのいろ (カゼノイロ)","artist":"森羅万象","url":"/music/森羅万象 - かぜのいろ (カゼノイロ).ogg","cover":"/music/covers/kaze-no-iro.jpg"},{"name":"Onisan Dochira!","artist":"狐の工作室","url":"/music/狐の工作室 - Onisan Dochira!.ogg","cover":"/music/covers/onisan-dochira.jpg"},{"name":"Skip in the byway","artist":"神乃木製作所","url":"/music/神乃木製作所 - Skip in the byway.ogg","cover":"/music/covers/skip-in-the-byway.jpg"}]'>
+  
+  <div class="music-body">
+    <div class="music-cover">
+      
+      
+      <img src="/music/covers/soukyuu-no-rhapsody.jpg" alt="cover" class="music-cover-img" onerror="if(!this.dataset.failed){this.dataset.failed='1';this.src='/images/shion/404.png'}">
+      
+    </div>
+    <div class="music-info">
+      <div class="music-title-row">
+        <span class="music-title">奏穹のラプソディア (狂想曲)</span>
+        <span class="music-counter">1 / 10</span>
+      </div>
+      <span class="music-artist">瑶山百霊</span>
+      <div class="music-progress">
+        <div class="music-progress-bar">
+          <div class="music-progress-fill"></div>
+        </div>
+        <div class="music-time">
+          <span class="music-time-current">0:00</span>
+          <span class="music-time-total">0:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="music-controls">
+    <button class="music-btn music-btn-mode" aria-label="Play mode" data-mode="sequential" title="Sequential">
+      <svg class="music-mode-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+    <button class="music-btn music-btn-prev" aria-label="Previous track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+    </button>
+    <button class="music-btn music-btn-play" aria-label="Play">
+      <svg class="music-icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <svg class="music-icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="6" height="16"/><rect x="14" y="4" width="6" height="16"/></svg>
+    </button>
+    <button class="music-btn music-btn-next" aria-label="Next track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+    </button>
+    <button class="music-btn music-btn-list" aria-label="Playlist">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="music-playlist">
+    
+    <button class="music-playlist-item active" data-index="0">
+      <span class="music-playlist-name">奏穹のラプソディア (狂想曲)</span>
+      <span class="music-playlist-artist">瑶山百霊</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="1">
+      <span class="music-playlist-name">Graveyard Memory</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="2">
+      <span class="music-playlist-name">ポラリス (北极星)</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="3">
+      <span class="music-playlist-name">その唄の名は…</span>
+      <span class="music-playlist-artist">yukina / GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="4">
+      <span class="music-playlist-name">over the moon</span>
+      <span class="music-playlist-artist">Forest306</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="5">
+      <span class="music-playlist-name">21時の探しモノ (21时寻找的东西)</span>
+      <span class="music-playlist-artist">minimum electric design</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="6">
+      <span class="music-playlist-name">Freak Report 01 ~他愛も無い二人の博物誌~</span>
+      <span class="music-playlist-artist">凛</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="7">
+      <span class="music-playlist-name">かぜのいろ (カゼノイロ)</span>
+      <span class="music-playlist-artist">森羅万象</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="8">
+      <span class="music-playlist-name">Onisan Dochira!</span>
+      <span class="music-playlist-artist">狐の工作室</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="9">
+      <span class="music-playlist-name">Skip in the byway</span>
+      <span class="music-playlist-artist">神乃木製作所</span>
+    </button>
+    
+  </div>
+  
+</div>
+
+    </section>
+    
+
+    <section class="sidebar-card sidebar-toc">
+      <div class="sidebar-toc-header">
+        <a class="sidebar-back-home" href="/" title="首页">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </a>
+        <span class="sidebar-toc-label">编程入门前的准备</span>
+      </div>
+      <div class="sidebar-scroll">
+      
+      
+      <nav class="sidebar-toc">
+        <ol class="toc-list"><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E4%B8%80%E3%80%81%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A1%AC%E4%BB%B6%E5%B8%B8%E8%AF%86"><span class="toc-list-text">一、计算机硬件常识</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#CPU%EF%BC%88%E4%B8%AD%E5%A4%AE%E5%A4%84%E7%90%86%E5%99%A8%EF%BC%89"><span class="toc-list-text">CPU（中央处理器）</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E6%98%BE%E5%8D%A1%E4%B8%8EGPU%EF%BC%88%E5%9B%BE%E5%BD%A2%E5%A4%84%E7%90%86%E5%99%A8%EF%BC%89"><span class="toc-list-text">显卡与GPU（图形处理器）</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%86%85%E5%AD%98"><span class="toc-list-text">内存</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E7%A1%AC%E7%9B%98%EF%BC%88%E5%A4%96%E5%AD%98%EF%BC%89"><span class="toc-list-text">硬盘（外存）</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E4%BA%8C%E3%80%81%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E"><span class="toc-list-text">二、搜索引擎</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%B8%B8%E8%A7%81%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E"><span class="toc-list-text">常见搜索引擎</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%88%86%E8%BE%A8%E5%B9%BF%E5%91%8A%E4%B8%8E%E5%AE%98%E7%BD%91"><span class="toc-list-text">分辨广告与官网</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E4%B8%89%E3%80%81%E6%96%87%E4%BB%B6%E5%8E%8B%E7%BC%A9"><span class="toc-list-text">三、文件压缩</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%8E%8B%E7%BC%A9%E5%B7%A5%E5%85%B7"><span class="toc-list-text">压缩工具</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%B8%B8%E8%A7%81%E5%8E%8B%E7%BC%A9%E6%A0%BC%E5%BC%8F"><span class="toc-list-text">常见压缩格式</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E5%9B%9B%E3%80%81%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86"><span class="toc-list-text">四、磁盘管理</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85%E5%BB%BA%E8%AE%AE"><span class="toc-list-text">软件安装建议</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E4%BA%94%E3%80%81%E7%BB%88%E7%AB%AF%E5%91%BD%E4%BB%A4%E8%A1%8C%EF%BC%88cmd%EF%BC%89"><span class="toc-list-text">五、终端命令行（cmd）</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-list-text">常用命令</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E5%85%AD%E3%80%81%E4%BA%86%E8%A7%A3Markdown"><span class="toc-list-text">六、了解Markdown</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95"><span class="toc-list-text">部分基础语法</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E4%B8%83%E3%80%81%E4%BA%86%E8%A7%A3%E7%BC%96%E7%A8%8B%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B"><span class="toc-list-text">七、了解编程的基本流程</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E9%85%8D%E7%BD%AE%EF%BC%9A%E5%87%86%E5%A4%87%E5%86%99%E4%BB%A3%E7%A0%81%E7%9A%84%E7%8E%AF%E5%A2%83"><span class="toc-list-text">（一）配置：准备写代码的环境</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8-%E9%9B%86%E6%88%90%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%88IDE%EF%BC%89"><span class="toc-list-text">文本编辑器 &#x2F; 集成开发环境（IDE）</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E7%BC%96%E8%AF%91%E5%99%A8%EF%BC%88Compiler%EF%BC%89"><span class="toc-list-text">编译器（Compiler）</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%EF%BC%88Environment-Variables%EF%BC%89"><span class="toc-list-text">环境变量（Environment Variables）</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E6%9E%84%E5%BB%BA%EF%BC%9A%E4%BB%8E%E6%BA%90%E4%BB%A3%E7%A0%81%E5%88%B0%E5%8F%AF%E6%89%A7%E8%A1%8C%E7%A8%8B%E5%BA%8F"><span class="toc-list-text">（二）构建：从源代码到可执行程序</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E5%85%AB%E3%80%81%E6%8B%A5%E6%9C%89%E4%B8%80%E4%B8%AAGithub%E8%B4%A6%E6%88%B7"><span class="toc-list-text">八、拥有一个Github账户</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E4%B9%9D%E3%80%81%E6%8F%90%E9%97%AE%E7%9A%84%E8%89%BA%E6%9C%AF"><span class="toc-list-text">九、提问的艺术</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%AD%A6%E4%BC%9A%E6%88%AA%E5%9B%BE"><span class="toc-list-text">学会截图</span></a></li></ol></li></ol>
+      </nav>
+      
+      </div>
+      <a class="sidebar-back-home-bottom" href="/">← 首页</a>
+    </section>
+  </div>
+
+  
+</aside>
+
+      
+
+      <main class="site-main">
+        <article class="post">
+
+  <div class="post-content">
+    
+  
+  
+  
+
+
+    <p>这是校科协方草地公开课的第一节课的讲稿，主要介绍计算机基础知识、开发环境配置、搜索引擎使用、文件压缩、磁盘管理、终端命令行、Markdown 语法、编程流程等入门内容。</p>
+<hr>
+<h1 id="一、计算机硬件常识"><a href="#一、计算机硬件常识" class="headerlink" title="一、计算机硬件常识"></a>一、计算机硬件常识</h1><h2 id="CPU（中央处理器）"><a href="#CPU（中央处理器）" class="headerlink" title="CPU（中央处理器）"></a>CPU（中央处理器）</h2><p>中央处理器是电脑工作的核心，<strong>处理器的性能就很大程度上决定了电脑的性能。</strong></p>
+<p>现在几乎所有 CPU 都在芯片中安装了多个核心，相当于一个个协同起来的独立的小处理器。</p>
+<p>一些 CPU 还使用<strong>大小核</strong>设计。</p>
+<p>从软件开发的角度，CPU负责执行程序中的指令，包括算术运算、逻辑判断、控制流程等，</p>
+<p>多核 CPU 可以并行处理多个线程，提高程序性能。</p>
+<h2 id="显卡与GPU（图形处理器）"><a href="#显卡与GPU（图形处理器）" class="headerlink" title="显卡与GPU（图形处理器）"></a>显卡与GPU（图形处理器）</h2><p>显卡是承载GPU以及其他组件的模块</p>
+<ul>
+<li><strong>集成显卡</strong>，GPU 被安排在处理器的同一片芯片上，性能相对较差，能应付大多数工作，但游戏、制图等特定工作就不太行了。</li>
+<li><strong>独立显卡</strong>，GPU 是一片独立的芯片，以显卡模块的形式安装在电脑内。性能较强，更高的功耗、更大的体积和更多的发热等。</li>
+</ul>
+<p>GPU是显卡的核心组件</p>
+<p>GPU 专门处理大量的并行计算，尤其是图形渲染和矩阵运算；</p>
+<p>游戏、图形界面渲染依赖 GPU；</p>
+<p>现代软件（深度学习、科学计算）利用 GPU 做大规模并行计算。</p>
+<h2 id="内存"><a href="#内存" class="headerlink" title="内存"></a>内存</h2><p><strong>误区</strong>：日常生活中所说的「手机内存不够」，其实大多指的是闪存空间不足，即「手机的硬盘」容量不够，而不是真正意义上的内存不足，对于电脑也是同理</p>
+<p>所谓的内存用来临时存放数据的，</p>
+<p>内存直接与处理器进行数据交流，读取与写入速度也是极快的</p>
+<p><strong>更多的内存意味着更多的空间来让处理器存放数据，也就意味着电脑能同时处理更多的任务，运行更加流畅</strong></p>
+<h2 id="硬盘（外存）"><a href="#硬盘（外存）" class="headerlink" title="硬盘（外存）"></a>硬盘（外存）</h2><p>内存是用来临时存储数据的，而硬盘则是用来长久保存数据的</p>
+<p>读写速度较慢，但硬盘中的数据不会因为断电而轻易消失</p>
+<p>处理器在一开始，从硬盘中取出数据放入内存，在内存中处理数据，处理完成之后，再将新的数据放回硬盘。</p>
+<hr>
+<h1 id="二、搜索引擎"><a href="#二、搜索引擎" class="headerlink" title="二、搜索引擎"></a>二、搜索引擎</h1><h2 id="常见搜索引擎"><a href="#常见搜索引擎" class="headerlink" title="常见搜索引擎"></a>常见搜索引擎</h2><ul>
+<li><strong>Google</strong>：全球最强大的搜索引擎，搜索结果准确、全面，但在国内访问需要科学上网。</li>
+<li><strong>Bing</strong>：微软推出的搜索引擎，界面简洁、结果较为国际化。</li>
+<li><strong>FireFox Search</strong>：Firefox 浏览器内置搜索服务，隐私保护较好。</li>
+<li><strong>Baidu</strong>：结果偏广告化，技术类内容质量较低。</li>
+<li><strong>360 搜索</strong>：结果相关度较差，不适合技术类检索。</li>
+</ul>
+<p><strong>建议</strong>：在学习与开发过程中，尽量使用 <strong>Google</strong> 或<strong>Bing</strong>，能获得更准确的技术资料。</p>
+<h2 id="分辨广告与官网"><a href="#分辨广告与官网" class="headerlink" title="分辨广告与官网"></a>分辨广告与官网</h2><ul>
+<li>标有「广告」「推广」</li>
+<li>域名可疑（如 <code>.cn.com</code>、拼音混乱）</li>
+<li>认准知名网站：如 <a href="https://microsoft.com/" target="_blank" rel="noopener">microsoft.com</a>  </li>
+<li>看清楚网址后缀 <code>.com</code>、<code>.org</code>、<code>.edu</code></li>
+</ul>
+<hr>
+<h1 id="三、文件压缩"><a href="#三、文件压缩" class="headerlink" title="三、文件压缩"></a>三、文件压缩</h1><h2 id="压缩工具"><a href="#压缩工具" class="headerlink" title="压缩工具"></a>压缩工具</h2><ul>
+<li><strong>7-Zip（推荐）</strong>：免费开源，支持多平台（Windows &#x2F; macOS &#x2F;Linux），压缩率高。</li>
+<li><strong>WinRAR</strong>：功能强大，但为商业软件，长期使用需购买授权。</li>
+</ul>
+<h2 id="常见压缩格式"><a href="#常见压缩格式" class="headerlink" title="常见压缩格式"></a>常见压缩格式</h2><table>
+<thead>
+<tr>
+<th>格式</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>.7z</code></td>
+<td>压缩率高，推荐使用</td>
+</tr>
+<tr>
+<td><code>.zip</code></td>
+<td>通用性强，系统自带支持</td>
+</tr>
+<tr>
+<td><code>.tar</code></td>
+<td>Linux 系统常见的打包格式</td>
+</tr>
+<tr>
+<td><code>.tar.gz</code></td>
+<td><code>tar</code> 打包后再压缩，常见于开源项目发布</td>
+</tr>
+</tbody></table>
+<hr>
+<h1 id="四、磁盘管理"><a href="#四、磁盘管理" class="headerlink" title="四、磁盘管理"></a>四、磁盘管理</h1><table>
+<thead>
+<tr>
+<th>C盘</th>
+<th>系统盘</th>
+<th>仅存系统与必要软件</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>D盘</td>
+<td>工作盘</td>
+<td>存放项目、资料</td>
+</tr>
+<tr>
+<td>E盘（如果有）</td>
+<td>存档盘</td>
+<td>备份、媒体资源</td>
+</tr>
+</tbody></table>
+<ul>
+<li><strong>C盘</strong>：系统盘，一般存放系统文件和软件。</li>
+<li><strong>D盘&#x2F;E盘</strong>：常用于存放用户数据或项目文件。</li>
+<li><strong>路径分隔符</strong>：Windows 使用 <code>\</code>，Linux&#x2F;macOS 使用 <code>/</code>。</li>
+</ul>
+<p>但是<code>\</code>在一些情况下会被识别为转义字符，当出现路径问题时可以尝试改用<code>/</code>或者使用转义字符<code>\\</code></p>
+<h2 id="软件安装建议"><a href="#软件安装建议" class="headerlink" title="软件安装建议"></a>软件安装建议</h2><ul>
+<li>不要安装在 <code>桌面</code> 或含中文、空格的路径</li>
+<li>安装到D盘或其他非系统盘 推荐：<code>D:\DevTools\vscode</code>    </li>
+<li>将临时文件、资料、程序分类存放</li>
+</ul>
+<p>建议将项目文件和开发工具进行分类管理：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">D:\<br>├─ Code\        ← 存放项目源代码（你的工作区）<br>├─ DevTools\    ← 各种开发工具、编译器、构建工具等<br>└─ SDK\         ← 各种软件开发库与框架<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="五、终端命令行（cmd）"><a href="#五、终端命令行（cmd）" class="headerlink" title="五、终端命令行（cmd）"></a>五、终端命令行（cmd）</h1><h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><table>
+<thead>
+<tr>
+<th>功能</th>
+<th>命令</th>
+<th>示例</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>切换目录</strong></td>
+<td><code>cd</code></td>
+<td><code>cd C:\Windows</code></td>
+<td>切换到指定目录</td>
+</tr>
+<tr>
+<td><strong>创建目录</strong></td>
+<td><code>md</code> 或 <code>mkdir</code><br></td>
+<td><code>md NewFolder</code></td>
+<td>创建一个名为 <em>NewFolder</em> 的新目录</td>
+</tr>
+<tr>
+<td><strong>删除目录</strong></td>
+<td><code>rd</code> 或 <code>rmdir</code><br></td>
+<td><code>rmdir /s C:\OldFolder</code></td>
+<td>递归删除非空目录（需加 <code>/s</code> 参数）</td>
+</tr>
+<tr>
+<td><strong>复制文件</strong></td>
+<td><code>copy</code></td>
+<td><code>copy C:\file.txt D:\backup\file.txt</code></td>
+<td>将文件从一个位置复制到另一个位置</td>
+</tr>
+<tr>
+<td><strong>移动&#x2F;重命名文件</strong></td>
+<td><code>move</code></td>
+<td><code>move C:\file.txt D:\newfile.txt</code></td>
+<td>移动或重命名文件</td>
+</tr>
+<tr>
+<td><strong>删除文件</strong></td>
+<td><code>del</code></td>
+<td><code>del C:\file.txt</code></td>
+<td>删除指定文件</td>
+</tr>
+<tr>
+<td><strong>查看系统信息</strong></td>
+<td><code>systeminfo</code></td>
+<td><code>systeminfo &gt; systeminfo.txt</code></td>
+<td>获取操作系统版本、内存等信息并保存到文件</td>
+</tr>
+<tr>
+<td><strong>查看IP配置</strong></td>
+<td><code>ipconfig</code><br></td>
+<td><code>ipconfig /all</code></td>
+<td>显示所有网络适配器的详细IP配置</td>
+</tr>
+<tr>
+<td><strong>测试网络连接</strong></td>
+<td><code>ping</code></td>
+<td><code>ping www.example.com</code></td>
+<td>测试与目标主机的网络连通性</td>
+</tr>
+<tr>
+<td><strong>清屏</strong></td>
+<td><code>cls</code></td>
+<td><code>cls</code></td>
+<td>清空所有输出</td>
+</tr>
+</tbody></table>
+<hr>
+<h1 id="六、了解Markdown"><a href="#六、了解Markdown" class="headerlink" title="六、了解Markdown"></a>六、了解Markdown</h1><p>Markdown 是一种轻量级标记语言，用于快速编写格式化文档。  </p>
+<p>常用于编写 README、笔记、博客等。</p>
+<h2 id="部分基础语法"><a href="#部分基础语法" class="headerlink" title="部分基础语法"></a>部分基础语法</h2><table>
+<thead>
+<tr>
+<th><strong>功能</strong></th>
+<th><strong>语法示例</strong></th>
+<th><strong>显示效果</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>标题</td>
+<td># 一级标题<br>## 二级标题</td>
+<td># 一级标题<br>## 二级标题</td>
+</tr>
+<tr>
+<td>加粗</td>
+<td>**加粗**</td>
+<td><strong>加粗</strong></td>
+</tr>
+<tr>
+<td>斜体</td>
+<td>*斜体*</td>
+<td><em>斜体</em></td>
+</tr>
+<tr>
+<td>超文本链接</td>
+<td>[演示](<a href="https://www.example.com/" target="_blank" rel="noopener">https://www.example.com</a>)</td>
+<td><a href="https://www.example.com/" target="_blank" rel="noopener">演示</a></td>
+</tr>
+<tr>
+<td>图片</td>
+<td>![描述](url)<br></td>
+<td>&#x2F;</td>
+</tr>
+<tr>
+<td>代码块<br></td>
+<td>`print(“Hello”)`</td>
+<td><code>print(&quot;Hello&quot;)</code></td>
+</tr>
+<tr>
+<td></td>
+<td>```c<br>printf(“Hello”)<br>```</td>
+<td><code>C&lt;br&gt;printf(&quot;Hello&quot;)&lt;br&gt;</code></td>
+</tr>
+<tr>
+<td>列表</td>
+<td>- 一级列表<br>- 二级列表</td>
+<td>- 一级列表<br>    - 二级列表</td>
+</tr>
+<tr>
+<td>分割线</td>
+<td>文本1<br>---<br>文本2</td>
+<td>文本1<br>—<br>文本2<br></td>
+</tr>
+</tbody></table>
+<p>详细的语法请自行探索：<a href="https://markdown.com.cn/basic-syntax/" target="_blank" rel="noopener">Markdown 基本语法 | Markdown 官方教程</a></p>
+<hr>
+<h1 id="七、了解编程的基本流程"><a href="#七、了解编程的基本流程" class="headerlink" title="七、了解编程的基本流程"></a>七、了解编程的基本流程</h1><p><strong>环境配置</strong> 和 <strong>程序构建</strong></p>
+<hr>
+<h2 id="（一）配置：准备写代码的环境"><a href="#（一）配置：准备写代码的环境" class="headerlink" title="（一）配置：准备写代码的环境"></a>（一）配置：准备写代码的环境</h2><p>在真正写代码前，计算机需要知道你要用什么语言、在哪里写、怎么运行。</p>
+<p>这就是“配置环境”。</p>
+<hr>
+<h2 id="文本编辑器-集成开发环境（IDE）"><a href="#文本编辑器-集成开发环境（IDE）" class="headerlink" title="文本编辑器 &#x2F; 集成开发环境（IDE）"></a>文本编辑器 &#x2F; 集成开发环境（IDE）</h2><blockquote>
+<p>写代码就像写作文，只是工具不同</p>
+</blockquote>
+<ul>
+<li><strong>VS Code（推荐）</strong>：轻量、简洁、插件多，支持多种语言。适合初学者。</li>
+<li><strong>Visual Studio</strong>：功能强大，但体积较大，占用资源多。</li>
+<li><strong>JetBrains 系列（PyCharm、CLion、IDEA）</strong>：专业化程度高，几乎不用自己配环境。</li>
+</ul>
+<p><strong>如何安装 VS Code：</strong><br> 访问 <a href="https://code/.visualstudio/.com/" target="_blank" rel="noopener">https://code\.visualstudio\.com/</a><br> → 下载并安装（默认选项即可）<br> → 打开后安装插件：如 “C&#x2F;C++” 插件。</p>
+<hr>
+<h2 id="编译器（Compiler）"><a href="#编译器（Compiler）" class="headerlink" title="编译器（Compiler）"></a>编译器（Compiler）</h2><blockquote>
+<p>编译器就像“翻译官”，把你写的代码翻译成计算机能理解的语言</p>
+</blockquote>
+<p>不同语言使用的编译器不同：</p>
+<table>
+<thead>
+<tr>
+<th><strong>语言</strong></th>
+<th><strong>是否需要编译器</strong></th>
+<th><strong>常见编译器</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>C &#x2F; C++</td>
+<td>需要</td>
+<td>GCC、Clang、MSVC</td>
+</tr>
+<tr>
+<td>Python</td>
+<td>不需要（解释执行）</td>
+<td>内置解释器</td>
+</tr>
+<tr>
+<td>Java</td>
+<td>需要</td>
+<td>JDK 自带 javac</td>
+</tr>
+</tbody></table>
+<p>C&#x2F;C++通过编译器将源代码一次性转换成机器语言，生成可执行文件;</p>
+<p>Python源代码在程序运行时由解释器逐行转换成机器语言;</p>
+<p>Java源代码首先被编译成与平台无关的字节码文件（.class文件），然后这些字节码文件可以在不同平台的Java虚拟机（JVM）上运行。</p>
+<hr>
+<h2 id="环境变量（Environment-Variables）"><a href="#环境变量（Environment-Variables）" class="headerlink" title="环境变量（Environment Variables）"></a>环境变量（Environment Variables）</h2><blockquote>
+<p>让系统知道“编译器在哪里”</p>
+</blockquote>
+<p>环境变量是操作系统中用来设置运行环境的参数，可以影响到系统和应用程序的行为</p>
+<p>在windows上当你修改环境变量时，相当于是在修改注册表；</p>
+<p>当系统启动时，windows会从注册表中读取并加载这些变量；</p>
+<p>当你打开程序时，程序也会继承系统的变量。</p>
+<p>这些变量相当于是给一堆路径取了一个别名，</p>
+<p>而Path变量则相对特殊，因为在进行路径查找时往往会自动在该变量中查找。</p>
+<p><strong>类型区分：</strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>类型</strong></th>
+<th><strong>有效范围</strong></th>
+<th><strong>说明</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>系统环境变量</td>
+<td>所有用户</td>
+<td>影响整个系统</td>
+</tr>
+<tr>
+<td>用户环境变量</td>
+<td>当前用户</td>
+<td>只影响个人账户</td>
+</tr>
+<tr>
+<td>临时环境变量</td>
+<td>当前窗口</td>
+<td>关闭后失效</td>
+</tr>
+</tbody></table>
+<p><strong>设置方法：</strong><br>Windows 搜索“环境变量” &#x2F; “系统属性 → 高级 → 环境变量” → 编辑<code>Path</code> → 添加编译器路径。</p>
+<h2 id="（二）构建：从源代码到可执行程序"><a href="#（二）构建：从源代码到可执行程序" class="headerlink" title="（二）构建：从源代码到可执行程序"></a>（二）构建：从源代码到可执行程序</h2><p>当环境准备好后，我们就可以“写代码”了。<br>但计算机不能直接读懂你的文字，它需要一个<strong>翻译和拼装的过程</strong>。<br>以C语言为例，整个<code>构建（Build）</code>过程大致如下：</p>
+<hr>
+<h1 id="八、拥有一个Github账户"><a href="#八、拥有一个Github账户" class="headerlink" title="八、拥有一个Github账户"></a>八、拥有一个Github账户</h1><p><a href="https://github.com/" target="_blank" rel="noopener">Github</a> 是全球最大的代码托管平台</p>
+<p>在这里你可以上传自己的代码，也可以下载别人的代码</p>
+<hr>
+<h1 id="九、提问的艺术"><a href="#九、提问的艺术" class="headerlink" title="九、提问的艺术"></a>九、提问的艺术</h1><p>高效提问能帮助你更快解决问题：</p>
+<p><strong>如何正确提问</strong><strong>：</strong> </p>
+<ol>
+<li><strong>明确背景</strong>：说明系统、环境、语言版本。 </li>
+<li><strong>展示代码</strong>：提供能复现问题的最小示例。 </li>
+<li><strong>描述期望与实际</strong>：说明你期望的结果与实际发生的错误。</li>
+<li><strong>先查再问</strong>：尝试搜索、阅读文档后再提问。</li>
+</ol>
+<p><strong>示例：</strong></p>
+<p>&gt; “为什么我的代码运行不了”<br>&gt; “我在 Windows 10 + Python 3.10 环境下运行以下代码时出现<br><code>ModuleNotFoundError</code>，请问可能的原因是什么？” 并给出报错截图和日志截图</p>
+<p>否则我们能给出的回答只能是<strong>帮你算一卦</strong></p>
+<p>推荐研读：</p>
+<p><a href="https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way/blob/main/README-zh_CN.md" target="_blank" rel="noopener">提问的智慧</a></p>
+<h2 id="学会截图"><a href="#学会截图" class="headerlink" title="学会截图"></a>学会截图</h2><p>请不要直接拿手机拍电脑屏幕 :(</p>
+<ul>
+<li>Windows：<code>Win + Shift + S</code>（系统自带截图）  </li>
+<li>MacOS：<code>Cmd + Shift + 4</code>  </li>
+<li>QQ截图 &#x2F; 微信截图</li>
+<li>第三方工具：Snipaste、ShareX</li>
+</ul>
+<hr>
+
+  </div>
+
+  
+  <div class="post-copyright">
+    <p><strong>Shionyori</strong></p>
+    <p>/2025/10/14/%E7%BC%96%E7%A8%8B%E5%85%A5%E9%97%A8%E5%89%8D%E7%9A%84%E5%87%86%E5%A4%87/</p>
+    <p>&amp;copy; 2025 Shionyori. 保留所有权利。</p>
+  </div>
+  
+
+  <footer class="post-footer">
+    
+    <div class="post-tags-footer">
+      
+        <a class="tag-link" href="/tags/%E5%85%A5%E9%97%A8/">入门</a>
+      
+        <a class="tag-link" href="/tags/%E5%B8%B8%E8%AF%86/">常识</a>
+      
+        <a class="tag-link" href="/tags/%E6%96%B9%E8%8D%89%E5%9C%B0/">方草地</a>
+      
+    </div>
+    
+
+    
+<div class="post-share">
+  <div class="share-buttons">
+    
+    
+    
+
+    
+    <a class="share-btn share-twitter" href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fshionyori.github.io%2F2025%2F10%2F14%2F%E7%BC%96%E7%A8%8B%E5%85%A5%E9%97%A8%E5%89%8D%E7%9A%84%E5%87%86%E5%A4%87%2F&text=%E7%BC%96%E7%A8%8B%E5%85%A5%E9%97%A8%E5%89%8D%E7%9A%84%E5%87%86%E5%A4%87" target="_blank" rel="noopener" aria-label="分享到 Twitter">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fshionyori.github.io%2F2025%2F10%2F14%2F%E7%BC%96%E7%A8%8B%E5%85%A5%E9%97%A8%E5%89%8D%E7%9A%84%E5%87%86%E5%A4%87%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fshionyori.github.io%2F2025%2F10%2F14%2F%E7%BC%96%E7%A8%8B%E5%85%A5%E9%97%A8%E5%89%8D%E7%9A%84%E5%87%86%E5%A4%87%2F" target="_blank" rel="noopener" aria-label="分享到 LinkedIn">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    
+
+    
+    <button class="share-btn share-copy" aria-label="复制链接" data-url="https://shionyori.github.io/2025/10/14/编程入门前的准备/">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    </button>
+    
+  </div>
+</div>
+
+
+  </footer>
+</article>
+
+
+
+<nav class="post-nav">
+  
+    <a class="post-nav-item post-nav-prev has-cover" href="/2026/01/10/C++%E7%A7%BB%E5%8A%A8%E8%AF%AD%E4%B9%89/" style='background-image: url(/images/posts/C++%E7%A7%BB%E5%8A%A8%E8%AF%AD%E4%B9%89/cover.png)'>
+      <span class="nav-label">上一篇</span>
+      <span class="nav-title">C++ 移动语义</span>
+    </a>
+  
+  
+    <a class="post-nav-item post-nav-next has-cover" href="/2025/10/02/Reactor%20%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/" style='background-image: url(/images/posts/Reactor%20%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/cover.png)'>
+      <span class="nav-label">下一篇</span>
+      <span class="nav-title">Reactor 网络模型</span>
+    </a>
+  
+</nav>
+
+
+
+
+
+      </main>
+
+      
+    </div>
+  </div>
+</div>
+
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+
+<nav class="mobile-nav" id="mobile-nav">
+  <div class="mobile-nav-inner">
+    <div class="mobile-nav-header">
+      <span class="mobile-nav-title">首页</span>
+      <button class="btn-icon mobile-nav-close" id="mobile-nav-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <ul class="mobile-nav-menu">
+      
+        <li>
+          <a class="mobile-nav-link" href="/">首页</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/archives/">归档</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/tags/">标签</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/categories/">分类</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/friends/">友链</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/about/">关于</a>
+        </li>
+      
+    </ul>
+
+    
+    <div class="mobile-nav-social">
+      
+        <a class="social-icon" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+  </div>
+</nav>
+
+  <footer class="site-footer">
+  <div class="footer-inner">
+    
+    <div class="footer-social">
+      
+        <a class="social-link" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+
+    <div class="footer-info">
+      <span class="copyright">
+        &copy;
+        
+          2025 &ndash;
+        
+        2026
+        Shionyori
+      </span>
+
+      
+        <span class="powered-by">由 <a href="https://hexo.io/" target="_blank">Hexo</a> 驱动</span>
+      
+
+      
+        <span class="theme-by">主题 Shion</span>
+      
+
+      
+    </div>
+
+    
+
+  </div>
+</footer>
+
+
+
+  
+<div class="search-overlay" id="search-overlay"
+     data-i18n-found="关于「{query}」，找到了 {count} 条记录"
+     data-i18n-not-found="关于「{query}」，没有找到任何记录呢">
+  <div class="search-container">
+    <img class="search-decoration" src="/images/shion/search.png" alt="">
+    <div class="search-header">
+      <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" class="search-input" id="search-input" placeholder="输入关键词搜索..." autocomplete="off">
+      <button class="search-close" id="search-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="search-info" id="search-info"></div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+
+
+  
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/contrib/auto-render.min.js"></script>
+
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

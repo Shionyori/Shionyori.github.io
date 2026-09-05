@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>WSL2 的 localhost 访问机制 - Shionyori&#39;s Blog</title>
+
+
+<meta name="description" content="Gorgeous blooming flowers will eventually elegantly scattered.">
+
+
+<meta property="og:title" content="WSL2 的 localhost 访问机制">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://shionyori.github.io/2026/08/11/WSL2 的 localhost 访问机制/">
+<meta property="og:site_name" content="Shionyori&#39;s Blog">
+
+
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="WSL2 的 localhost 访问机制">
+
+
+<link rel="canonical" href="https://shionyori.github.io/2026/08/11/WSL2 的 localhost 访问机制/">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "name": "WSL2 的 localhost 访问机制",
+  "url": "https://shionyori.github.io/2026/08/11/WSL2 的 localhost 访问机制/",
+  "datePublished": "2026-08-12T00:00:00+08:00",
+  "author": { "@type": "Person", "name": "Shionyori" }
+  
+}
+</script>
+
+<meta name="theme-color" content="#6b7eb5">
+<link rel="icon" type="image/png" href="/images/shion/favicon.png">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+
+
+<script>
+  (function() {
+    var mode = 'auto';
+    var saved = localStorage.getItem('shion-theme');
+    if (saved) { mode = saved; }
+    else if (mode === 'auto') {
+      mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    if (mode === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+    (function() {
+      var fonts = {"heading":"'Noto Serif SC', 'Source Han Serif SC', Georgia, serif","body":"'Noto Sans SC', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif","code":"'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace","size_root":"15px"};
+      var legacySize = '';
+      var sizeRoot = fonts.size_root || legacySize;
+
+      if (fonts.heading) {
+        document.documentElement.style.setProperty('--font-heading', fonts.heading);
+      }
+      if (fonts.body) {
+        document.documentElement.style.setProperty('--font-body', fonts.body);
+      }
+      if (fonts.code) {
+        document.documentElement.style.setProperty('--font-code', fonts.code);
+      }
+      if (sizeRoot) {
+        document.documentElement.style.setProperty('--font-size-root', sizeRoot);
+      }
+    })();
+  })();
+</script>
+
+
+<noscript>
+  <style>
+    .sidebar-inner,
+    .content-card,
+    .post,
+    .page,
+    .archive-item,
+    .category-item,
+    .pagination,
+    .comments,
+    .not-found-content,
+    .widget,
+    .tag-cloud-item,
+    .post-card-wrapper,
+    .post-content,
+    .post-tags-footer,
+    .post-share,
+    .post-copyright,
+    .post-nav {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  </style>
+</noscript>
+
+  <script>
+    window.__shionConfig = {
+      katexCDN: 'https://cdn.jsdelivr.net/npm/katex@0',
+      katexDelimiters: [{"left":"$$","right":"$$","display":true},{"left":"$","right":"$","display":false}]
+    };
+  </script>
+<meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a class="site-logo" href="/">
+      
+        <span class="logo-text">Shionyori&#39;s Blog</span>
+      
+    </a>
+
+    <nav class="site-nav" id="site-nav">
+      
+        <a class="nav-item" href="/">首页</a>
+      
+        <a class="nav-item" href="/archives/">归档</a>
+      
+        <a class="nav-item" href="/tags/">标签</a>
+      
+        <a class="nav-item" href="/categories/">分类</a>
+      
+        <a class="nav-item" href="/friends/">友链</a>
+      
+        <a class="nav-item" href="/about/">关于</a>
+      
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn-icon search-toggle" id="search-toggle" aria-label="搜索">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon theme-toggle" id="theme-toggle" aria-label="深色模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon sidebar-toggle" id="sidebar-toggle" aria-label="sidebar_toggle">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+
+  
+<div class="reading-progress" id="reading-progress">
+  <div class="reading-progress-bar" id="reading-progress-bar"></div>
+</div>
+
+
+
+<div id="pjax-container">
+  
+  
+  
+  <div class="page-bg">
+  
+    <img src="/images/posts/WSL2%20%E7%9A%84%20localhost%20%E8%AE%BF%E9%97%AE%E6%9C%BA%E5%88%B6/cover.png" alt="">
+  </div>
+  
+
+  
+  
+  
+  <section class="page-hero">
+    <h1 class="hero-title">WSL2 的 localhost 访问机制</h1>
+    <div class="hero-subtitle">
+      <div class="post-meta">
+    
+    <time class="post-date" datetime="2026-08-12T00:00:00+08:00">
+      2026-08-12
+    </time>
+    
+
+    
+    <time class="post-updated" datetime="2026-08-12T00:00:00+08:00">
+      更新于 2026-08-12
+    </time>
+    
+
+    
+    <span class="post-word-count">1118 words</span>
+    
+
+    
+    <span class="post-reading-time">5 min read</span>
+    
+
+    
+    <span class="post-categories">
+      
+        <a class="category-link" href="/categories/%E5%85%B6%E4%BB%96/">其他</a>
+      
+    </span>
+    
+
+</div>
+
+    </div>
+    
+    <div class="hero-tags">
+      
+        <a class="tag-link" href="/tags/WSL2/">WSL2</a>
+      
+        <a class="tag-link" href="/tags/localhost/">localhost</a>
+      
+        <a class="tag-link" href="/tags/Mirrored-%E6%A8%A1%E5%BC%8F/">Mirrored 模式</a>
+      
+        <a class="tag-link" href="/tags/NAT-%E6%A8%A1%E5%BC%8F/">NAT 模式</a>
+      
+    </div>
+    
+  </section>
+  
+  
+
+  
+<div class="container">
+    <div class="content-wrapper">
+      
+      
+<aside class="site-sidebar sidebar-post" id="site-sidebar" data-position="left">
+
+  
+  
+
+  <div class="sidebar-sticky-group">
+    
+    <section class="sidebar-card sidebar-music">
+      
+<div class="music-player" data-playlist='[{"name":"奏穹のラプソディア (狂想曲)","artist":"瑶山百霊","url":"/music/瑶山百霊 - 奏穹のラプソディア (狂想曲).ogg","cover":"/music/covers/soukyuu-no-rhapsody.jpg"},{"name":"Graveyard Memory","artist":"GET IN THE RING","url":"/music/GET IN THE RING - Graveyard Memory.ogg","cover":"/music/covers/graveyard-memory.jpg"},{"name":"ポラリス (北极星)","artist":"GET IN THE RING","url":"/music/GET IN THE RING - ポラリス (北极星).ogg","cover":"/music/covers/polaris.jpg"},{"name":"その唄の名は…","artist":"yukina / GET IN THE RING","url":"/music/yukina _ GET IN THE RING - その唄の名は….ogg","cover":"/music/covers/sono-uta-no-na-wa.jpg"},{"name":"over the moon","artist":"Forest306","url":"/music/Forest306 - over the moon.ogg","cover":"/music/covers/over-the-moon.jpg"},{"name":"21時の探しモノ (21时寻找的东西)","artist":"minimum electric design","url":"/music/minimum electric design - 21時の探しモノ (21时寻找的东西).ogg","cover":"/music/covers/21ji-no-sagashimono.jpg"},{"name":"Freak Report 01 ~他愛も無い二人の博物誌~","artist":"凛","url":"/music/凛 - Freak Report 01 ~他愛も無い二人の博物誌~.ogg","cover":"/music/covers/freak-report-01.jpg"},{"name":"かぜのいろ (カゼノイロ)","artist":"森羅万象","url":"/music/森羅万象 - かぜのいろ (カゼノイロ).ogg","cover":"/music/covers/kaze-no-iro.jpg"},{"name":"Onisan Dochira!","artist":"狐の工作室","url":"/music/狐の工作室 - Onisan Dochira!.ogg","cover":"/music/covers/onisan-dochira.jpg"},{"name":"Skip in the byway","artist":"神乃木製作所","url":"/music/神乃木製作所 - Skip in the byway.ogg","cover":"/music/covers/skip-in-the-byway.jpg"}]'>
+  
+  <div class="music-body">
+    <div class="music-cover">
+      
+      
+      <img src="/music/covers/soukyuu-no-rhapsody.jpg" alt="cover" class="music-cover-img" onerror="if(!this.dataset.failed){this.dataset.failed='1';this.src='/images/shion/404.png'}">
+      
+    </div>
+    <div class="music-info">
+      <div class="music-title-row">
+        <span class="music-title">奏穹のラプソディア (狂想曲)</span>
+        <span class="music-counter">1 / 10</span>
+      </div>
+      <span class="music-artist">瑶山百霊</span>
+      <div class="music-progress">
+        <div class="music-progress-bar">
+          <div class="music-progress-fill"></div>
+        </div>
+        <div class="music-time">
+          <span class="music-time-current">0:00</span>
+          <span class="music-time-total">0:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="music-controls">
+    <button class="music-btn music-btn-mode" aria-label="Play mode" data-mode="sequential" title="Sequential">
+      <svg class="music-mode-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+    <button class="music-btn music-btn-prev" aria-label="Previous track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+    </button>
+    <button class="music-btn music-btn-play" aria-label="Play">
+      <svg class="music-icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <svg class="music-icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="6" height="16"/><rect x="14" y="4" width="6" height="16"/></svg>
+    </button>
+    <button class="music-btn music-btn-next" aria-label="Next track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+    </button>
+    <button class="music-btn music-btn-list" aria-label="Playlist">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="music-playlist">
+    
+    <button class="music-playlist-item active" data-index="0">
+      <span class="music-playlist-name">奏穹のラプソディア (狂想曲)</span>
+      <span class="music-playlist-artist">瑶山百霊</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="1">
+      <span class="music-playlist-name">Graveyard Memory</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="2">
+      <span class="music-playlist-name">ポラリス (北极星)</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="3">
+      <span class="music-playlist-name">その唄の名は…</span>
+      <span class="music-playlist-artist">yukina / GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="4">
+      <span class="music-playlist-name">over the moon</span>
+      <span class="music-playlist-artist">Forest306</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="5">
+      <span class="music-playlist-name">21時の探しモノ (21时寻找的东西)</span>
+      <span class="music-playlist-artist">minimum electric design</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="6">
+      <span class="music-playlist-name">Freak Report 01 ~他愛も無い二人の博物誌~</span>
+      <span class="music-playlist-artist">凛</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="7">
+      <span class="music-playlist-name">かぜのいろ (カゼノイロ)</span>
+      <span class="music-playlist-artist">森羅万象</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="8">
+      <span class="music-playlist-name">Onisan Dochira!</span>
+      <span class="music-playlist-artist">狐の工作室</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="9">
+      <span class="music-playlist-name">Skip in the byway</span>
+      <span class="music-playlist-artist">神乃木製作所</span>
+    </button>
+    
+  </div>
+  
+</div>
+
+    </section>
+    
+
+    <section class="sidebar-card sidebar-toc">
+      <div class="sidebar-toc-header">
+        <a class="sidebar-back-home" href="/" title="首页">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </a>
+        <span class="sidebar-toc-label">WSL2 的 localhost 访问机制</span>
+      </div>
+      <div class="sidebar-scroll">
+      
+      
+      <nav class="sidebar-toc">
+        <ol class="toc-list"><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#Windows-%E4%B8%8D%E8%83%BD%E9%80%9A%E8%BF%87%E6%9C%AC%E6%9C%BA%E5%B1%80%E5%9F%9F%E7%BD%91-IP-%E8%AE%BF%E9%97%AE-WSL2-%E4%B8%8A%E7%9A%84%E6%9C%8D%E5%8A%A1"><span class="toc-list-text">Windows 不能通过本机局域网 IP 访问 WSL2 上的服务</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#Windows-%E4%B8%8E-WSL2-%E9%80%9A%E8%BF%87%E5%9B%9E%E7%8E%AF%E5%9C%B0%E5%9D%80%E7%9A%84%E7%9B%B8%E4%BA%92%E8%AE%BF%E9%97%AE"><span class="toc-list-text">Windows 与 WSL2 通过回环地址的相互访问</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#WSL2-%E4%B8%8A%E7%9A%84%E6%9C%8D%E5%8A%A1%E8%BF%9B%E7%A8%8B%E9%9C%80%E8%A6%81%E7%9B%91%E5%90%AC-0-0-0-0"><span class="toc-list-text">WSL2 上的服务进程需要监听 0.0.0.0</span></a></li></ol>
+      </nav>
+      
+      </div>
+      <a class="sidebar-back-home-bottom" href="/">← 首页</a>
+    </section>
+  </div>
+
+  
+</aside>
+
+      
+
+      <main class="site-main">
+        <article class="post">
+
+  <div class="post-content">
+    
+  
+  
+  
+
+
+    <p>在 WSL2 中运行 Vite 服务时，发现在宿主机的浏览器上无法通过 <code>localhost:5173</code> 进行访问。已知 Vite 绑定到回环地址 <code>127.0.0.1</code>，而且 WSL2 开启了 Mirrored 模式，按理来说会共享宿主机的局域网 IP。</p>
+<hr>
+<h1 id="Windows-不能通过本机局域网-IP-访问-WSL2-上的服务"><a href="#Windows-不能通过本机局域网-IP-访问-WSL2-上的服务" class="headerlink" title="Windows 不能通过本机局域网 IP 访问 WSL2 上的服务"></a>Windows 不能通过本机局域网 IP 访问 WSL2 上的服务</h1><p>首先经过多次尝试发现，mirrored 模式允许宿主机和 WSL2 之间直接通过回环地址访问对方的服务，但是 Windows 无法直接通过本机局域网 IP（<code>192.168.1.x</code>） 访问 WSL2。</p>
+<table>
+<thead>
+<tr>
+<th>Attempt</th>
+<th>宿主机（Windows）</th>
+<th>WSL2（服务所在）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>curl http://192.168.1.16:5173</code></td>
+<td>Failed to connect</td>
+<td>Succeed</td>
+</tr>
+<tr>
+<td><code>curl localhost:5173</code></td>
+<td>Succeed</td>
+<td>Succeed</td>
+</tr>
+<tr>
+<td><code>curl 127.0.0.1:5173</code></td>
+<td>Succeed</td>
+<td>Succeed</td>
+</tr>
+</tbody></table>
+<p>对此去了解了具体的通信流程，得知这主要是 Windows 自身的回环短路优化机制导致的。</p>
+<p>数据包的具体交换流程如下：</p>
+<ol>
+<li>浏览器发起请求，目标 IP &#x3D; <code>192.168.1.16</code></li>
+<li>Windows 网络栈查路由表，发现 <code>192.168.1.16</code> 属于本机</li>
+<li>触发<strong>内核级回环短路优化</strong>，数据包直接在 Windows 网络栈内部回转</li>
+<li>数据包未经过物理网卡，也未经过 Hyper-V 虚拟交换机</li>
+<li>WSL2 虚拟机无法感知任何数据包，连接失败</li>
+</ol>
+<p>因此想要在 Windows 访问 WSL2 上的服务不能使用本机局域网 IP，而应该使用回环地址。</p>
+<h1 id="Windows-与-WSL2-通过回环地址的相互访问"><a href="#Windows-与-WSL2-通过回环地址的相互访问" class="headerlink" title="Windows 与 WSL2 通过回环地址的相互访问"></a>Windows 与 WSL2 通过回环地址的相互访问</h1><p>于是我做了进一步的测试：使用回环地址，服务分别位于宿主机和 WSL2，测试在不同的网络模式下的可达性。</p>
+<table>
+<thead>
+<tr>
+<th>Request</th>
+<th>网络模式</th>
+<th>可达性 &#x2F; 数据包入口</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Windows → WSL2（localhost）</td>
+<td>NAT</td>
+<td>成功，WSL2 的 <code>lo</code>（经代理模拟）</td>
+</tr>
+<tr>
+<td>Windows → WSL2（localhost）</td>
+<td>Mirrored</td>
+<td>成功，WSL2 的 <code>eth0</code>（Hyper-V 投递）</td>
+</tr>
+<tr>
+<td>WSL2 → Windows（localhost）</td>
+<td>NAT</td>
+<td>失败</td>
+</tr>
+<tr>
+<td>WSL2 → Windows（localhost）</td>
+<td>Mirrored</td>
+<td>成功，Windows 的 <code>lo</code>（识别为本地回环）</td>
+</tr>
+<tr>
+<td>WSL2 → Windows（网关&#x2F;局域网IP）</td>
+<td>NAT &#x2F; Mirrored</td>
+<td>Windows 的物理&#x2F;虚拟网卡（外部流量）</td>
+</tr>
+</tbody></table>
+<ol>
+<li><p>Windows 浏览器访问 <code>localhost:5173</code>（WSL2 上的服务）</p>
+<ul>
+<li>NAT 模式：Windows 主机的 <code>wslservice.exe</code> 进程在 <code>127.0.0.1</code> 的端口上进行监听。发出的请求被该进程接收后，经由应用层的转发管道，投递至 WSL2 内部的代理服务，然后<strong>由该代理在 WSL2 内部发起新的请求</strong>，源 IP 为 <code>127.0.0.1</code>，命中 <code>lo</code> 回环接口。</li>
+<li>Mirrored 模式：Windows 将目标为 <code>127.0.0.1</code> 的数据包通过 Hyper-V 虚拟交换机直接投递给 WSL2 的虚拟网卡 <code>eth0</code>。</li>
+</ul>
+</li>
+<li><p>WSL2 内部访问 <code>localhost:7890</code>（Windows 上的服务）</p>
+<ul>
+<li>NAT 模式：WSL2 内部的 <code>127.0.0.1</code> 仅指向 Linux 自身的 <code>lo</code> 回环接口。在 WSL2 内部访问 <code>localhost:7890</code> 只会在 Linux 的网络栈内相应的进程，数据包根本无法到达 Windows 主机。</li>
+<li>Mirrored 模式：WSL2 的 Linux 内核中注入了 BPF 钩子，它会拦截发往 <code>127.0.0.1</code> 的数据包，将其出口由 <code>lo</code> 接口切换至虚拟网卡 <code>eth0</code>。数据包从 <code>eth0</code> 发出后，经由 Hyper-V 虚拟交换机送达 Windows 主机。与 Linux 不同，Windows 的 TCP&#x2F;IP 协议栈只要看到一个数据包的目标 IP 是 <code>127.0.0.1</code>，<strong>无论来源，都会作为本机回环流量处理</strong>，投递给 Windows 的 <code>lo</code> 回环接口。</li>
+</ul>
+</li>
+</ol>
+<p>可见在 NAT 模式下数据包只能从 Windows 到 WSL2；而在 Mirrored 模式下数据包在 Windows 与 WSL2 之间的交换可以是双向的，但是机制有所不同。</p>
+<h1 id="WSL2-上的服务进程需要监听-0-0-0-0"><a href="#WSL2-上的服务进程需要监听-0-0-0-0" class="headerlink" title="WSL2 上的服务进程需要监听 0.0.0.0"></a>WSL2 上的服务进程需要监听 0.0.0.0</h1><p>从上面的分析可知，在 Mirrored 模式下，当我们从 Windows 浏览器访问 <code>localhost:5173</code> 时，数据包在 Linux 内核中是从 <code>eth0</code>（外部网卡）进入的，它的源 IP 为 <code>192.168.1.16</code>，也就是主机的局域网 IP。</p>
+<table>
+<thead>
+<tr>
+<th>Listen</th>
+<th>含义</th>
+<th>在 WSL2 中的具体表现</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>127.0.0.1</code></td>
+<td>只监听 <code>lo</code>（回环接口）</td>
+<td>只能接受来源 IP 是 <code>127.0.0.1</code> 的包</td>
+</tr>
+<tr>
+<td><code>0.0.0.0</code></td>
+<td>监听本机所有网络接口（<code>lo</code> + <code>eth0</code> 等）</td>
+<td>只要目标端口匹配，Linux 内核就会接收</td>
+</tr>
+</tbody></table>
+<p>而 Linux 内核存在一种<strong>源地址校验机制</strong>：源 IP 非 <code>127.0.0.1</code> 的包不允许发往 <code>127.0.0.1</code>。这也就意味着，如果服务进程只监听 <code>127.0.0.1</code>，Linux 内核会因源地址校验机制而将数据包丢弃。</p>
+<p>因此，为了让 Windows 能通过 <code>localhost</code> 访问 WSL2 的服务，其上的服务进程必须监听 <code>0.0.0.0</code>。 </p>
+
+  </div>
+
+  
+  <div class="post-copyright">
+    <p><strong>Shionyori</strong></p>
+    <p>/2026/08/11/WSL2%20%E7%9A%84%20localhost%20%E8%AE%BF%E9%97%AE%E6%9C%BA%E5%88%B6/</p>
+    <p>&amp;copy; 2026 Shionyori. 保留所有权利。</p>
+  </div>
+  
+
+  <footer class="post-footer">
+    
+    <div class="post-tags-footer">
+      
+        <a class="tag-link" href="/tags/WSL2/">WSL2</a>
+      
+        <a class="tag-link" href="/tags/localhost/">localhost</a>
+      
+        <a class="tag-link" href="/tags/Mirrored-%E6%A8%A1%E5%BC%8F/">Mirrored 模式</a>
+      
+        <a class="tag-link" href="/tags/NAT-%E6%A8%A1%E5%BC%8F/">NAT 模式</a>
+      
+    </div>
+    
+
+    
+<div class="post-share">
+  <div class="share-buttons">
+    
+    
+    
+
+    
+    <a class="share-btn share-twitter" href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fshionyori.github.io%2F2026%2F08%2F11%2FWSL2%20%E7%9A%84%20localhost%20%E8%AE%BF%E9%97%AE%E6%9C%BA%E5%88%B6%2F&text=WSL2%20%E7%9A%84%20localhost%20%E8%AE%BF%E9%97%AE%E6%9C%BA%E5%88%B6" target="_blank" rel="noopener" aria-label="分享到 Twitter">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fshionyori.github.io%2F2026%2F08%2F11%2FWSL2%20%E7%9A%84%20localhost%20%E8%AE%BF%E9%97%AE%E6%9C%BA%E5%88%B6%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fshionyori.github.io%2F2026%2F08%2F11%2FWSL2%20%E7%9A%84%20localhost%20%E8%AE%BF%E9%97%AE%E6%9C%BA%E5%88%B6%2F" target="_blank" rel="noopener" aria-label="分享到 LinkedIn">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    
+
+    
+    <button class="share-btn share-copy" aria-label="复制链接" data-url="https://shionyori.github.io/2026/08/11/WSL2 的 localhost 访问机制/">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    </button>
+    
+  </div>
+</div>
+
+
+  </footer>
+</article>
+
+
+
+<nav class="post-nav">
+  
+    <a class="post-nav-item post-nav-prev has-cover" href="/2026/08/17/LangChain/" style='background-image: url(/images/posts/LangChain/cover.png)'>
+      <span class="nav-label">上一篇</span>
+      <span class="nav-title">LangChain</span>
+    </a>
+  
+  
+    <a class="post-nav-item post-nav-next has-cover" href="/2026/08/01/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/" style='background-image: url(/images/posts/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/cover.png)'>
+      <span class="nav-label">下一篇</span>
+      <span class="nav-title">反射机制</span>
+    </a>
+  
+</nav>
+
+
+
+
+
+      </main>
+
+      
+    </div>
+  </div>
+</div>
+
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+
+<nav class="mobile-nav" id="mobile-nav">
+  <div class="mobile-nav-inner">
+    <div class="mobile-nav-header">
+      <span class="mobile-nav-title">首页</span>
+      <button class="btn-icon mobile-nav-close" id="mobile-nav-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <ul class="mobile-nav-menu">
+      
+        <li>
+          <a class="mobile-nav-link" href="/">首页</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/archives/">归档</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/tags/">标签</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/categories/">分类</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/friends/">友链</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/about/">关于</a>
+        </li>
+      
+    </ul>
+
+    
+    <div class="mobile-nav-social">
+      
+        <a class="social-icon" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+  </div>
+</nav>
+
+  <footer class="site-footer">
+  <div class="footer-inner">
+    
+    <div class="footer-social">
+      
+        <a class="social-link" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+
+    <div class="footer-info">
+      <span class="copyright">
+        &copy;
+        
+          2025 &ndash;
+        
+        2026
+        Shionyori
+      </span>
+
+      
+        <span class="powered-by">由 <a href="https://hexo.io/" target="_blank">Hexo</a> 驱动</span>
+      
+
+      
+        <span class="theme-by">主题 Shion</span>
+      
+
+      
+    </div>
+
+    
+
+  </div>
+</footer>
+
+
+
+  
+<div class="search-overlay" id="search-overlay"
+     data-i18n-found="关于「{query}」，找到了 {count} 条记录"
+     data-i18n-not-found="关于「{query}」，没有找到任何记录呢">
+  <div class="search-container">
+    <img class="search-decoration" src="/images/shion/search.png" alt="">
+    <div class="search-header">
+      <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" class="search-input" id="search-input" placeholder="输入关键词搜索..." autocomplete="off">
+      <button class="search-close" id="search-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="search-info" id="search-info"></div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+
+
+  
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/contrib/auto-render.min.js"></script>
+
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

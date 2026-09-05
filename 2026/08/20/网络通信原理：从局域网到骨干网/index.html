@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>网络通信原理：从局域网到骨干网 - Shionyori&#39;s Blog</title>
+
+
+<meta name="description" content="Gorgeous blooming flowers will eventually elegantly scattered.">
+
+
+<meta property="og:title" content="网络通信原理：从局域网到骨干网">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://shionyori.github.io/2026/08/20/网络通信原理：从局域网到骨干网/">
+<meta property="og:site_name" content="Shionyori&#39;s Blog">
+
+
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="网络通信原理：从局域网到骨干网">
+
+
+<link rel="canonical" href="https://shionyori.github.io/2026/08/20/网络通信原理：从局域网到骨干网/">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "name": "网络通信原理：从局域网到骨干网",
+  "url": "https://shionyori.github.io/2026/08/20/网络通信原理：从局域网到骨干网/",
+  "datePublished": "2026-08-21T00:00:00+08:00",
+  "author": { "@type": "Person", "name": "Shionyori" }
+  
+}
+</script>
+
+<meta name="theme-color" content="#6b7eb5">
+<link rel="icon" type="image/png" href="/images/shion/favicon.png">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+
+
+<script>
+  (function() {
+    var mode = 'auto';
+    var saved = localStorage.getItem('shion-theme');
+    if (saved) { mode = saved; }
+    else if (mode === 'auto') {
+      mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    if (mode === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+    (function() {
+      var fonts = {"heading":"'Noto Serif SC', 'Source Han Serif SC', Georgia, serif","body":"'Noto Sans SC', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif","code":"'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace","size_root":"15px"};
+      var legacySize = '';
+      var sizeRoot = fonts.size_root || legacySize;
+
+      if (fonts.heading) {
+        document.documentElement.style.setProperty('--font-heading', fonts.heading);
+      }
+      if (fonts.body) {
+        document.documentElement.style.setProperty('--font-body', fonts.body);
+      }
+      if (fonts.code) {
+        document.documentElement.style.setProperty('--font-code', fonts.code);
+      }
+      if (sizeRoot) {
+        document.documentElement.style.setProperty('--font-size-root', sizeRoot);
+      }
+    })();
+  })();
+</script>
+
+
+<noscript>
+  <style>
+    .sidebar-inner,
+    .content-card,
+    .post,
+    .page,
+    .archive-item,
+    .category-item,
+    .pagination,
+    .comments,
+    .not-found-content,
+    .widget,
+    .tag-cloud-item,
+    .post-card-wrapper,
+    .post-content,
+    .post-tags-footer,
+    .post-share,
+    .post-copyright,
+    .post-nav {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  </style>
+</noscript>
+
+  <script>
+    window.__shionConfig = {
+      katexCDN: 'https://cdn.jsdelivr.net/npm/katex@0',
+      katexDelimiters: [{"left":"$$","right":"$$","display":true},{"left":"$","right":"$","display":false}]
+    };
+  </script>
+<meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a class="site-logo" href="/">
+      
+        <span class="logo-text">Shionyori&#39;s Blog</span>
+      
+    </a>
+
+    <nav class="site-nav" id="site-nav">
+      
+        <a class="nav-item" href="/">首页</a>
+      
+        <a class="nav-item" href="/archives/">归档</a>
+      
+        <a class="nav-item" href="/tags/">标签</a>
+      
+        <a class="nav-item" href="/categories/">分类</a>
+      
+        <a class="nav-item" href="/friends/">友链</a>
+      
+        <a class="nav-item" href="/about/">关于</a>
+      
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn-icon search-toggle" id="search-toggle" aria-label="搜索">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon theme-toggle" id="theme-toggle" aria-label="深色模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon sidebar-toggle" id="sidebar-toggle" aria-label="sidebar_toggle">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+
+  
+<div class="reading-progress" id="reading-progress">
+  <div class="reading-progress-bar" id="reading-progress-bar"></div>
+</div>
+
+
+
+<div id="pjax-container">
+  
+  
+  
+  <div class="page-bg">
+  
+    <img src="/images/posts/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E5%8E%9F%E7%90%86%EF%BC%9A%E4%BB%8E%E5%B1%80%E5%9F%9F%E7%BD%91%E5%88%B0%E9%AA%A8%E5%B9%B2%E7%BD%91/cover.png" alt="">
+  </div>
+  
+
+  
+  
+  
+  <section class="page-hero">
+    <h1 class="hero-title">网络通信原理：从局域网到骨干网</h1>
+    <div class="hero-subtitle">
+      <div class="post-meta">
+    
+    <time class="post-date" datetime="2026-08-21T00:00:00+08:00">
+      2026-08-21
+    </time>
+    
+
+    
+    <time class="post-updated" datetime="2026-08-21T00:00:00+08:00">
+      更新于 2026-08-21
+    </time>
+    
+
+    
+    <span class="post-word-count">4498 words</span>
+    
+
+    
+    <span class="post-reading-time">16 min read</span>
+    
+
+    
+    <span class="post-categories">
+      
+        <a class="category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a>
+      
+    </span>
+    
+
+</div>
+
+    </div>
+    
+    <div class="hero-tags">
+      
+        <a class="tag-link" href="/tags/DNS/">DNS</a>
+      
+        <a class="tag-link" href="/tags/NAT/">NAT</a>
+      
+        <a class="tag-link" href="/tags/%E5%B1%80%E5%9F%9F%E7%BD%91/">局域网</a>
+      
+        <a class="tag-link" href="/tags/%E5%85%AC%E7%BD%91-IP/">公网 IP</a>
+      
+        <a class="tag-link" href="/tags/CGNAT/">CGNAT</a>
+      
+        <a class="tag-link" href="/tags/%E5%AE%BD%E5%B8%A6%E9%80%9A%E4%BF%A1/">宽带通信</a>
+      
+        <a class="tag-link" href="/tags/%E7%A7%BB%E5%8A%A8%E9%80%9A%E4%BF%A1/">移动通信</a>
+      
+    </div>
+    
+  </section>
+  
+  
+
+  
+<div class="container">
+    <div class="content-wrapper">
+      
+      
+<aside class="site-sidebar sidebar-post" id="site-sidebar" data-position="left">
+
+  
+  
+
+  <div class="sidebar-sticky-group">
+    
+    <section class="sidebar-card sidebar-music">
+      
+<div class="music-player" data-playlist='[{"name":"奏穹のラプソディア (狂想曲)","artist":"瑶山百霊","url":"/music/瑶山百霊 - 奏穹のラプソディア (狂想曲).ogg","cover":"/music/covers/soukyuu-no-rhapsody.jpg"},{"name":"Graveyard Memory","artist":"GET IN THE RING","url":"/music/GET IN THE RING - Graveyard Memory.ogg","cover":"/music/covers/graveyard-memory.jpg"},{"name":"ポラリス (北极星)","artist":"GET IN THE RING","url":"/music/GET IN THE RING - ポラリス (北极星).ogg","cover":"/music/covers/polaris.jpg"},{"name":"その唄の名は…","artist":"yukina / GET IN THE RING","url":"/music/yukina _ GET IN THE RING - その唄の名は….ogg","cover":"/music/covers/sono-uta-no-na-wa.jpg"},{"name":"over the moon","artist":"Forest306","url":"/music/Forest306 - over the moon.ogg","cover":"/music/covers/over-the-moon.jpg"},{"name":"21時の探しモノ (21时寻找的东西)","artist":"minimum electric design","url":"/music/minimum electric design - 21時の探しモノ (21时寻找的东西).ogg","cover":"/music/covers/21ji-no-sagashimono.jpg"},{"name":"Freak Report 01 ~他愛も無い二人の博物誌~","artist":"凛","url":"/music/凛 - Freak Report 01 ~他愛も無い二人の博物誌~.ogg","cover":"/music/covers/freak-report-01.jpg"},{"name":"かぜのいろ (カゼノイロ)","artist":"森羅万象","url":"/music/森羅万象 - かぜのいろ (カゼノイロ).ogg","cover":"/music/covers/kaze-no-iro.jpg"},{"name":"Onisan Dochira!","artist":"狐の工作室","url":"/music/狐の工作室 - Onisan Dochira!.ogg","cover":"/music/covers/onisan-dochira.jpg"},{"name":"Skip in the byway","artist":"神乃木製作所","url":"/music/神乃木製作所 - Skip in the byway.ogg","cover":"/music/covers/skip-in-the-byway.jpg"}]'>
+  
+  <div class="music-body">
+    <div class="music-cover">
+      
+      
+      <img src="/music/covers/soukyuu-no-rhapsody.jpg" alt="cover" class="music-cover-img" onerror="if(!this.dataset.failed){this.dataset.failed='1';this.src='/images/shion/404.png'}">
+      
+    </div>
+    <div class="music-info">
+      <div class="music-title-row">
+        <span class="music-title">奏穹のラプソディア (狂想曲)</span>
+        <span class="music-counter">1 / 10</span>
+      </div>
+      <span class="music-artist">瑶山百霊</span>
+      <div class="music-progress">
+        <div class="music-progress-bar">
+          <div class="music-progress-fill"></div>
+        </div>
+        <div class="music-time">
+          <span class="music-time-current">0:00</span>
+          <span class="music-time-total">0:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="music-controls">
+    <button class="music-btn music-btn-mode" aria-label="Play mode" data-mode="sequential" title="Sequential">
+      <svg class="music-mode-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+    <button class="music-btn music-btn-prev" aria-label="Previous track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+    </button>
+    <button class="music-btn music-btn-play" aria-label="Play">
+      <svg class="music-icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <svg class="music-icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="6" height="16"/><rect x="14" y="4" width="6" height="16"/></svg>
+    </button>
+    <button class="music-btn music-btn-next" aria-label="Next track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+    </button>
+    <button class="music-btn music-btn-list" aria-label="Playlist">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="music-playlist">
+    
+    <button class="music-playlist-item active" data-index="0">
+      <span class="music-playlist-name">奏穹のラプソディア (狂想曲)</span>
+      <span class="music-playlist-artist">瑶山百霊</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="1">
+      <span class="music-playlist-name">Graveyard Memory</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="2">
+      <span class="music-playlist-name">ポラリス (北极星)</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="3">
+      <span class="music-playlist-name">その唄の名は…</span>
+      <span class="music-playlist-artist">yukina / GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="4">
+      <span class="music-playlist-name">over the moon</span>
+      <span class="music-playlist-artist">Forest306</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="5">
+      <span class="music-playlist-name">21時の探しモノ (21时寻找的东西)</span>
+      <span class="music-playlist-artist">minimum electric design</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="6">
+      <span class="music-playlist-name">Freak Report 01 ~他愛も無い二人の博物誌~</span>
+      <span class="music-playlist-artist">凛</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="7">
+      <span class="music-playlist-name">かぜのいろ (カゼノイロ)</span>
+      <span class="music-playlist-artist">森羅万象</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="8">
+      <span class="music-playlist-name">Onisan Dochira!</span>
+      <span class="music-playlist-artist">狐の工作室</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="9">
+      <span class="music-playlist-name">Skip in the byway</span>
+      <span class="music-playlist-artist">神乃木製作所</span>
+    </button>
+    
+  </div>
+  
+</div>
+
+    </section>
+    
+
+    <section class="sidebar-card sidebar-toc">
+      <div class="sidebar-toc-header">
+        <a class="sidebar-back-home" href="/" title="首页">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </a>
+        <span class="sidebar-toc-label">网络通信原理：从局域网到骨干网</span>
+      </div>
+      <div class="sidebar-scroll">
+      
+      
+      <nav class="sidebar-toc">
+        <ol class="toc-list"><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%A6%81%E7%B4%A0"><span class="toc-list-text">网络通信的基本要素</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E7%89%A9%E7%90%86%E8%BF%9E%E6%8E%A5%E4%B8%8E-MAC-%E5%9C%B0%E5%9D%80"><span class="toc-list-text">物理连接与 MAC 地址</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E4%BA%A4%E6%8D%A2%E6%9C%BA%E4%B8%8E%E5%B1%80%E5%9F%9F%E7%BD%91"><span class="toc-list-text">交换机与局域网</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E8%B7%AF%E7%94%B1%E5%99%A8%E4%B8%8E%E8%B7%A8%E7%BD%91%E9%80%9A%E4%BF%A1"><span class="toc-list-text">路由器与跨网通信</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%9F%9F%E5%90%8D%E4%B8%8E-DNS"><span class="toc-list-text">域名与 DNS</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E7%BD%91%E7%BB%9C%E8%AE%BE%E5%A4%87%E7%9A%84%E8%81%8C%E8%B4%A3"><span class="toc-list-text">网络设备的职责</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E7%BD%91%E5%8D%A1%E4%B8%8E%E7%89%A9%E7%90%86%E4%BB%8B%E8%B4%A8"><span class="toc-list-text">网卡与物理介质</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E7%BD%91%E5%8D%A1%EF%BC%88NIC%EF%BC%89"><span class="toc-list-text">网卡（NIC）</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E6%9C%89%E7%BA%BF%E4%B8%8E%E6%97%A0%E7%BA%BF"><span class="toc-list-text">有线与无线</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E5%85%AC%E7%BD%91-IP-%E4%B8%8E-NAT"><span class="toc-list-text">公网 IP 与 NAT</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%85%AC%E7%BD%91-IP-%E4%B8%8E%E7%A7%81%E6%9C%89-IP"><span class="toc-list-text">公网 IP 与私有 IP</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#NAT%EF%BC%88%E7%BD%91%E7%BB%9C%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2%EF%BC%89"><span class="toc-list-text">NAT（网络地址转换）</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#CGNAT%EF%BC%88%E8%BF%90%E8%90%A5%E5%95%86%E7%BA%A7-NAT%EF%BC%89"><span class="toc-list-text">CGNAT（运营商级 NAT）</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%85%AC%E7%BD%91-IP-%E7%9A%84%E6%8C%87%E5%90%91"><span class="toc-list-text">公网 IP 的指向</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E5%AE%B6%E5%BA%AD%E5%AE%BD%E5%B8%A6"><span class="toc-list-text">家庭宽带</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E7%89%A9%E7%90%86%E9%93%BE%E8%B7%AF"><span class="toc-list-text">物理链路</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%85%89%E6%8E%A5%E5%85%A5%E7%BD%91%E8%AE%BE%E5%A4%87"><span class="toc-list-text">光接入网设备</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#PPPoE-%E6%8B%A8%E5%8F%B7%E4%B8%8E%E4%BC%9A%E8%AF%9D"><span class="toc-list-text">PPPoE 拨号与会话</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#PPPoE-%E4%BC%9A%E8%AF%9D%E8%A1%A8"><span class="toc-list-text">PPPoE 会话表</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#PON-%E7%9A%84%E5%8A%A0%E5%AF%86%E5%B9%BF%E6%92%AD"><span class="toc-list-text">PON 的加密广播</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E6%95%B0%E6%8D%AE%E5%8C%85%E7%9A%84%E4%BC%A0%E6%92%AD%E8%B7%AF%E7%BA%BF"><span class="toc-list-text">数据包的传播路线</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E4%BC%81%E4%B8%9A%E4%B8%93%E7%BA%BF"><span class="toc-list-text">企业专线</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%AE%B6%E5%BA%AD%E5%AE%BD%E5%B8%A6%E4%B8%8E%E4%BC%81%E4%B8%9A%E4%B8%93%E7%BA%BF%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-list-text">家庭宽带与企业专线的区别</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E6%95%B0%E6%8D%AE%E4%B8%AD%E5%BF%83%E6%89%98%E7%AE%A1%EF%BC%88IDC%EF%BC%89"><span class="toc-list-text">数据中心托管（IDC）</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%EF%BC%88Reverse-Proxy%EF%BC%89"><span class="toc-list-text">反向代理（Reverse Proxy）</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E7%A7%BB%E5%8A%A8%E9%80%9A%E4%BF%A1"><span class="toc-list-text">移动通信</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E8%9C%82%E7%AA%9D%E7%BD%91%E7%BB%9C"><span class="toc-list-text">蜂窝网络</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E6%9C%89%E7%BA%BF%E5%AE%BD%E5%B8%A6%E4%B8%8E%E7%A7%BB%E5%8A%A8%E9%80%9A%E4%BF%A1"><span class="toc-list-text">有线宽带与移动通信</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E6%B5%81%E9%87%8F%E7%9A%84%E5%8F%A3%E5%BE%84%E4%B8%8E%E8%AE%A1%E8%B4%B9"><span class="toc-list-text">流量的口径与计费</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#CDN%EF%BC%88%E5%86%85%E5%AE%B9%E5%88%86%E5%8F%91%E7%BD%91%E7%BB%9C%EF%BC%89"><span class="toc-list-text">CDN（内容分发网络）</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-list-text">工作原理</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E4%B8%BB%E8%A6%81%E4%BD%9C%E7%94%A8"><span class="toc-list-text">主要作用</span></a></li></ol></li></ol>
+      </nav>
+      
+      </div>
+      <a class="sidebar-back-home-bottom" href="/">← 首页</a>
+    </section>
+  </div>
+
+  
+</aside>
+
+      
+
+      <main class="site-main">
+        <article class="post">
+
+  <div class="post-content">
+    
+  
+  
+  
+
+
+    <p>本文说明一台设备发出的数据包如何经过局域网、运营商接入网和骨干网到达远端服务器，以及返回的数据包如何被精确送回这台设备。内容包括基础设备（网卡、交换机、路由器）、地址系统（IP、NAT、DNS）、家庭宽带接入（光猫&#x2F;OLT&#x2F;BRAS）、企业级接入（专线&#x2F;IDC&#x2F;反向代理）以及移动通信。</p>
+<hr>
+<h1 id="网络通信的基本要素"><a href="#网络通信的基本要素" class="headerlink" title="网络通信的基本要素"></a>网络通信的基本要素</h1><p>一次网络通信需要依次解决四个问题：物理上如何连接、局域网内如何找到目标设备、跨网络如何转发、如何把 IP 映射成易记的域名。</p>
+<h2 id="物理连接与-MAC-地址"><a href="#物理连接与-MAC-地址" class="headerlink" title="物理连接与 MAC 地址"></a>物理连接与 MAC 地址</h2><ul>
+<li>物理层：用一根线缆连接两台设备的网卡，通过电压高低传输 <code>0</code> 和 <code>1</code> 的比特流。</li>
+<li>MAC 地址：每块网卡出厂烧录一个全球唯一的 6 字节编号（如 <code>AA-BB-CC-00-00-01</code>），用于在局域网内识别设备。</li>
+<li>数据帧：按“目标 MAC + 源 MAC + 数据”的顺序封装。接收方检查目标 MAC 是否是自己，是则收下，否则丢弃。</li>
+</ul>
+<p>这样只能连接两台设备，无法扩展到更多设备。</p>
+<h2 id="交换机与局域网"><a href="#交换机与局域网" class="headerlink" title="交换机与局域网"></a>交换机与局域网</h2><p>多台设备互相直连需要大量线缆，因此引入中间设备转发：</p>
+<ul>
+<li>集线器（Hub）：把信号复制并广播到所有端口，多个设备同时发送时会产生冲突域，相互干扰。</li>
+<li>交换机（Switch）：记录每个端口对应的 MAC 地址（MAC 地址表），只向目标端口转发数据，实现点对点通信，构成局域网（LAN）。</li>
+</ul>
+<p>但交换机只能在同一广播域内转发，无法连接远处的设备。</p>
+<h2 id="路由器与跨网通信"><a href="#路由器与跨网通信" class="headerlink" title="路由器与跨网通信"></a>路由器与跨网通信</h2><ul>
+<li>IP 地址：逻辑地址，由“网络号 + 主机号”组成（如 <code>192.168.1.5</code>），用于在整个互联网中标识设备。</li>
+<li>路由器（Router）：连接两个网络，根据目标 IP 查路由表，决定下一跳。</li>
+<li>网关（Gateway）：本网络的默认出口，通常是路由器在内网的接口。</li>
+</ul>
+<p>跨网络传输时，MAC 地址每经过一个路由器就会更换（逐跳寻址），而 IP 地址全程不变（始终指向最终目标）。</p>
+<h2 id="域名与-DNS"><a href="#域名与-DNS" class="headerlink" title="域名与 DNS"></a>域名与 DNS</h2><ul>
+<li>域名：用易记的名字（<code>google.com</code>）代替数字形式的 IP。</li>
+<li>DNS：维护域名与 IP 的映射，查询过程逐级递归：<ol>
+<li>浏览器 &#x2F; 操作系统缓存 → 本地 DNS 服务器</li>
+<li>本地 DNS → 根服务器 → 顶级域服务器（<code>.com</code>）→ 权威 DNS 服务器</li>
+<li>权威 DNS 返回真实 IP，各级逐级缓存并回传</li>
+</ol>
+</li>
+</ul>
+<blockquote>
+<p>DNS 返回的 IP 往往不是目标设备的地址，而是该网络出口（路由器或运营商网关）的地址。数据包先到达出口，再由 NAT 转交给网内的具体设备。</p>
+</blockquote>
+<div class="note note-info"><p>三层寻址的关系：局域网内用 MAC 找设备，跨网络用 IP 找网关，域名由 DNS 解析成 IP。</p>
+</div>
+
+<h2 id="网络设备的职责"><a href="#网络设备的职责" class="headerlink" title="网络设备的职责"></a>网络设备的职责</h2><table>
+<thead>
+<tr>
+<th>设备&#x2F;系统</th>
+<th>职责</th>
+<th>依据</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>交换机</td>
+<td>局域网内按目标端口转发</td>
+<td>MAC 地址表</td>
+</tr>
+<tr>
+<td>路由器</td>
+<td>跨网络选择下一跳</td>
+<td>IP 路由表</td>
+</tr>
+<tr>
+<td>网关</td>
+<td>提供本网络出口</td>
+<td>默认路由</td>
+</tr>
+<tr>
+<td>DNS</td>
+<td>域名解析为 IP</td>
+<td>域名-IP 映射表</td>
+</tr>
+<tr>
+<td>网卡</td>
+<td>在比特流与物理信号之间转换，持有 MAC</td>
+<td>出厂烧录</td>
+</tr>
+</tbody></table>
+<h1 id="网卡与物理介质"><a href="#网卡与物理介质" class="headerlink" title="网卡与物理介质"></a>网卡与物理介质</h1><h2 id="网卡（NIC）"><a href="#网卡（NIC）" class="headerlink" title="网卡（NIC）"></a>网卡（NIC）</h2><p>网卡负责两件事：</p>
+<ol>
+<li>编解码：把 CPU 的二进制数据编码成电 &#x2F; 光 &#x2F; 电磁信号发送；接收时反向解码还原。</li>
+<li>提供 MAC 地址：MAC 地址烧录在网卡 ROM 中，用于标识网卡。</li>
+</ol>
+<p>物理上，网卡是一块 PCB 电路板，核心部件包括：</p>
+<ul>
+<li>MAC 控制器：负责数据帧的封装 &#x2F; 解封、MAC 过滤，并通过 DMA 直接读写内存。</li>
+<li>PHY 芯片：把 <code>0/1</code> 调制成网线上的电压变化（内置放大器补偿信号衰减）。</li>
+<li>射频前端（FEM，无线网卡才有）：功率放大器 + 低噪声放大器，用于放大无线信号。</li>
+</ul>
+<div class="note note-info"><p>网卡同时负责发送和接收（收发器 Transceiver）。天线、光模块只完成物理信号的传导，编解码在网卡芯片内部完成。</p>
+</div>
+
+<h2 id="有线与无线"><a href="#有线与无线" class="headerlink" title="有线与无线"></a>有线与无线</h2><ul>
+<li>有线靠电信号 &#x2F; 光信号在实体介质中传播；无线靠电磁波在空气中传播。</li>
+<li>无线协议（CSMA&#x2F;CA）采用“先请求、再发送、后确认”的机制，效率低于有线（相同带宽下通常只有有线的 60%-70%）。</li>
+<li>无线连接只覆盖设备到接入点这一段距离：离开这段距离后，数据一律通过网线、光纤等有线介质传输。</li>
+</ul>
+<blockquote>
+<p>Wi-Fi、蓝牙、4G&#x2F;5G 的无线信号到达路由器或基站后，都会转入有线介质（网线、光纤、海底光缆）继续传输。骨干网络全部由物理线缆构成。</p>
+</blockquote>
+<h1 id="公网-IP-与-NAT"><a href="#公网-IP-与-NAT" class="headerlink" title="公网 IP 与 NAT"></a>公网 IP 与 NAT</h1><h2 id="公网-IP-与私有-IP"><a href="#公网-IP-与私有-IP" class="headerlink" title="公网 IP 与私有 IP"></a>公网 IP 与私有 IP</h2><ul>
+<li>公网 IP：全球唯一。ICANN 把地址段分给运营商，运营商再逐级向下分配，用于在公网中定位网络出口。</li>
+<li>私有 IP：<code>192.168.x.x</code>、<code>10.x.x.x</code>、<code>172.16.x.x</code> 等，可在不同局域网中重复使用，但不会在公网中被路由。</li>
+</ul>
+<h2 id="NAT（网络地址转换）"><a href="#NAT（网络地址转换）" class="headerlink" title="NAT（网络地址转换）"></a>NAT（网络地址转换）</h2><p>IPv4 地址总数约 43 亿，不够全球设备使用。内网设备通过路由器做 NAT，使多台设备共用一个公网 IP：</p>
+<ol>
+<li>设备发送数据包（源 IP 为内网 <code>192.168.1.5:5555</code>）给路由器。</li>
+<li>路由器执行 SNAT：把源 IP 改写为 WAN 口公网 IP <code>6.6.6.6</code>，源端口改写为随机端口 <code>8888</code>，并记录一条映射。</li>
+<li>服务器回复时目标为 <code>6.6.6.6:8888</code>，路由器查 NAT 表，执行 DNAT 把目标改回内网地址后转发。</li>
+</ol>
+<div class="note note-info"><p>NAT 映射保存在网关内存中，不写入数据包。网关重启会清空 NAT 表，所有经过该网关的连接随即中断（所以重启路由器后，已打开的网页需要重新加载）。</p>
+</div>
+
+<h2 id="CGNAT（运营商级-NAT）"><a href="#CGNAT（运营商级-NAT）" class="headerlink" title="CGNAT（运营商级 NAT）"></a>CGNAT（运营商级 NAT）</h2><p>运营商在城域网部署 CGNAT，让大量用户共享少量公网 IP：</p>
+<ul>
+<li>家庭路由器 WAN 口拿到的可能是运营商内网 IP（如 <code>100.64.1.2</code>），而不是公网 IP。</li>
+<li>公网 IP（如 <code>6.6.6.6</code>）属于运营商机房的 CGNAT 网关；上网时动态占用一个端口，闲置几分钟后回收。</li>
+<li>公网 IP + 端口与一次通信请求对应，不与设备绑定：同一设备发起两次请求，会获得两个不同的公网端口。</li>
+</ul>
+<p>由此产生一个后果：外网无法主动访问内网设备——NAT 表中没有对应入站记录时，入站数据包会被丢弃。这是家庭宽带无法直接对外提供服务的原因。</p>
+<p>数据包返回时，经过两层地址映射：</p>
+<ol>
+<li>CGNAT 网关（公网 IP + 端口 → 运营商内网 IP）：按端口查 NAT 表，找到家庭路由器的运营商内网 IP（如 <code>100.64.1.2</code>）。</li>
+<li>BRAS（运营商内网 IP → 物理路径）：查会话表，把运营商内网 IP 对应到宽带账号和物理线路。</li>
+</ol>
+<div class="note note-info"><p>公网段按“公网 IP + 端口”区分用户，运营商内网段按“运营商内网 IP ↔ 宽带账号”区分用户。两层映射需要分别查询，链路才能完整。</p>
+</div>
+
+<h2 id="公网-IP-的指向"><a href="#公网-IP-的指向" class="headerlink" title="公网 IP 的指向"></a>公网 IP 的指向</h2><p>公网 IP 不与某台电脑或某个用户固定绑定，而是指向运营商 BRAS 上的一条会话记录。BRAS 建立会话时记录以下信息：</p>
+<ol>
+<li>宽带账号（PPPoE 拨号）：用于认证。</li>
+<li>光猫 SN 序列号：标识物理光猫，绑定光纤端口。</li>
+<li>MAC 地址：用于弱绑定校验。</li>
+</ol>
+<p>BRAS 把公网 IP 与会话信息存入内存中的会话表，查询流程见后文「PPPoE 会话表」。</p>
+<h1 id="家庭宽带"><a href="#家庭宽带" class="headerlink" title="家庭宽带"></a>家庭宽带</h1><p>家庭接入段设备多、协议层次多，下面按物理链路、接入设备、拨号与查表流程分别说明。</p>
+<h2 id="物理链路"><a href="#物理链路" class="headerlink" title="物理链路"></a>物理链路</h2><p>数据离开家庭路由器后经过的链路：</p>
+<p>光猫 → 入户光纤 → 分光器 → OLT（小区机房） → BRAS（运营商机房） → 骨干网</p>
+<table>
+<thead>
+<tr>
+<th>路段</th>
+<th>介质</th>
+<th>关键设备</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>电脑 → 路由器</td>
+<td>空气（Wi-Fi）</td>
+<td>无线网卡、路由器（NAT）</td>
+</tr>
+<tr>
+<td>路由器 → 光猫</td>
+<td>铜缆（网线）</td>
+<td>光猫（光电转换）</td>
+</tr>
+<tr>
+<td>光猫 → OLT</td>
+<td>光纤（光信号）</td>
+<td>分光器、OLT</td>
+</tr>
+<tr>
+<td>OLT → BRAS</td>
+<td>城域光纤</td>
+<td>BRAS（认证、限速、映射）</td>
+</tr>
+<tr>
+<td>BRAS → 骨干网</td>
+<td>骨干光纤</td>
+<td>核心路由器</td>
+</tr>
+</tbody></table>
+<h2 id="光接入网设备"><a href="#光接入网设备" class="headerlink" title="光接入网设备"></a>光接入网设备</h2><p>家庭宽带采用光纤到户（FTTH），接入网由以下设备构成：</p>
+<ul>
+<li>ONT（Optical Network Terminal，光网络终端）：即家庭光猫，负责光电转换和 PPPoE 拨号。</li>
+<li>ODN（Optical Distribution Network，光分配网络）：OLT 与 ONT 之间的无源光纤网络，由光纤和分光器（Splitter）组成，把一根光纤的光信号分成 32&#x2F;64 路连接到多个家庭。</li>
+<li>OLT（Optical Line Terminal，光线路终端）：小区机房的局端设备，接收光猫的光信号并汇聚成数据流，与上层 BRAS 对接。</li>
+<li>BRAS（Broadband Remote Access Server，宽带远程接入服务器）：运营商机房的接入设备，负责 PPPoE 认证、会话管理、限速与 IP 分配。</li>
+</ul>
+<div class="note note-info"><p>设备位置：ONT 在用户侧（光猫），OLT 在局端（小区机房），ODN 是两者之间的无源光纤链路（含分光器），BRAS 再往上接入骨干网。</p>
+</div>
+
+<h2 id="PPPoE-拨号与会话"><a href="#PPPoE-拨号与会话" class="headerlink" title="PPPoE 拨号与会话"></a>PPPoE 拨号与会话</h2><ul>
+<li>光猫启动后通过 PPPoE 拨号向 BRAS 发起认证，把宽带账号和密码交给 AAA 认证服务器。</li>
+<li>认证通过后，BRAS 建立 PPPoE 会话，并从地址池分配一个 IP（可能是公网 IP，也可能是运营商内网 IP）。</li>
+<li>会话在断线前持续有效。重新拨号后，IP 重新分配，并绑定新的物理路径（搬家更换光纤后需要重新拨号）。</li>
+</ul>
+<h2 id="PPPoE-会话表"><a href="#PPPoE-会话表" class="headerlink" title="PPPoE 会话表"></a>PPPoE 会话表</h2><p>公网 IP 不与物理端口或宽带账号直接绑定，而是对应 BRAS 内存中的一条会话记录。BRAS 会话表临时绑定以下三项：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>公网 IP</td>
+<td>分配给本次拨号的临时地址</td>
+</tr>
+<tr>
+<td>宽带账号</td>
+<td>用户的永久身份（如 <code>025-xxxx</code>）</td>
+</tr>
+<tr>
+<td>物理路径</td>
+<td>OLT 的 PON 口、分光器分支、光猫 SN</td>
+</tr>
+</tbody></table>
+<p>外网数据包返回、目标为你的公网 IP 时，BRAS 的查询流程：</p>
+<ol>
+<li>查会话表，确定该 IP 属于哪个宽带账号；</li>
+<li>根据账号查到对应物理路径（哪个 OLT、哪根分光器下的哪个光猫）；</li>
+<li>给数据包打上 VLAN &#x2F; 通道标签，交给 OLT 投递。</li>
+</ol>
+<div class="note note-info"><p>数据包能够被送到家里，依据的是 BRAS 会话表中“公网 IP ↔ 宽带账号 ↔ 物理路径”的临时绑定，公网 IP 与光猫之间没有固定映射。</p>
+</div>
+
+<h2 id="PON-的加密广播"><a href="#PON-的加密广播" class="headerlink" title="PON 的加密广播"></a>PON 的加密广播</h2><p>一个 OLT 的 PON 口通过分光器分出 32&#x2F;64 路，连接多个家庭光猫。下行数据是广播的（分光器下的所有光猫都能收到光信号），靠两层机制保证只有目标光猫能收到并解开：</p>
+<ol>
+<li>逻辑通道标签（GEM Port ID）：每个光猫分配唯一 ID，收到帧先看标签，不匹配直接丢弃。</li>
+<li>AES 加密密钥：OLT 在注册阶段通过 OMCI 协议与每个光猫协商独立密钥；其他光猫即使收到帧也无法解密。</li>
+</ol>
+<p>标签负责过滤（决定是否收下数据），密钥负责解密（决定能否读取内容），两者职责不同。</p>
+<blockquote>
+<p>各段设备只处理自己负责的那一层：BRAS 按 IP 查会话表，OLT 按 VLAN &#x2F; GEM 标签选择光猫。</p>
+</blockquote>
+<h2 id="数据包的传播路线"><a href="#数据包的传播路线" class="headerlink" title="数据包的传播路线"></a>数据包的传播路线</h2><p>以手机访问 <code>google.com</code> 为例：</p>
+<ol>
+<li>DNS 查询：手机向 DNS 服务器查询 <code>google.com</code> 对应的 IP。</li>
+<li>发包：手机把源 IP（内网 <code>192.168.1.5</code>）和目标 IP 写入数据包，交给路由器。</li>
+<li>NAT：路由器把源 IP 改为 WAN 口公网 IP，记录 NAT 表。</li>
+<li>出站：数据包经光猫、OLT 到达 BRAS，BRAS 校验源 IP 属于合法会话后放行到骨干网（不检查目标 IP）。</li>
+<li>全球路由：骨干网路由器按目标 IP 逐级转发，经海底光缆到达对端机房。</li>
+<li>入站：服务器回复，数据包目标为你的公网 IP。BRAS 查会话表，找到对应的宽带账号和物理路径。</li>
+<li>加密广播：OLT 用目标光猫的密钥加密，经分光器广播，只有该光猫能解密收下。</li>
+<li>反向 NAT：路由器查 NAT 表，把目标 IP 改回 <code>192.168.1.5</code>，送达手机。</li>
+</ol>
+<div class="note note-info"><p>BRAS 在出站和入站时处理方式不同：出站只校验源 IP 是否属于合法会话；入站才查询目标 IP 对应的会话和物理路径。</p>
+</div>
+
+<h1 id="企业专线"><a href="#企业专线" class="headerlink" title="企业专线"></a>企业专线</h1><h2 id="家庭宽带与企业专线的区别"><a href="#家庭宽带与企业专线的区别" class="headerlink" title="家庭宽带与企业专线的区别"></a>家庭宽带与企业专线的区别</h2><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>家庭宽带</th>
+<th>企业专线 &#x2F; 托管</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>带宽</td>
+<td>共享、超卖、上下行不对等</td>
+<td>独享、上下行对等、SLA 保障</td>
+</tr>
+<tr>
+<td>IP</td>
+<td>动态 &#x2F; CGNAT 大内网</td>
+<td>静态公网 IP，全球固定</td>
+</tr>
+<tr>
+<td>认证</td>
+<td>PPPoE 拨号（办宽带）</td>
+<td>物理端口绑定 &#x2F; BGP 互联</td>
+</tr>
+<tr>
+<td>端口</td>
+<td>80&#x2F;443 默认封禁</td>
+<td>全开放，可直接建站</td>
+</tr>
+<tr>
+<td>网络层级</td>
+<td>接入网（Access）</td>
+<td>汇聚 &#x2F; 核心层（Core）</td>
+</tr>
+</tbody></table>
+<p>数据中心（如谷歌）不经过 BRAS 与 PPPoE：通过专线光纤直接接入运营商的骨干核心路由器，用 BGP 向全球宣告自己的 IP 段。家庭宽带需要逐用户认证与计费（PPPoE 会话），企业专线为物理直连，没有逐用户认证环节。</p>
+<h2 id="数据中心托管（IDC）"><a href="#数据中心托管（IDC）" class="headerlink" title="数据中心托管（IDC）"></a>数据中心托管（IDC）</h2><p>自行购买物理服务器后，有两种部署方式：</p>
+<ul>
+<li>托管到 IDC 机房：把服务器放进数据中心。IDC 已铺设到运营商骨干节点的光纤，并与运营商建立 BGP 互联，托管客户按带宽付费即可获得固定公网 IP，无需自行与运营商对接 BGP。</li>
+<li>放在家里：走家庭宽带，需要端口转发和 DDNS，且 80&#x2F;443 默认被封，无法稳定对外提供服务。</li>
+</ul>
+<blockquote>
+<p>云服务器与托管的区别在于资产归属：托管需要自行采购并持有服务器硬件；云服务器按需租用计算资源。两者同样提供固定公网 IP 与 BGP 接入。</p>
+</blockquote>
+<p>公网 IP 按层级逐级分配：ICANN → 运营商 → IDC &#x2F; 云厂商 → 终端用户。IDC 从运营商获取整段地址（如 <code>/24</code>，256 个），再拆分成单个 IP 分配给托管客户。</p>
+<h2 id="反向代理（Reverse-Proxy）"><a href="#反向代理（Reverse-Proxy）" class="headerlink" title="反向代理（Reverse Proxy）"></a>反向代理（Reverse Proxy）</h2><p>反向代理（如 Nginx）持有公网 IP，接收所有对外流量，再根据请求的域名（七层）或端口（四层）转发给内网的不同服务：</p>
+<ul>
+<li>访问 <code>www.a.com</code> → 转发给服务器 A</li>
+<li>访问 <code>www.b.com</code> → 转发给服务器 B</li>
+</ul>
+<div class="note note-info"><p>反向代理工作在应用层，依据 HTTP 请求中的 Host 字段转发，与底层的接入方式无关。一个公网入口可以挂载任意数量的后端服务，因此少量公网 IP 即可承载大量对外服务。</p>
+</div>
+
+<h1 id="移动通信"><a href="#移动通信" class="headerlink" title="移动通信"></a>移动通信</h1><h2 id="蜂窝网络"><a href="#蜂窝网络" class="headerlink" title="蜂窝网络"></a>蜂窝网络</h2><p>移动通信的链路：手机 → 基站（4G&#x2F;5G） → 回传网络 → PGW&#x2F;UPF（运营商核心网） → 骨干网。</p>
+<ul>
+<li>身份识别依据 SIM 卡中的 IMSI。</li>
+<li>个人 SIM 卡接入公共 IP 池，获得运营商内网 IP（<code>10.x.x.x</code> 等），由 PGW 做 NAT，共享公网出口。</li>
+<li>企业可购买 APN &#x2F; VPDN 专线 SIM 卡，获得独立固定 IP。数据直达企业内网，不经过公共互联网（物理上仍走公共基站，逻辑上走专属隧道）。</li>
+</ul>
+<h2 id="有线宽带与移动通信"><a href="#有线宽带与移动通信" class="headerlink" title="有线宽带与移动通信"></a>有线宽带与移动通信</h2><p>有线宽带与移动通信解决不同场景的问题，两者共用：</p>
+<ul>
+<li>有线宽带：时延低、带宽稳定、抗干扰强，用于机房、数据库和固定场所。</li>
+<li>移动通信：无需布线、覆盖范围大，用于移动设备；时延和带宽受基站负载、距离影响。</li>
+</ul>
+<p>企业通常同时使用：办公区用有线 + Wi-Fi；外勤设备、容灾备份走蜂窝网络（两条线路互为备份）。</p>
+<h2 id="流量的口径与计费"><a href="#流量的口径与计费" class="headerlink" title="流量的口径与计费"></a>流量的口径与计费</h2><ul>
+<li>技术口径的“流量”：数据包在物理介质（网线、光纤、空气）中传输的数据量。</li>
+<li>计费口径的“流量”：运营商计费系统统计、经过计费通道的数据量。</li>
+</ul>
+<p>家庭宽带与移动网络使用物理隔离的接入网（BRAS 与 PGW），从计费入口就已区分：宽带走固网计费（按宽带账号），移动走移动计费（按 SIM 卡 &#x2F; APN）。两类费用在营业厅账单中合并展示，但底层数据相互独立。</p>
+<blockquote>
+<p>手机开热点给电脑上网时，数据从基站（移动接入网）进入，消耗的是手机流量套餐，与家庭宽带计费无关。</p>
+</blockquote>
+<h1 id="CDN（内容分发网络）"><a href="#CDN（内容分发网络）" class="headerlink" title="CDN（内容分发网络）"></a>CDN（内容分发网络）</h1><p>CDN（Content Delivery Network，内容分发网络）把网站的静态资源缓存到分布在全球各地的节点，用户请求时从最近的节点获取，缩短传输路径。</p>
+<h2 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h2><ol>
+<li>用户请求域名时，DNS 解析被交给 CDN 的调度系统。</li>
+<li>CDN 根据用户 IP 判断地理位置和网络状况，返回离用户最近、负载最轻的节点的 IP。</li>
+<li>用户直接访问该节点：<ul>
+<li>缓存命中：节点上已有内容，直接返回。</li>
+<li>缓存未命中：节点向源站请求一份内容，缓存后转发给用户。</li>
+</ul>
+</li>
+</ol>
+<div class="note note-info"><p>接入 CDN 后，DNS 解析返回的是 CDN 节点 IP，而不是源站 IP。配置时要把域名解析改为 CNAME，指向 CDN 服务商提供的域名。</p>
+</div>
+
+<h2 id="主要作用"><a href="#主要作用" class="headerlink" title="主要作用"></a>主要作用</h2><ul>
+<li>提升访问速度：用户就近获取内容，缩短数据传输路径。</li>
+<li>降低源站压力：大部分请求由 CDN 节点响应，源站只处理少量请求。</li>
+<li>增强稳定性：节点分布在不同网络，可分摊流量并抵御 DDoS 攻击。</li>
+</ul>
+
+  </div>
+
+  
+  <div class="post-copyright">
+    <p><strong>Shionyori</strong></p>
+    <p>/2026/08/20/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E5%8E%9F%E7%90%86%EF%BC%9A%E4%BB%8E%E5%B1%80%E5%9F%9F%E7%BD%91%E5%88%B0%E9%AA%A8%E5%B9%B2%E7%BD%91/</p>
+    <p>&amp;copy; 2026 Shionyori. 保留所有权利。</p>
+  </div>
+  
+
+  <footer class="post-footer">
+    
+    <div class="post-tags-footer">
+      
+        <a class="tag-link" href="/tags/DNS/">DNS</a>
+      
+        <a class="tag-link" href="/tags/NAT/">NAT</a>
+      
+        <a class="tag-link" href="/tags/%E5%B1%80%E5%9F%9F%E7%BD%91/">局域网</a>
+      
+        <a class="tag-link" href="/tags/%E5%85%AC%E7%BD%91-IP/">公网 IP</a>
+      
+        <a class="tag-link" href="/tags/CGNAT/">CGNAT</a>
+      
+        <a class="tag-link" href="/tags/%E5%AE%BD%E5%B8%A6%E9%80%9A%E4%BF%A1/">宽带通信</a>
+      
+        <a class="tag-link" href="/tags/%E7%A7%BB%E5%8A%A8%E9%80%9A%E4%BF%A1/">移动通信</a>
+      
+    </div>
+    
+
+    
+<div class="post-share">
+  <div class="share-buttons">
+    
+    
+    
+
+    
+    <a class="share-btn share-twitter" href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fshionyori.github.io%2F2026%2F08%2F20%2F%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E5%8E%9F%E7%90%86%EF%BC%9A%E4%BB%8E%E5%B1%80%E5%9F%9F%E7%BD%91%E5%88%B0%E9%AA%A8%E5%B9%B2%E7%BD%91%2F&text=%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E5%8E%9F%E7%90%86%EF%BC%9A%E4%BB%8E%E5%B1%80%E5%9F%9F%E7%BD%91%E5%88%B0%E9%AA%A8%E5%B9%B2%E7%BD%91" target="_blank" rel="noopener" aria-label="分享到 Twitter">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fshionyori.github.io%2F2026%2F08%2F20%2F%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E5%8E%9F%E7%90%86%EF%BC%9A%E4%BB%8E%E5%B1%80%E5%9F%9F%E7%BD%91%E5%88%B0%E9%AA%A8%E5%B9%B2%E7%BD%91%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fshionyori.github.io%2F2026%2F08%2F20%2F%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E5%8E%9F%E7%90%86%EF%BC%9A%E4%BB%8E%E5%B1%80%E5%9F%9F%E7%BD%91%E5%88%B0%E9%AA%A8%E5%B9%B2%E7%BD%91%2F" target="_blank" rel="noopener" aria-label="分享到 LinkedIn">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    
+
+    
+    <button class="share-btn share-copy" aria-label="复制链接" data-url="https://shionyori.github.io/2026/08/20/网络通信原理：从局域网到骨干网/">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    </button>
+    
+  </div>
+</div>
+
+
+  </footer>
+</article>
+
+
+
+<nav class="post-nav">
+  
+    <a class="post-nav-item post-nav-prev has-cover" href="/2026/08/20/RPC%20%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" style='background-image: url(/images/posts/RPC%20%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/cover.png)'>
+      <span class="nav-label">上一篇</span>
+      <span class="nav-title">RPC 与分布式系统</span>
+    </a>
+  
+  
+    <a class="post-nav-item post-nav-next has-cover" href="/2026/08/17/LangChain/" style='background-image: url(/images/posts/LangChain/cover.png)'>
+      <span class="nav-label">下一篇</span>
+      <span class="nav-title">LangChain</span>
+    </a>
+  
+</nav>
+
+
+
+
+
+      </main>
+
+      
+    </div>
+  </div>
+</div>
+
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+
+<nav class="mobile-nav" id="mobile-nav">
+  <div class="mobile-nav-inner">
+    <div class="mobile-nav-header">
+      <span class="mobile-nav-title">首页</span>
+      <button class="btn-icon mobile-nav-close" id="mobile-nav-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <ul class="mobile-nav-menu">
+      
+        <li>
+          <a class="mobile-nav-link" href="/">首页</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/archives/">归档</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/tags/">标签</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/categories/">分类</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/friends/">友链</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/about/">关于</a>
+        </li>
+      
+    </ul>
+
+    
+    <div class="mobile-nav-social">
+      
+        <a class="social-icon" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+  </div>
+</nav>
+
+  <footer class="site-footer">
+  <div class="footer-inner">
+    
+    <div class="footer-social">
+      
+        <a class="social-link" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+
+    <div class="footer-info">
+      <span class="copyright">
+        &copy;
+        
+          2025 &ndash;
+        
+        2026
+        Shionyori
+      </span>
+
+      
+        <span class="powered-by">由 <a href="https://hexo.io/" target="_blank">Hexo</a> 驱动</span>
+      
+
+      
+        <span class="theme-by">主题 Shion</span>
+      
+
+      
+    </div>
+
+    
+
+  </div>
+</footer>
+
+
+
+  
+<div class="search-overlay" id="search-overlay"
+     data-i18n-found="关于「{query}」，找到了 {count} 条记录"
+     data-i18n-not-found="关于「{query}」，没有找到任何记录呢">
+  <div class="search-container">
+    <img class="search-decoration" src="/images/shion/search.png" alt="">
+    <div class="search-header">
+      <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" class="search-input" id="search-input" placeholder="输入关键词搜索..." autocomplete="off">
+      <button class="search-close" id="search-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="search-info" id="search-info"></div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+
+
+  
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/contrib/auto-render.min.js"></script>
+
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

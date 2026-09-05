@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>C++ 函数式编程 - Shionyori&#39;s Blog</title>
+
+
+<meta name="description" content="Gorgeous blooming flowers will eventually elegantly scattered.">
+
+
+<meta property="og:title" content="C++ 函数式编程">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://shionyori.github.io/2025/03/08/C++函数式编程/">
+<meta property="og:site_name" content="Shionyori&#39;s Blog">
+
+
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C++ 函数式编程">
+
+
+<link rel="canonical" href="https://shionyori.github.io/2025/03/08/C++函数式编程/">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "name": "C++ 函数式编程",
+  "url": "https://shionyori.github.io/2025/03/08/C++函数式编程/",
+  "datePublished": "2025-03-09T00:00:00+08:00",
+  "author": { "@type": "Person", "name": "Shionyori" }
+  
+}
+</script>
+
+<meta name="theme-color" content="#6b7eb5">
+<link rel="icon" type="image/png" href="/images/shion/favicon.png">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+
+
+<script>
+  (function() {
+    var mode = 'auto';
+    var saved = localStorage.getItem('shion-theme');
+    if (saved) { mode = saved; }
+    else if (mode === 'auto') {
+      mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    if (mode === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+    (function() {
+      var fonts = {"heading":"'Noto Serif SC', 'Source Han Serif SC', Georgia, serif","body":"'Noto Sans SC', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif","code":"'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace","size_root":"15px"};
+      var legacySize = '';
+      var sizeRoot = fonts.size_root || legacySize;
+
+      if (fonts.heading) {
+        document.documentElement.style.setProperty('--font-heading', fonts.heading);
+      }
+      if (fonts.body) {
+        document.documentElement.style.setProperty('--font-body', fonts.body);
+      }
+      if (fonts.code) {
+        document.documentElement.style.setProperty('--font-code', fonts.code);
+      }
+      if (sizeRoot) {
+        document.documentElement.style.setProperty('--font-size-root', sizeRoot);
+      }
+    })();
+  })();
+</script>
+
+
+<noscript>
+  <style>
+    .sidebar-inner,
+    .content-card,
+    .post,
+    .page,
+    .archive-item,
+    .category-item,
+    .pagination,
+    .comments,
+    .not-found-content,
+    .widget,
+    .tag-cloud-item,
+    .post-card-wrapper,
+    .post-content,
+    .post-tags-footer,
+    .post-share,
+    .post-copyright,
+    .post-nav {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  </style>
+</noscript>
+
+  <script>
+    window.__shionConfig = {
+      katexCDN: 'https://cdn.jsdelivr.net/npm/katex@0',
+      katexDelimiters: [{"left":"$$","right":"$$","display":true},{"left":"$","right":"$","display":false}]
+    };
+  </script>
+<meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a class="site-logo" href="/">
+      
+        <span class="logo-text">Shionyori&#39;s Blog</span>
+      
+    </a>
+
+    <nav class="site-nav" id="site-nav">
+      
+        <a class="nav-item" href="/">首页</a>
+      
+        <a class="nav-item" href="/archives/">归档</a>
+      
+        <a class="nav-item" href="/tags/">标签</a>
+      
+        <a class="nav-item" href="/categories/">分类</a>
+      
+        <a class="nav-item" href="/friends/">友链</a>
+      
+        <a class="nav-item" href="/about/">关于</a>
+      
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn-icon search-toggle" id="search-toggle" aria-label="搜索">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon theme-toggle" id="theme-toggle" aria-label="深色模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon sidebar-toggle" id="sidebar-toggle" aria-label="sidebar_toggle">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+
+  
+<div class="reading-progress" id="reading-progress">
+  <div class="reading-progress-bar" id="reading-progress-bar"></div>
+</div>
+
+
+
+<div id="pjax-container">
+  
+  
+  
+  <div class="page-bg">
+  
+    <img src="/images/posts/C++%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/cover.png" alt="">
+  </div>
+  
+
+  
+  
+  
+  <section class="page-hero">
+    <h1 class="hero-title">C++ 函数式编程</h1>
+    <div class="hero-subtitle">
+      <div class="post-meta">
+    
+    <time class="post-date" datetime="2025-03-09T00:00:00+08:00">
+      2025-03-09
+    </time>
+    
+
+    
+    <time class="post-updated" datetime="2026-07-23T00:00:00+08:00">
+      更新于 2026-07-23
+    </time>
+    
+
+    
+    <span class="post-word-count">1858 words</span>
+    
+
+    
+    <span class="post-reading-time">7 min read</span>
+    
+
+    
+    <span class="post-categories">
+      
+        <a class="category-link" href="/categories/C/">C++</a>
+      
+    </span>
+    
+
+</div>
+
+    </div>
+    
+    <div class="hero-tags">
+      
+        <a class="tag-link" href="/tags/C/">C++</a>
+      
+        <a class="tag-link" href="/tags/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/">函数式编程</a>
+      
+        <a class="tag-link" href="/tags/%E4%BB%BF%E5%87%BD%E6%95%B0/">仿函数</a>
+      
+        <a class="tag-link" href="/tags/Lambda/">Lambda</a>
+      
+        <a class="tag-link" href="/tags/function/">function</a>
+      
+        <a class="tag-link" href="/tags/bind/">bind</a>
+      
+        <a class="tag-link" href="/tags/%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0/">回调函数</a>
+      
+        <a class="tag-link" href="/tags/%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88/">函数指针</a>
+      
+        <a class="tag-link" href="/tags/%E5%87%BD%E6%95%B0%E5%90%8D%E9%80%80%E5%8C%96/">函数名退化</a>
+      
+    </div>
+    
+  </section>
+  
+  
+
+  
+<div class="container">
+    <div class="content-wrapper">
+      
+      
+<aside class="site-sidebar sidebar-post" id="site-sidebar" data-position="left">
+
+  
+  
+
+  <div class="sidebar-sticky-group">
+    
+    <section class="sidebar-card sidebar-music">
+      
+<div class="music-player" data-playlist='[{"name":"奏穹のラプソディア (狂想曲)","artist":"瑶山百霊","url":"/music/瑶山百霊 - 奏穹のラプソディア (狂想曲).ogg","cover":"/music/covers/soukyuu-no-rhapsody.jpg"},{"name":"Graveyard Memory","artist":"GET IN THE RING","url":"/music/GET IN THE RING - Graveyard Memory.ogg","cover":"/music/covers/graveyard-memory.jpg"},{"name":"ポラリス (北极星)","artist":"GET IN THE RING","url":"/music/GET IN THE RING - ポラリス (北极星).ogg","cover":"/music/covers/polaris.jpg"},{"name":"その唄の名は…","artist":"yukina / GET IN THE RING","url":"/music/yukina _ GET IN THE RING - その唄の名は….ogg","cover":"/music/covers/sono-uta-no-na-wa.jpg"},{"name":"over the moon","artist":"Forest306","url":"/music/Forest306 - over the moon.ogg","cover":"/music/covers/over-the-moon.jpg"},{"name":"21時の探しモノ (21时寻找的东西)","artist":"minimum electric design","url":"/music/minimum electric design - 21時の探しモノ (21时寻找的东西).ogg","cover":"/music/covers/21ji-no-sagashimono.jpg"},{"name":"Freak Report 01 ~他愛も無い二人の博物誌~","artist":"凛","url":"/music/凛 - Freak Report 01 ~他愛も無い二人の博物誌~.ogg","cover":"/music/covers/freak-report-01.jpg"},{"name":"かぜのいろ (カゼノイロ)","artist":"森羅万象","url":"/music/森羅万象 - かぜのいろ (カゼノイロ).ogg","cover":"/music/covers/kaze-no-iro.jpg"},{"name":"Onisan Dochira!","artist":"狐の工作室","url":"/music/狐の工作室 - Onisan Dochira!.ogg","cover":"/music/covers/onisan-dochira.jpg"},{"name":"Skip in the byway","artist":"神乃木製作所","url":"/music/神乃木製作所 - Skip in the byway.ogg","cover":"/music/covers/skip-in-the-byway.jpg"}]'>
+  
+  <div class="music-body">
+    <div class="music-cover">
+      
+      
+      <img src="/music/covers/soukyuu-no-rhapsody.jpg" alt="cover" class="music-cover-img" onerror="if(!this.dataset.failed){this.dataset.failed='1';this.src='/images/shion/404.png'}">
+      
+    </div>
+    <div class="music-info">
+      <div class="music-title-row">
+        <span class="music-title">奏穹のラプソディア (狂想曲)</span>
+        <span class="music-counter">1 / 10</span>
+      </div>
+      <span class="music-artist">瑶山百霊</span>
+      <div class="music-progress">
+        <div class="music-progress-bar">
+          <div class="music-progress-fill"></div>
+        </div>
+        <div class="music-time">
+          <span class="music-time-current">0:00</span>
+          <span class="music-time-total">0:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="music-controls">
+    <button class="music-btn music-btn-mode" aria-label="Play mode" data-mode="sequential" title="Sequential">
+      <svg class="music-mode-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+    <button class="music-btn music-btn-prev" aria-label="Previous track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+    </button>
+    <button class="music-btn music-btn-play" aria-label="Play">
+      <svg class="music-icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <svg class="music-icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="6" height="16"/><rect x="14" y="4" width="6" height="16"/></svg>
+    </button>
+    <button class="music-btn music-btn-next" aria-label="Next track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+    </button>
+    <button class="music-btn music-btn-list" aria-label="Playlist">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="music-playlist">
+    
+    <button class="music-playlist-item active" data-index="0">
+      <span class="music-playlist-name">奏穹のラプソディア (狂想曲)</span>
+      <span class="music-playlist-artist">瑶山百霊</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="1">
+      <span class="music-playlist-name">Graveyard Memory</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="2">
+      <span class="music-playlist-name">ポラリス (北极星)</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="3">
+      <span class="music-playlist-name">その唄の名は…</span>
+      <span class="music-playlist-artist">yukina / GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="4">
+      <span class="music-playlist-name">over the moon</span>
+      <span class="music-playlist-artist">Forest306</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="5">
+      <span class="music-playlist-name">21時の探しモノ (21时寻找的东西)</span>
+      <span class="music-playlist-artist">minimum electric design</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="6">
+      <span class="music-playlist-name">Freak Report 01 ~他愛も無い二人の博物誌~</span>
+      <span class="music-playlist-artist">凛</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="7">
+      <span class="music-playlist-name">かぜのいろ (カゼノイロ)</span>
+      <span class="music-playlist-artist">森羅万象</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="8">
+      <span class="music-playlist-name">Onisan Dochira!</span>
+      <span class="music-playlist-artist">狐の工作室</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="9">
+      <span class="music-playlist-name">Skip in the byway</span>
+      <span class="music-playlist-artist">神乃木製作所</span>
+    </button>
+    
+  </div>
+  
+</div>
+
+    </section>
+    
+
+    <section class="sidebar-card sidebar-toc">
+      <div class="sidebar-toc-header">
+        <a class="sidebar-back-home" href="/" title="首页">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </a>
+        <span class="sidebar-toc-label">C++ 函数式编程</span>
+      </div>
+      <div class="sidebar-scroll">
+      
+      
+      <nav class="sidebar-toc">
+        <ol class="toc-list"><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#1-%E5%87%BD%E6%95%B0%E7%B1%BB%E4%B8%8E%E5%87%BD%E6%95%B0%E5%AF%B9%E8%B1%A1%EF%BC%88%E4%BB%BF%E5%87%BD%E6%95%B0%EF%BC%89"><span class="toc-list-text">1. 函数类与函数对象（仿函数）</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#2-%E5%87%BD%E6%95%B0%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%87%BD%E6%95%B0%E7%AD%BE%E5%90%8D"><span class="toc-list-text">2. 函数类型与函数签名</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#2-Lambda-%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-list-text">2. Lambda 表达式</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#3-std-function"><span class="toc-list-text">3. std::function</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#4-bind"><span class="toc-list-text">4. bind()</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#5-%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0"><span class="toc-list-text">5. 回调函数</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#5-1-%E6%99%AE%E9%80%9A%E5%87%BD%E6%95%B0%E4%BD%9C%E4%B8%BA%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0"><span class="toc-list-text">5.1 普通函数作为回调函数</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#5-2-%E7%B1%BB%E7%9A%84%E9%9D%99%E6%80%81%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0%E4%BD%9C%E4%B8%BA%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0"><span class="toc-list-text">5.2 类的静态成员函数作为回调函数</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#5-3-%E7%B1%BB%E7%9A%84%E9%9D%9E%E9%9D%99%E6%80%81%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0%E4%BD%9C%E4%B8%BA%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0"><span class="toc-list-text">5.3 类的非静态成员函数作为回调函数</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#6-%E5%87%BD%E6%95%B0%E5%90%8D%E9%80%80%E5%8C%96%E4%B8%BA%E6%8C%87%E9%92%88"><span class="toc-list-text">6. 函数名退化为指针</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#6-1-%E6%99%AE%E9%80%9A%E5%87%BD%E6%95%B0%E5%92%8C%E9%9D%99%E6%80%81%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0"><span class="toc-list-text">6.1 普通函数和静态成员函数</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#6-2-%E9%9D%9E%E9%9D%99%E6%80%81%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0%E5%90%8D%E4%B8%8D%E6%94%AF%E6%8C%81%E9%9A%90%E5%BC%8F%E9%80%80%E5%8C%96"><span class="toc-list-text">6.2 非静态成员函数名不支持隐式退化</span></a></li></ol></li></ol>
+      </nav>
+      
+      </div>
+      <a class="sidebar-back-home-bottom" href="/">← 首页</a>
+    </section>
+  </div>
+
+  
+</aside>
+
+      
+
+      <main class="site-main">
+        <article class="post">
+
+  <div class="post-content">
+    
+  
+  
+  
+
+
+    <p>函数不再只是一段代码，也可以是一个对象、一个参数、一个返回值。C++ 为函数式风格提供了完整的工具箱：从重载 operator() 的仿函数，到灵活捕获上下文的 Lambda，再到通用的 std::function 包装器。</p>
+<hr>
+<h1 id="1-函数类与函数对象（仿函数）"><a href="#1-函数类与函数对象（仿函数）" class="headerlink" title="1. 函数类与函数对象（仿函数）"></a>1. 函数类与函数对象（仿函数）</h1><p>函数类是一个重载了括号运算符 <code>()</code> 的类，大概就是这样 <code>operator()(参数列表){函数体...}</code>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">Add</span> &#123;<br>    <span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">operator</span><span class="hljs-params">()</span><span class="hljs-params">(<span class="hljs-type">int</span> a, <span class="hljs-type">int</span> b)</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> a + b; &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>函数对象就是函数类的实例，它可以像正常函数一样被调用（例如 <code>object(2)</code>），我们也可以称之为<strong>仿函数</strong>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp">Add add;<br><span class="hljs-type">int</span> result = <span class="hljs-built_in">add</span>(<span class="hljs-number">2</span>, <span class="hljs-number">3</span>); <span class="hljs-comment">// 调用仿函数，result = 5</span><br></code></pre></td></tr></table></figure>
+
+<h1 id="2-函数类型与函数签名"><a href="#2-函数类型与函数签名" class="headerlink" title="2. 函数类型与函数签名"></a>2. 函数类型与函数签名</h1><p>函数类型由返回类型和参数类型列表组成（例如 <code>int(int, int)</code>）。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">add</span><span class="hljs-params">(<span class="hljs-type">int</span> a, <span class="hljs-type">int</span> b)</span> </span>&#123; <span class="hljs-keyword">return</span> a + b; &#125; <span class="hljs-comment">// 函数类型为 int(int, int)</span><br></code></pre></td></tr></table></figure>
+
+<p>函数签名由函数名、参数类型列表以及限定符（包括 <code>const</code>、<code>volatile</code>、引用限定符 <code>&amp;</code> &#x2F; <code>&amp;&amp;</code>）组成，<strong>不包括返回类型</strong>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">add</span><span class="hljs-params">(<span class="hljs-type">int</span> a, <span class="hljs-type">int</span> b)</span> </span>&#123; <span class="hljs-keyword">return</span> a + b; &#125;<br><span class="hljs-function"><span class="hljs-type">double</span> <span class="hljs-title">add</span><span class="hljs-params">(<span class="hljs-type">int</span> a, <span class="hljs-type">int</span> b)</span> </span>&#123; <span class="hljs-keyword">return</span> a + b; &#125; <span class="hljs-comment">// 函数重定义：签名都是 add(int,int)</span><br></code></pre></td></tr></table></figure>
+
+<h1 id="2-Lambda-表达式"><a href="#2-Lambda-表达式" class="headerlink" title="2. Lambda 表达式"></a>2. <code>Lambda</code> 表达式</h1><p>Lambda 表达式，也可以叫做<strong>匿名函数</strong>，形如 <code>[捕获区间](参数列表)-&gt;返回类型{函数体}</code>。</p>
+<ul>
+<li>如果参数列表为空，可以省略 <code>()</code></li>
+<li>如果返回类型可以由编译器推导，也可以省略 <code>-&gt;返回类型</code></li>
+</ul>
+<p>常用的捕获方式有：</p>
+<ul>
+<li><code>[=]</code>：按值捕获所有外部变量</li>
+<li><code>[&amp;]</code>：按引用捕获所有外部变量</li>
+<li><code>[this]</code>：捕获当前对象的指针</li>
+<li><code>[=, &amp;x]</code>：按引用捕获 <code>x</code>，其他外部变量按值捕获</li>
+<li><code>[&amp;, x]</code>：按值捕获 <code>x</code>，其他外部变量按引用捕获</li>
+</ul>
+<h1 id="3-std-function"><a href="#3-std-function" class="headerlink" title="3. std::function"></a>3. <code>std::function</code></h1><p>函数包装器，可以用于储存函数，从而避免直接使用函数指针。</p>
+<ul>
+<li>使用 <code>std::function&lt;T&gt;</code> 模板时需要指定<strong>函数类型</strong>（如 <code>int(int, int)</code>）</li>
+<li>可以存储普通函数、仿函数、Lambda 表达式等可调用对象</li>
+<li>存储的对象必须是可拷贝的</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;functional&gt;</span></span><br><br>function&lt;<span class="hljs-type">int</span>(<span class="hljs-type">int</span>, <span class="hljs-type">int</span>)&gt; f1 = add; <span class="hljs-comment">// 存储普通函数</span><br>function&lt;<span class="hljs-type">int</span>(<span class="hljs-type">int</span>, <span class="hljs-type">int</span>)&gt; f2 = <span class="hljs-built_in">Multiply</span>(); <span class="hljs-comment">// 存储仿函数</span><br>function&lt;<span class="hljs-type">int</span>(<span class="hljs-type">int</span>, <span class="hljs-type">int</span>)&gt; f3 = [](<span class="hljs-type">int</span> a, <span class="hljs-type">int</span> b) &#123; <span class="hljs-keyword">return</span> a - b; &#125;; <span class="hljs-comment">// 存储 Lambda 表达式</span><br></code></pre></td></tr></table></figure>
+
+<h1 id="4-bind"><a href="#4-bind" class="headerlink" title="4. bind()"></a>4. <code>bind()</code></h1><p>用于固定一个可调用对象的部分参数，从而创建一个新的可调用对象。</p>
+<ol>
+<li>对于一般函数而言：</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">auto</span> addFive = <span class="hljs-built_in">bind</span>(add, <span class="hljs-number">5</span>, placeholder::_1) <span class="hljs-comment">// 固定add函数的第一个参数为5</span><br></code></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>成员函数有一个<strong>隐含参数</strong>：<code>this</code> 指针，所以绑定成员函数时，<strong>第一个参数必须是指向对象的指针（或引用）</strong>：</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cpp">std::<span class="hljs-built_in">bind</span>(&amp;ProgramA::FunA2, &amp;PA)<br></code></pre></td></tr></table></figure>
+
+<h1 id="5-回调函数"><a href="#5-回调函数" class="headerlink" title="5. 回调函数"></a>5. 回调函数</h1><p>在 C++ 中，回调函数（callback）指的是被其他函数作为参数传入（通常是函数指针或可调用对象），并在特定事件或条件下被调用的函数。</p>
+<p>回调函数可以</p>
+<p>回调函数的用处：</p>
+<ol>
+<li>代码解耦：通过改变传入的回调函数，让通用的代码能够处理特定的逻辑</li>
+<li>异步任务：回调函数作为异步任务的入口点</li>
+<li>事件响应机制：当事件触发时，自动调用回调函数处理相关逻辑</li>
+</ol>
+<h2 id="5-1-普通函数作为回调函数"><a href="#5-1-普通函数作为回调函数" class="headerlink" title="5.1 普通函数作为回调函数"></a>5.1 普通函数作为回调函数</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">programA_FunA1</span><span class="hljs-params">()</span> </span>&#123;<br>	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;I&#x27;am ProgramA_FunA1 and be called..\n&quot;</span>);<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">programA_FunA2</span><span class="hljs-params">()</span> </span>&#123;<br>	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;I&#x27;am ProgramA_FunA2 and be called..\n&quot;</span>);<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">programB_FunB1</span><span class="hljs-params">(<span class="hljs-type">void</span> (*callback)())</span> </span>&#123; <span class="hljs-comment">// 直接传入函数指针</span><br>	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;I&#x27;am programB_FunB1 and be called..\n&quot;</span>);<br>	<span class="hljs-built_in">callback</span>();<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span> **argv)</span> </span>&#123;<br>	<span class="hljs-built_in">programA_FunA1</span>();<br>	<span class="hljs-built_in">programB_FunB1</span>(programA_FunA2);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>在这个例子中，<code>programB_FunB1</code> 函数接受一个函数指针作为参数，并在其内部调用该回调函数。</p>
+<h2 id="5-2-类的静态成员函数作为回调函数"><a href="#5-2-类的静态成员函数作为回调函数" class="headerlink" title="5.2 类的静态成员函数作为回调函数"></a>5.2 类的静态成员函数作为回调函数</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">ProgramA</span> &#123;<br><span class="hljs-keyword">public</span>:<br>	<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">FunA1</span><span class="hljs-params">()</span> </span>&#123;<br>		<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;I&#x27;am ProgramA.FunA1() and be called..\n&quot;</span>);<br>	&#125;<br>	<span class="hljs-function"><span class="hljs-type">static</span> <span class="hljs-type">void</span> <span class="hljs-title">FunA2</span><span class="hljs-params">()</span> </span>&#123;<br>		<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;I&#x27;am ProgramA.FunA2() and be called..\n&quot;</span>);<br>	&#125;<br>&#125;;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">ProgramB</span> &#123;<br><span class="hljs-keyword">public</span>:<br>	<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">FunB1</span><span class="hljs-params">(<span class="hljs-type">void</span> (*callback)())</span> </span>&#123; <span class="hljs-comment">// 直接传入函数指针</span><br>		<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;I&#x27;am ProgramB.FunB1() and be called..\n&quot;</span>);<br>		<span class="hljs-built_in">callback</span>();<br>	&#125;<br>&#125;;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span> **argv)</span> </span>&#123;<br>	ProgramA PA;<br>	PA.<span class="hljs-built_in">FunA1</span>();<br>	<br>	ProgramB PB;<br>	PB.<span class="hljs-built_in">FunB1</span>(ProgramA::FunA2);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>静态成员函数的一个限制是它们<strong>不能访问非静态成员变量或函数</strong>。</p>
+<h2 id="5-3-类的非静态成员函数作为回调函数"><a href="#5-3-类的非静态成员函数作为回调函数" class="headerlink" title="5.3 类的非静态成员函数作为回调函数"></a>5.3 类的非静态成员函数作为回调函数</h2><p>非静态成员函数作为回调函数需要一些额外的处理，因为它们<strong>需要一个对象实例来调用</strong>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">ProgramA</span> &#123;<br><span class="hljs-keyword">public</span>:<br>	<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">FunA1</span><span class="hljs-params">()</span> </span>&#123;<br>		<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;I&#x27;am ProgramA.FunA1() and be called..\n&quot;</span>);<br>	&#125;<br>	<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">FunA2</span><span class="hljs-params">()</span> </span>&#123;<br>		<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;I&#x27;am ProgramA.FunA2() and be called..\n&quot;</span>);<br>	&#125;<br>&#125;;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">ProgramB</span> &#123;<br><span class="hljs-keyword">public</span>:<br>	<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">FunB1</span><span class="hljs-params">(<span class="hljs-type">void</span> (ProgramA::*callback)(), <span class="hljs-type">void</span> *context)</span> </span>&#123; <span class="hljs-comment">// 同时传入函数指针和类对象</span><br>		<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;I&#x27;am ProgramB.FunB1() and be called..\n&quot;</span>);<br>		((ProgramA *)context-&gt;*callback)();<br>	&#125;<br>&#125;;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span> **argv)</span> </span>&#123;<br>	ProgramA PA;<br>	PA.<span class="hljs-built_in">FunA1</span>();<br>	<br>	ProgramB PB;<br>	PB.<span class="hljs-built_in">FunB1</span>(&amp;ProgramA::FunA2, &amp;PA);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这种方法虽然有效，但在某些情况下可能不够灵活。</p>
+<p>为了更灵活地使用回调函数，可以使用<code>std::function</code>和<code>std::bind</code>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;functional&gt;</span></span><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">ProgramA</span> &#123;<br><span class="hljs-keyword">public</span>:<br>	<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">FunA1</span><span class="hljs-params">()</span> </span>&#123;<br>		<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;I&#x27;am ProgramA.FunA1() and be called..\n&quot;</span>);<br>	&#125;<br>	<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">FunA2</span><span class="hljs-params">()</span> </span>&#123;<br>		<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;I&#x27;am ProgramA.FunA2() and be called..\n&quot;</span>);<br>	&#125;<br>	<span class="hljs-function"><span class="hljs-type">static</span> <span class="hljs-type">void</span> <span class="hljs-title">FunA3</span><span class="hljs-params">()</span> </span>&#123;<br>		<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;I&#x27;am ProgramA.FunA3() and be called..\n&quot;</span>);<br>	&#125;<br>&#125;;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">ProgramB</span> &#123;<br>	<span class="hljs-keyword">typedef</span> std::function&lt;<span class="hljs-type">void</span>()&gt; CallbackFun;<br><span class="hljs-keyword">public</span>:<br>	<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">FunB1</span><span class="hljs-params">(CallbackFun callback)</span> </span>&#123; <span class="hljs-comment">// 然后直接传可调用对象名即可</span><br>		<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;I&#x27;am ProgramB.FunB2() and be called..\n&quot;</span>);<br>		<span class="hljs-built_in">callback</span>();<br>	&#125;<br>&#125;;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">normFun</span><span class="hljs-params">()</span> </span>&#123;<br>	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;I&#x27;am normFun() and be called..\n&quot;</span>);<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span> **argv)</span> </span>&#123;<br>	ProgramA PA;<br>	PA.<span class="hljs-built_in">FunA1</span>();<br>	<br>	ProgramB PB;<br>	PB.<span class="hljs-built_in">FunB1</span>(normFun);<br>	PB.<span class="hljs-built_in">FunB1</span>(ProgramA::FunA3);<br>	PB.<span class="hljs-built_in">FunB1</span>(std::<span class="hljs-built_in">bind</span>(&amp;ProgramA::FunA2, &amp;PA)); <span class="hljs-comment">// 先经过bind获取一个处理过的可调用对象</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h1 id="6-函数名退化为指针"><a href="#6-函数名退化为指针" class="headerlink" title="6. 函数名退化为指针"></a>6. 函数名退化为指针</h1><h2 id="6-1-普通函数和静态成员函数"><a href="#6-1-普通函数和静态成员函数" class="headerlink" title="6.1 普通函数和静态成员函数"></a>6.1 普通函数和静态成员函数</h2><p>在 C++ 中，函数名（包括<strong>普通函数和静态成员函数</strong>）在特定上下文中会隐式退化为函数指针：</p>
+<ul>
+<li>当函数名作为函数指针的初始化值时</li>
+<li>当函数名作为函数参数传递时</li>
+</ul>
+<p>这允许我们在需要函数指针的地方直接用函数名，而无需显式取地址，更加方便。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">normalFunc</span><span class="hljs-params">(<span class="hljs-type">int</span> x)</span> </span>&#123; &#125;<br><br><span class="hljs-built_in">void</span> (*p1)(<span class="hljs-type">int</span>) = normalFunc;    <span class="hljs-comment">// 函数名隐式退化为指针</span><br><span class="hljs-built_in">void</span> (*p2)(<span class="hljs-type">int</span>) = &amp;normalFunc;   <span class="hljs-comment">// 显式取址亦可，效果相同</span><br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">registerCallback</span><span class="hljs-params">(<span class="hljs-type">void</span> (*callback)(<span class="hljs-type">int</span>))</span></span>;<br><span class="hljs-built_in">registerCallback</span>(normalFunc);    <span class="hljs-comment">// 作为参数传递时同样自动退化</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="6-2-非静态成员函数名不支持隐式退化"><a href="#6-2-非静态成员函数名不支持隐式退化" class="headerlink" title="6.2 非静态成员函数名不支持隐式退化"></a>6.2 非静态成员函数名不支持隐式退化</h2><p>函数名退化的本质就是：编译器允许将函数名这个符号，隐式转换为该函数在内存中的起始地址。</p>
+<ul>
+<li>普通函数 &#x2F; 静态成员函数是独立的可调用实体，函数名可直接退化为代码入口的裸地址</li>
+<li>非静态成员函数依赖具体对象，调用时除了代码地址，还必须携带 this 修正偏移量、虚表索引等元数据，这些信息无法直接用一个裸地址替代，其函数名在语法上也不代表完整的可调用实体</li>
+</ul>
+<p>所以 C++ 标准规定，<strong>非静态成员函数名不支持隐式退化</strong>。</p>
+<p>当我们需要获取非静态成员函数的指针时，<strong>必须显式使用取地址符 <code>&amp;</code></strong>，并用成员函数指针类型来接收。这里的 <code>&amp;</code> 形式上仍是取地址运算符，但作用于非静态成员函数时，它会触发编译器构造一个包含代码地址（或虚表索引）和 <code>this</code> 修正偏移量的成员函数指针对象，而不仅仅是获取一个裸地址。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-built_in">void</span> (MyClass::*ptr1)(<span class="hljs-type">int</span>) = &amp;MyClass::func;     <span class="hljs-comment">// 必须加 &amp;，触发构造</span><br><span class="hljs-built_in">void</span> (*ptr2)(<span class="hljs-type">int</span>) = MyClass::staticFunc;         <span class="hljs-comment">// 可省略 &amp;，函数名退化</span><br><span class="hljs-built_in">void</span> (*ptr3)(<span class="hljs-type">int</span>) = normalFunc;                  <span class="hljs-comment">// 可省略 &amp;，函数名退化</span><br></code></pre></td></tr></table></figure>
+  </div>
+
+  
+  <div class="post-copyright">
+    <p><strong>Shionyori</strong></p>
+    <p>/2025/03/08/C++%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/</p>
+    <p>&amp;copy; 2025 Shionyori. 保留所有权利。</p>
+  </div>
+  
+
+  <footer class="post-footer">
+    
+    <div class="post-tags-footer">
+      
+        <a class="tag-link" href="/tags/C/">C++</a>
+      
+        <a class="tag-link" href="/tags/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/">函数式编程</a>
+      
+        <a class="tag-link" href="/tags/%E4%BB%BF%E5%87%BD%E6%95%B0/">仿函数</a>
+      
+        <a class="tag-link" href="/tags/Lambda/">Lambda</a>
+      
+        <a class="tag-link" href="/tags/function/">function</a>
+      
+        <a class="tag-link" href="/tags/bind/">bind</a>
+      
+        <a class="tag-link" href="/tags/%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0/">回调函数</a>
+      
+        <a class="tag-link" href="/tags/%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88/">函数指针</a>
+      
+        <a class="tag-link" href="/tags/%E5%87%BD%E6%95%B0%E5%90%8D%E9%80%80%E5%8C%96/">函数名退化</a>
+      
+    </div>
+    
+
+    
+<div class="post-share">
+  <div class="share-buttons">
+    
+    
+    
+
+    
+    <a class="share-btn share-twitter" href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fshionyori.github.io%2F2025%2F03%2F08%2FC%2B%2B%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B%2F&text=C%2B%2B%20%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B" target="_blank" rel="noopener" aria-label="分享到 Twitter">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fshionyori.github.io%2F2025%2F03%2F08%2FC%2B%2B%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fshionyori.github.io%2F2025%2F03%2F08%2FC%2B%2B%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B%2F" target="_blank" rel="noopener" aria-label="分享到 LinkedIn">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    
+
+    
+    <button class="share-btn share-copy" aria-label="复制链接" data-url="https://shionyori.github.io/2025/03/08/C++函数式编程/">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    </button>
+    
+  </div>
+</div>
+
+
+  </footer>
+</article>
+
+
+
+<nav class="post-nav">
+  
+    <a class="post-nav-item post-nav-prev has-cover" href="/2025/03/24/%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" style='background-image: url(/images/posts/%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/cover.png)'>
+      <span class="nav-label">上一篇</span>
+      <span class="nav-title">网络基础知识</span>
+    </a>
+  
+  
+    <a class="post-nav-item post-nav-next has-cover" href="/2025/03/08/C++%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/" style='background-image: url(/images/posts/C++%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/cover.png)'>
+      <span class="nav-label">下一篇</span>
+      <span class="nav-title">C++ 智能指针</span>
+    </a>
+  
+</nav>
+
+
+
+
+
+      </main>
+
+      
+    </div>
+  </div>
+</div>
+
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+
+<nav class="mobile-nav" id="mobile-nav">
+  <div class="mobile-nav-inner">
+    <div class="mobile-nav-header">
+      <span class="mobile-nav-title">首页</span>
+      <button class="btn-icon mobile-nav-close" id="mobile-nav-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <ul class="mobile-nav-menu">
+      
+        <li>
+          <a class="mobile-nav-link" href="/">首页</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/archives/">归档</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/tags/">标签</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/categories/">分类</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/friends/">友链</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/about/">关于</a>
+        </li>
+      
+    </ul>
+
+    
+    <div class="mobile-nav-social">
+      
+        <a class="social-icon" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+  </div>
+</nav>
+
+  <footer class="site-footer">
+  <div class="footer-inner">
+    
+    <div class="footer-social">
+      
+        <a class="social-link" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+
+    <div class="footer-info">
+      <span class="copyright">
+        &copy;
+        
+          2025 &ndash;
+        
+        2026
+        Shionyori
+      </span>
+
+      
+        <span class="powered-by">由 <a href="https://hexo.io/" target="_blank">Hexo</a> 驱动</span>
+      
+
+      
+        <span class="theme-by">主题 Shion</span>
+      
+
+      
+    </div>
+
+    
+
+  </div>
+</footer>
+
+
+
+  
+<div class="search-overlay" id="search-overlay"
+     data-i18n-found="关于「{query}」，找到了 {count} 条记录"
+     data-i18n-not-found="关于「{query}」，没有找到任何记录呢">
+  <div class="search-container">
+    <img class="search-decoration" src="/images/shion/search.png" alt="">
+    <div class="search-header">
+      <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" class="search-input" id="search-input" placeholder="输入关键词搜索..." autocomplete="off">
+      <button class="search-close" id="search-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="search-info" id="search-info"></div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+
+
+  
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/contrib/auto-render.min.js"></script>
+
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>C++ 协程 - Shionyori&#39;s Blog</title>
+
+
+<meta name="description" content="Gorgeous blooming flowers will eventually elegantly scattered.">
+
+
+<meta property="og:title" content="C++ 协程">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://shionyori.github.io/2025/06/02/C++协程/">
+<meta property="og:site_name" content="Shionyori&#39;s Blog">
+
+
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C++ 协程">
+
+
+<link rel="canonical" href="https://shionyori.github.io/2025/06/02/C++协程/">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "name": "C++ 协程",
+  "url": "https://shionyori.github.io/2025/06/02/C++协程/",
+  "datePublished": "2025-06-03T00:00:00+08:00",
+  "author": { "@type": "Person", "name": "Shionyori" }
+  
+}
+</script>
+
+<meta name="theme-color" content="#6b7eb5">
+<link rel="icon" type="image/png" href="/images/shion/favicon.png">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+
+
+<script>
+  (function() {
+    var mode = 'auto';
+    var saved = localStorage.getItem('shion-theme');
+    if (saved) { mode = saved; }
+    else if (mode === 'auto') {
+      mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    if (mode === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+    (function() {
+      var fonts = {"heading":"'Noto Serif SC', 'Source Han Serif SC', Georgia, serif","body":"'Noto Sans SC', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif","code":"'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace","size_root":"15px"};
+      var legacySize = '';
+      var sizeRoot = fonts.size_root || legacySize;
+
+      if (fonts.heading) {
+        document.documentElement.style.setProperty('--font-heading', fonts.heading);
+      }
+      if (fonts.body) {
+        document.documentElement.style.setProperty('--font-body', fonts.body);
+      }
+      if (fonts.code) {
+        document.documentElement.style.setProperty('--font-code', fonts.code);
+      }
+      if (sizeRoot) {
+        document.documentElement.style.setProperty('--font-size-root', sizeRoot);
+      }
+    })();
+  })();
+</script>
+
+
+<noscript>
+  <style>
+    .sidebar-inner,
+    .content-card,
+    .post,
+    .page,
+    .archive-item,
+    .category-item,
+    .pagination,
+    .comments,
+    .not-found-content,
+    .widget,
+    .tag-cloud-item,
+    .post-card-wrapper,
+    .post-content,
+    .post-tags-footer,
+    .post-share,
+    .post-copyright,
+    .post-nav {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  </style>
+</noscript>
+
+  <script>
+    window.__shionConfig = {
+      katexCDN: 'https://cdn.jsdelivr.net/npm/katex@0',
+      katexDelimiters: [{"left":"$$","right":"$$","display":true},{"left":"$","right":"$","display":false}]
+    };
+  </script>
+<meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a class="site-logo" href="/">
+      
+        <span class="logo-text">Shionyori&#39;s Blog</span>
+      
+    </a>
+
+    <nav class="site-nav" id="site-nav">
+      
+        <a class="nav-item" href="/">首页</a>
+      
+        <a class="nav-item" href="/archives/">归档</a>
+      
+        <a class="nav-item" href="/tags/">标签</a>
+      
+        <a class="nav-item" href="/categories/">分类</a>
+      
+        <a class="nav-item" href="/friends/">友链</a>
+      
+        <a class="nav-item" href="/about/">关于</a>
+      
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn-icon search-toggle" id="search-toggle" aria-label="搜索">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon theme-toggle" id="theme-toggle" aria-label="深色模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon sidebar-toggle" id="sidebar-toggle" aria-label="sidebar_toggle">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+
+  
+<div class="reading-progress" id="reading-progress">
+  <div class="reading-progress-bar" id="reading-progress-bar"></div>
+</div>
+
+
+
+<div id="pjax-container">
+  
+  
+  
+  <div class="page-bg">
+  
+    <img src="/images/posts/C++%E5%8D%8F%E7%A8%8B/cover.png" alt="">
+  </div>
+  
+
+  
+  
+  
+  <section class="page-hero">
+    <h1 class="hero-title">C++ 协程</h1>
+    <div class="hero-subtitle">
+      <div class="post-meta">
+    
+    <time class="post-date" datetime="2025-06-03T00:00:00+08:00">
+      2025-06-03
+    </time>
+    
+
+    
+    <time class="post-updated" datetime="2026-09-05T15:12:08+08:00">
+      更新于 2026-09-05
+    </time>
+    
+
+    
+    <span class="post-word-count">2191 words</span>
+    
+
+    
+    <span class="post-reading-time">9 min read</span>
+    
+
+    
+    <span class="post-categories">
+      
+        <a class="category-link" href="/categories/C/">C++</a>
+      
+    </span>
+    
+
+</div>
+
+    </div>
+    
+    <div class="hero-tags">
+      
+        <a class="tag-link" href="/tags/C/">C++</a>
+      
+        <a class="tag-link" href="/tags/%E5%8D%8F%E7%A8%8B/">协程</a>
+      
+        <a class="tag-link" href="/tags/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/">异步编程</a>
+      
+        <a class="tag-link" href="/tags/promise-type/">promise_type</a>
+      
+        <a class="tag-link" href="/tags/awaitable/">awaitable</a>
+      
+    </div>
+    
+  </section>
+  
+  
+
+  
+<div class="container">
+    <div class="content-wrapper">
+      
+      
+<aside class="site-sidebar sidebar-post" id="site-sidebar" data-position="left">
+
+  
+  
+
+  <div class="sidebar-sticky-group">
+    
+    <section class="sidebar-card sidebar-music">
+      
+<div class="music-player" data-playlist='[{"name":"奏穹のラプソディア (狂想曲)","artist":"瑶山百霊","url":"/music/瑶山百霊 - 奏穹のラプソディア (狂想曲).ogg","cover":"/music/covers/soukyuu-no-rhapsody.jpg"},{"name":"Graveyard Memory","artist":"GET IN THE RING","url":"/music/GET IN THE RING - Graveyard Memory.ogg","cover":"/music/covers/graveyard-memory.jpg"},{"name":"ポラリス (北极星)","artist":"GET IN THE RING","url":"/music/GET IN THE RING - ポラリス (北极星).ogg","cover":"/music/covers/polaris.jpg"},{"name":"その唄の名は…","artist":"yukina / GET IN THE RING","url":"/music/yukina _ GET IN THE RING - その唄の名は….ogg","cover":"/music/covers/sono-uta-no-na-wa.jpg"},{"name":"over the moon","artist":"Forest306","url":"/music/Forest306 - over the moon.ogg","cover":"/music/covers/over-the-moon.jpg"},{"name":"21時の探しモノ (21时寻找的东西)","artist":"minimum electric design","url":"/music/minimum electric design - 21時の探しモノ (21时寻找的东西).ogg","cover":"/music/covers/21ji-no-sagashimono.jpg"},{"name":"Freak Report 01 ~他愛も無い二人の博物誌~","artist":"凛","url":"/music/凛 - Freak Report 01 ~他愛も無い二人の博物誌~.ogg","cover":"/music/covers/freak-report-01.jpg"},{"name":"かぜのいろ (カゼノイロ)","artist":"森羅万象","url":"/music/森羅万象 - かぜのいろ (カゼノイロ).ogg","cover":"/music/covers/kaze-no-iro.jpg"},{"name":"Onisan Dochira!","artist":"狐の工作室","url":"/music/狐の工作室 - Onisan Dochira!.ogg","cover":"/music/covers/onisan-dochira.jpg"},{"name":"Skip in the byway","artist":"神乃木製作所","url":"/music/神乃木製作所 - Skip in the byway.ogg","cover":"/music/covers/skip-in-the-byway.jpg"}]'>
+  
+  <div class="music-body">
+    <div class="music-cover">
+      
+      
+      <img src="/music/covers/soukyuu-no-rhapsody.jpg" alt="cover" class="music-cover-img" onerror="if(!this.dataset.failed){this.dataset.failed='1';this.src='/images/shion/404.png'}">
+      
+    </div>
+    <div class="music-info">
+      <div class="music-title-row">
+        <span class="music-title">奏穹のラプソディア (狂想曲)</span>
+        <span class="music-counter">1 / 10</span>
+      </div>
+      <span class="music-artist">瑶山百霊</span>
+      <div class="music-progress">
+        <div class="music-progress-bar">
+          <div class="music-progress-fill"></div>
+        </div>
+        <div class="music-time">
+          <span class="music-time-current">0:00</span>
+          <span class="music-time-total">0:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="music-controls">
+    <button class="music-btn music-btn-mode" aria-label="Play mode" data-mode="sequential" title="Sequential">
+      <svg class="music-mode-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+    <button class="music-btn music-btn-prev" aria-label="Previous track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+    </button>
+    <button class="music-btn music-btn-play" aria-label="Play">
+      <svg class="music-icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <svg class="music-icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="6" height="16"/><rect x="14" y="4" width="6" height="16"/></svg>
+    </button>
+    <button class="music-btn music-btn-next" aria-label="Next track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+    </button>
+    <button class="music-btn music-btn-list" aria-label="Playlist">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="music-playlist">
+    
+    <button class="music-playlist-item active" data-index="0">
+      <span class="music-playlist-name">奏穹のラプソディア (狂想曲)</span>
+      <span class="music-playlist-artist">瑶山百霊</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="1">
+      <span class="music-playlist-name">Graveyard Memory</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="2">
+      <span class="music-playlist-name">ポラリス (北极星)</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="3">
+      <span class="music-playlist-name">その唄の名は…</span>
+      <span class="music-playlist-artist">yukina / GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="4">
+      <span class="music-playlist-name">over the moon</span>
+      <span class="music-playlist-artist">Forest306</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="5">
+      <span class="music-playlist-name">21時の探しモノ (21时寻找的东西)</span>
+      <span class="music-playlist-artist">minimum electric design</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="6">
+      <span class="music-playlist-name">Freak Report 01 ~他愛も無い二人の博物誌~</span>
+      <span class="music-playlist-artist">凛</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="7">
+      <span class="music-playlist-name">かぜのいろ (カゼノイロ)</span>
+      <span class="music-playlist-artist">森羅万象</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="8">
+      <span class="music-playlist-name">Onisan Dochira!</span>
+      <span class="music-playlist-artist">狐の工作室</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="9">
+      <span class="music-playlist-name">Skip in the byway</span>
+      <span class="music-playlist-artist">神乃木製作所</span>
+    </button>
+    
+  </div>
+  
+</div>
+
+    </section>
+    
+
+    <section class="sidebar-card sidebar-toc">
+      <div class="sidebar-toc-header">
+        <a class="sidebar-back-home" href="/" title="首页">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </a>
+        <span class="sidebar-toc-label">C++ 协程</span>
+      </div>
+      <div class="sidebar-scroll">
+      
+      
+      <nav class="sidebar-toc">
+        <ol class="toc-list"><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%8D%8F%E7%A8%8B"><span class="toc-list-text">什么是协程</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E5%8D%8F%E7%A8%8B"><span class="toc-list-text">如何创建一个协程</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E5%8D%8F%E7%A8%8B%E7%9A%84%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6"><span class="toc-list-text">协程的核心组件</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E4%B8%89%E4%B8%AA%E5%85%B3%E9%94%AE%E5%AD%97"><span class="toc-list-text">三个关键字</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%8D%8F%E7%A8%8B%E7%8A%B6%E6%80%81%EF%BC%88%E5%8D%8F%E7%A8%8B%E5%B8%A7%EF%BC%89"><span class="toc-list-text">协程状态（协程帧）</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%8D%8F%E7%A8%8B%E5%8F%A5%E6%9F%84"><span class="toc-list-text">协程句柄</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E6%89%BF%E8%AF%BA%E7%B1%BB%E5%9E%8B%EF%BC%88promise-type%EF%BC%89"><span class="toc-list-text">承诺类型（promise_type）</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#awaitable-%E5%AF%B9%E8%B1%A1"><span class="toc-list-text">awaitable 对象</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E4%BB%8E%E6%B1%87%E7%BC%96%E8%A7%92%E5%BA%A6%E7%9C%8B%E5%8D%8F%E7%A8%8B%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-list-text">从汇编角度看协程的实现</span></a></li></ol>
+      </nav>
+      
+      </div>
+      <a class="sidebar-back-home-bottom" href="/">← 首页</a>
+    </section>
+  </div>
+
+  
+</aside>
+
+      
+
+      <main class="site-main">
+        <article class="post">
+
+  <div class="post-content">
+    
+  
+  
+  
+
+
+    <p>C++20 引入了协程（coroutine），从此我们可以用同步的方式编写异步代码，而不需要关心回调函数、状态机等复杂的控制流。</p>
+<hr>
+<h1 id="什么是协程"><a href="#什么是协程" class="headerlink" title="什么是协程"></a>什么是协程</h1><p>简单来说，<mark>协程就是一个可以暂停与恢复执行的函数</mark>。</p>
+<p>协程允许在执行过程中暂停，并在需要时恢复，从而实现非阻塞的异步操作。</p>
+<p>协程与函数的区别：</p>
+<ul>
+<li>我们知道函数是在栈上运行的，函数状态（包括局部变量、指令指针等）全部被保存在在栈帧中，会随着函数的返回而销毁。</li>
+<li>而协程的状态则会被保存在堆上的一块内存中，我们称之为协程帧（coroutine frame）。当协程被挂起时，协程的状态会被写入协程帧中；当协程恢复执行时，再从协程帧中读取状态，回到之前挂起的位置继续执行。</li>
+</ul>
+<h1 id="如何创建一个协程"><a href="#如何创建一个协程" class="headerlink" title="如何创建一个协程"></a>如何创建一个协程</h1><p>我们先来看一个简单的协程示例，代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;coroutine&gt;</span></span><br><br><span class="hljs-keyword">struct</span> <span class="hljs-title class_">Task</span> &#123;<br>    <span class="hljs-keyword">struct</span> <span class="hljs-title class_">promise_type</span> &#123;<br>        <span class="hljs-function">Task <span class="hljs-title">get_return_object</span><span class="hljs-params">()</span> </span>&#123;<br>            <span class="hljs-keyword">return</span> Task&#123;std::coroutine_handle&lt;promise_type&gt;::<span class="hljs-built_in">from_promise</span>(*<span class="hljs-keyword">this</span>)&#125;;<br>        &#125;<br>        <span class="hljs-function">std::suspend_always <span class="hljs-title">initial_suspend</span><span class="hljs-params">()</span> </span>&#123; <span class="hljs-keyword">return</span> &#123;&#125;; &#125;<br>        <span class="hljs-function">std::suspend_always <span class="hljs-title">final_suspend</span><span class="hljs-params">()</span> <span class="hljs-keyword">noexcept</span> </span>&#123; <span class="hljs-keyword">return</span> &#123;&#125;; &#125;<br>        <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">return_void</span><span class="hljs-params">()</span> </span>&#123;&#125;<br>        <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">unhandled_exception</span><span class="hljs-params">()</span> </span>&#123;&#125;<br>    &#125;;<br>    std::coroutine_handle&lt;promise_type&gt; handle;<br>&#125;;<br><br><span class="hljs-function">Task <span class="hljs-title">my_coroutine</span><span class="hljs-params">()</span> </span>&#123;<br>    std::cout &lt;&lt; <span class="hljs-string">&quot;execute phase 1&quot;</span> &lt;&lt; std::endl;<br>    <span class="hljs-keyword">co_await</span> std::suspend_always&#123;&#125;;<br>    std::cout &lt;&lt; <span class="hljs-string">&quot;execute phase 2&quot;</span> &lt;&lt; std::endl;<br>    <span class="hljs-keyword">co_return</span>;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    Task t = <span class="hljs-built_in">my_coroutine</span>();    <span class="hljs-comment">// 创建协程对象</span><br>    t.handle.<span class="hljs-built_in">resume</span>();          <span class="hljs-comment">// 执行 phase 1</span><br>    t.handle.<span class="hljs-built_in">resume</span>();          <span class="hljs-comment">// 执行 phase 2</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h1 id="协程的核心组件"><a href="#协程的核心组件" class="headerlink" title="协程的核心组件"></a>协程的核心组件</h1><h2 id="三个关键字"><a href="#三个关键字" class="headerlink" title="三个关键字"></a>三个关键字</h2><p>在 C++20 中，一个函数体内只要出现了以下三个关键字，它就会被编译器识别并编译为协程：</p>
+<ul>
+<li><code>co_await</code> <expr>：挂起当前协程</li>
+<li><code>co_yield</code> <expr>：挂起当前协程并产生一个值（常用于生成器 Generator）</li>
+<li><code>co_return</code> <expr>：从协程返回，并标志着协程体执行结束</li>
+</ul>
+<h2 id="协程状态（协程帧）"><a href="#协程状态（协程帧）" class="headerlink" title="协程状态（协程帧）"></a>协程状态（协程帧）</h2><p>协程状态，或者说协程帧（coroutine frame），是协程在执行过程中保存其状态的堆内存区域。</p>
+<p>它包含了以下内容：</p>
+<ul>
+<li>协程的局部变量</li>
+<li>协程的参数</li>
+<li>协程的返回地址（指令指针）</li>
+<li>协程的状态字，用于标识协程当前执行到哪一个挂起点</li>
+</ul>
+<h2 id="协程句柄"><a href="#协程句柄" class="headerlink" title="协程句柄"></a>协程句柄</h2><p>协程句柄的类型为 <code>std::coroutine_handle&lt;promise_type&gt;</code>，本质上是一个指向协程帧首地址的 8 字节指针，它被存放在协程对象（如 Task）中，作为外部控制协程的唯一接口。</p>
+<p>通过协程句柄，我们可以做以下操作：</p>
+<ul>
+<li><code>resume()</code>：恢复协程执行</li>
+<li><code>done()</code>：检查协程是否已经执行到了最终挂起点（<code>final_suspend</code>）</li>
+<li><code>handle.destroy()</code>：手动销毁协程帧（如果在 <code>final_suspend</code> 时选择了挂起，必须手动调用此方法防内存泄漏）</li>
+<li><code>promise()</code>：获取对应的 <code>promise_type</code> 对象</li>
+</ul>
+<p>在上述代码中，<code>Task</code> 结构体中包含了一个 <code>std::coroutine_handle&lt;promise_type&gt;</code> 类型的成员 <code>handle</code>，它指向协程帧。我们可以通过调用 <code>handle.resume()</code> 来恢复协程的执行。</p>
+<h2 id="承诺类型（promise-type）"><a href="#承诺类型（promise-type）" class="headerlink" title="承诺类型（promise_type）"></a>承诺类型（promise_type）</h2><p><code>promise_type</code> 是一个约定名称（而非关键字），用于定义协程的生命周期策略和返回值行为。编译器会在协程的返回类型中查找名为 <code>promise_type</code> 的嵌套类型，或通过 <code>std::coroutine_traits</code> 特化来获取。每个协程的协程帧内部都嵌入了一个 <code>promise_type</code> 对象，由编译器在帧构造时自动初始化，在帧销毁时自动析构。</p>
+<p>它提供了以下几个关键接口（称为“钩子函数”，由编译器在相应时机嵌入代码块）：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>调用时机</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>get_return_object()</code></td>
+<td>协程创建时最先调用</td>
+<td>构造并返回协程的对外返回值（如 <code>Task</code>）</td>
+</tr>
+<tr>
+<td><code>initial_suspend()</code></td>
+<td><code>get_return_object()</code> 之后立即调用</td>
+<td>决定协程是否一启动就挂起</td>
+</tr>
+<tr>
+<td><code>final_suspend()</code></td>
+<td><code>co_return</code> 执行完毕后调用</td>
+<td>决定协程结束后是否挂起（影响是否自动销毁帧）</td>
+</tr>
+<tr>
+<td><code>return_void()</code> &#x2F; <code>return_value(T)</code></td>
+<td>执行到 <code>co_return</code> 时调用</td>
+<td>处理协程的返回值</td>
+</tr>
+<tr>
+<td><code>yield_value(T)</code></td>
+<td>执行到 <code>co_yield</code> 时调用</td>
+<td>处理生成器的产出值</td>
+</tr>
+<tr>
+<td><code>unhandled_exception()</code></td>
+<td>协程体抛出未被捕获的异常时调用</td>
+<td>处理异常</td>
+</tr>
+</tbody></table>
+<p>承诺类型的实现方式是一个内部类，我们可以通过重写上述接口来定制协程的行为。</p>
+<p><code>promise_type</code> 提供了巨大的自定义空间：</p>
+<ol>
+<li>方法内部逻辑：可以在钩子函数中写任意 C++ 代码（日志、计时、信号量通知等）</li>
+<li>返回值类型：<code>initial_suspend</code> 和 <code>final_suspend</code> 可以返回任意满足 Awaitable 概念的类型</li>
+<li>成员变量：可以在 <code>promise_type</code> 中添加成员变量，它们会存活在协程帧中，贯穿协程的整个生命周期</li>
+<li>内存分配：可以重载 <code>operator new</code> &#x2F; <code>operator delete</code> 来控制协程帧的内存分配策略</li>
+</ol>
+<h2 id="awaitable-对象"><a href="#awaitable-对象" class="headerlink" title="awaitable 对象"></a>awaitable 对象</h2><p>awaitable 对象是 <code>co_await</code> 表达式的操作数，它定义了单次挂起的行为契约。<br>与 <code>promise_type</code>（管理协程的整体生命周期）不同，awaitable 负责管理协程执行过程中的每一个具体的暂停点。</p>
+<p>符合 awaitable 的类就是一个没有任何成员变量的类，但它必须实现以下三个方法：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>调用时机</th>
+<th>返回值含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>await_ready()</code></td>
+<td><code>co_await</code> 执行时首先调用</td>
+<td><code>true</code>不挂起；<code>false</code>需要挂起</td>
+</tr>
+<tr>
+<td><code>await_suspend(handle)</code></td>
+<td>当 <code>await_ready()</code> 返回 <code>false</code> 时调用</td>
+<td><code>void</code> &#x2F; <code>bool</code> &#x2F; 另一个 <code>coroutine_handle</code>，决定挂起后的行为</td>
+</tr>
+<tr>
+<td><code>await_resume()</code></td>
+<td>协程恢复执行后调用</td>
+<td>返回 <code>co_await</code> 表达式的值</td>
+</tr>
+</tbody></table>
+<p>C++20 标准库提供了两个预设的 awaitable 类：</p>
+<ul>
+<li><code>std::suspend_always</code>：总是挂起</li>
+<li><code>std::suspend_never</code>：从不挂起</li>
+</ul>
+<p>它们一般用作 <code>initial_suspend()</code>、<code>final_suspend()</code>、<code>co_await</code> 表达式的操作数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">std::suspend_always <span class="hljs-title">initial_suspend</span><span class="hljs-params">()</span> </span>&#123; <span class="hljs-keyword">return</span> &#123;&#125;; &#125;    <span class="hljs-comment">// 协程创建后立即挂起</span><br><span class="hljs-function">std::suspend_never <span class="hljs-title">initial_suspend</span><span class="hljs-params">()</span> </span>&#123; <span class="hljs-keyword">return</span> &#123;&#125;; &#125;     <span class="hljs-comment">// 协程创建后立即执行</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function">std::suspend_always <span class="hljs-title">final_suspend</span><span class="hljs-params">()</span> <span class="hljs-keyword">noexcept</span> </span>&#123; <span class="hljs-keyword">return</span> &#123;&#125;; &#125;     <span class="hljs-comment">// 协程结束后挂起，等待手动销毁</span><br><span class="hljs-function">std::suspend_never <span class="hljs-title">final_suspend</span><span class="hljs-params">()</span> <span class="hljs-keyword">noexcept</span> </span>&#123; <span class="hljs-keyword">return</span> &#123;&#125;; &#125;      <span class="hljs-comment">// 协程结束后自动销毁</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-keyword">co_await</span> std::suspend_always&#123;&#125;;     <span class="hljs-comment">// 协程挂起</span><br><span class="hljs-keyword">co_await</span> std::suspend_never&#123;&#125;;      <span class="hljs-comment">// 协程不挂起</span><br></code></pre></td></tr></table></figure>
+
+
+<h1 id="从汇编角度看协程的实现"><a href="#从汇编角度看协程的实现" class="headerlink" title="从汇编角度看协程的实现"></a>从汇编角度看协程的实现</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">main:<br>    sub rsp, 8<br>    call my_coroutine<br>    mov [rsp], rax<br>    mov rdi, [rsp]<br>    call Task::resume<br>    mov rdi, [rsp]<br>    call Task::resume<br>    xor eax, eax<br>    add rsp, 8<br>    ret<br></code></pre></td></tr></table></figure>
+
+<p>当主函数调用 <code>my_coroutine()</code> 时，并不会直接执行业务逻辑，而是先初始化协程帧；然后依次调用 <code>promise_type</code> 的构造函数、<code>get_return_object()</code>、<code>initial_suspend()</code>，最后挂起协程，返回协程对象给主函数。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">my_coroutine:<br>    mov edi, 48                           ; 申请 48 字节空间用于存放「协程帧」<br>    call operator new                     ; 包括 promise、状态字、寄存器上下文等<br>    mov rbx, rax                          ; rbx 指向协程帧首地址<br>    <br>    mov rdi, rbx<br>    call Task::promise_type::promise_type()      ; 在协程帧内构造 promise_type<br>    <br>    mov rdi, rbx<br>    call Task::promise_type::get_return_object() ; 创建传给外部的 Task 对象<br>    <br>    mov rdi, rbx<br>    call Task::promise_type::initial_suspend()   ; 调用初始挂起检查<br>    <br>    mov qword [rbx + 0], 0                 ; [rbx + 0] 是当前状态字（State ID = 0）<br>    mov qword [rbx + 8], .L_resume_point_1 ; [rbx + 8] 存储下一次恢复时的跳转目标（IP）<br>    mov qword [rbx + 16], rsp              ; [rbx + 16] 保存调用者的栈指针<br>    mov qword [rbx + 24], rbp              ; [rbx + 24] 保存调用者的基址指针<br>    <br>    lea rdi, [rbx]<br>    call std::suspend_always::await_suspend()  ; 挂起，保存上下文<br><br>    ret<br></code></pre></td></tr></table></figure>
+
+<p>随后主函数调用 <code>Task::resume()</code>，恢复协程的执行，需要注意的是 <code>Task::resume()</code> 只是一个中转函数，用于检查协程的状态字是否合法，而真正的状态机路由函数是后面的 <code>my_coroutine_resume</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">Task::resume:<br>    mov rbx, [rdi]                        ; 从 Task 结构体中读取指向协程帧的指针<br>    cmp rbx, 0                            ; 空指针检查<br>    je .L_skip_resume<br>    cmp qword [rbx + 0], 2                ; 检查状态字是否为 2（2 代表协程已结束）<br>    je .L_skip_resume<br>    jmp my_coroutine_resume               ; 跳转到真正的状态机路由函数<br>.L_skip_resume:<br>    ret<br></code></pre></td></tr></table></figure>
+
+<p>跳转到 <code>my_coroutine_resume</code> 后，协程会根据状态字跳转到对应的恢复点继续执行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">my_coroutine_resume:<br>    mov eax, [rbx + 0]              ; 读取当前状态字<br>    cmp eax, 0                      ; 检查状态字是否为 0（0 代表协程刚开始执行）<br>    je .L_state_0<br>    cmp eax, 1<br>    je .L_state_1<br>    jmp .L_end<br><br>.L_state_0:                         ; 状态字为 0，表示协程刚开始执行<br>    mov rsp, [rbx + 16]<br>    mov rbp, [rbx + 24]<br>    jmp [rbx + 8]<br><br>.L_resume_point_1:<br>    mov edi, 1<br>    call std::cout::operator&lt;&lt;<br>    mov qword [rbx + 0], 1<br>    mov qword [rbx + 8], .L_resume_point_2<br>    mov qword [rbx + 16], rsp<br>    mov qword [rbx + 24], rbp<br>    lea rdi, [rbx]<br>    call std::suspend_always::await_suspend()<br>    ret<br><br>.L_state_1:                         ; 状态字为 1，表示协程已经执行到第一个挂起点<br>    mov rsp, [rbx + 16]<br>    mov rbp, [rbx + 24]<br>    jmp [rbx + 8]<br><br>.L_resume_point_2:<br>    mov edi, 2<br>    call std::cout::operator&lt;&lt;<br>    mov rdi, rbx<br>    call Task::promise_type::return_void()<br>    mov rdi, rbx<br>    call Task::promise_type::final_suspend()<br>    mov qword [rbx + 0], 2<br>    ret<br><br>.L_end:<br>    ret<br></code></pre></td></tr></table></figure>
+  </div>
+
+  
+  <div class="post-copyright">
+    <p><strong>Shionyori</strong></p>
+    <p>/2025/06/02/C++%E5%8D%8F%E7%A8%8B/</p>
+    <p>&amp;copy; 2025 Shionyori. 保留所有权利。</p>
+  </div>
+  
+
+  <footer class="post-footer">
+    
+    <div class="post-tags-footer">
+      
+        <a class="tag-link" href="/tags/C/">C++</a>
+      
+        <a class="tag-link" href="/tags/%E5%8D%8F%E7%A8%8B/">协程</a>
+      
+        <a class="tag-link" href="/tags/%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/">异步编程</a>
+      
+        <a class="tag-link" href="/tags/promise-type/">promise_type</a>
+      
+        <a class="tag-link" href="/tags/awaitable/">awaitable</a>
+      
+    </div>
+    
+
+    
+<div class="post-share">
+  <div class="share-buttons">
+    
+    
+    
+
+    
+    <a class="share-btn share-twitter" href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fshionyori.github.io%2F2025%2F06%2F02%2FC%2B%2B%E5%8D%8F%E7%A8%8B%2F&text=C%2B%2B%20%E5%8D%8F%E7%A8%8B" target="_blank" rel="noopener" aria-label="分享到 Twitter">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fshionyori.github.io%2F2025%2F06%2F02%2FC%2B%2B%E5%8D%8F%E7%A8%8B%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fshionyori.github.io%2F2025%2F06%2F02%2FC%2B%2B%E5%8D%8F%E7%A8%8B%2F" target="_blank" rel="noopener" aria-label="分享到 LinkedIn">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    
+
+    
+    <button class="share-btn share-copy" aria-label="复制链接" data-url="https://shionyori.github.io/2025/06/02/C++协程/">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    </button>
+    
+  </div>
+</div>
+
+
+  </footer>
+</article>
+
+
+
+<nav class="post-nav">
+  
+    <a class="post-nav-item post-nav-prev has-cover" href="/2025/09/23/IO%20%E6%A8%A1%E5%9E%8B/" style='background-image: url(/images/posts/IO%20%E6%A8%A1%E5%9E%8B/cover.png)'>
+      <span class="nav-label">上一篇</span>
+      <span class="nav-title">IO 模型</span>
+    </a>
+  
+  
+    <a class="post-nav-item post-nav-next has-cover" href="/2025/04/17/%E5%AF%B9%20Socket%20%E8%BF%9B%E8%A1%8C%E5%B0%81%E8%A3%85/" style='background-image: url(/images/posts/%E5%AF%B9%20Socket%20%E8%BF%9B%E8%A1%8C%E5%B0%81%E8%A3%85/cover.png)'>
+      <span class="nav-label">下一篇</span>
+      <span class="nav-title">对 Socket 进行封装</span>
+    </a>
+  
+</nav>
+
+
+
+
+
+      </main>
+
+      
+    </div>
+  </div>
+</div>
+
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+
+<nav class="mobile-nav" id="mobile-nav">
+  <div class="mobile-nav-inner">
+    <div class="mobile-nav-header">
+      <span class="mobile-nav-title">首页</span>
+      <button class="btn-icon mobile-nav-close" id="mobile-nav-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <ul class="mobile-nav-menu">
+      
+        <li>
+          <a class="mobile-nav-link" href="/">首页</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/archives/">归档</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/tags/">标签</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/categories/">分类</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/friends/">友链</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/about/">关于</a>
+        </li>
+      
+    </ul>
+
+    
+    <div class="mobile-nav-social">
+      
+        <a class="social-icon" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+  </div>
+</nav>
+
+  <footer class="site-footer">
+  <div class="footer-inner">
+    
+    <div class="footer-social">
+      
+        <a class="social-link" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+
+    <div class="footer-info">
+      <span class="copyright">
+        &copy;
+        
+          2025 &ndash;
+        
+        2026
+        Shionyori
+      </span>
+
+      
+        <span class="powered-by">由 <a href="https://hexo.io/" target="_blank">Hexo</a> 驱动</span>
+      
+
+      
+        <span class="theme-by">主题 Shion</span>
+      
+
+      
+    </div>
+
+    
+
+  </div>
+</footer>
+
+
+
+  
+<div class="search-overlay" id="search-overlay"
+     data-i18n-found="关于「{query}」，找到了 {count} 条记录"
+     data-i18n-not-found="关于「{query}」，没有找到任何记录呢">
+  <div class="search-container">
+    <img class="search-decoration" src="/images/shion/search.png" alt="">
+    <div class="search-header">
+      <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" class="search-input" id="search-input" placeholder="输入关键词搜索..." autocomplete="off">
+      <button class="search-close" id="search-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="search-info" id="search-info"></div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+
+
+  
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/contrib/auto-render.min.js"></script>
+
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>RPC 与分布式系统 - Shionyori&#39;s Blog</title>
+
+
+<meta name="description" content="Gorgeous blooming flowers will eventually elegantly scattered.">
+
+
+<meta property="og:title" content="RPC 与分布式系统">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://shionyori.github.io/2026/08/20/RPC 与分布式系统/">
+<meta property="og:site_name" content="Shionyori&#39;s Blog">
+
+
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RPC 与分布式系统">
+
+
+<link rel="canonical" href="https://shionyori.github.io/2026/08/20/RPC 与分布式系统/">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "name": "RPC 与分布式系统",
+  "url": "https://shionyori.github.io/2026/08/20/RPC 与分布式系统/",
+  "datePublished": "2026-08-21T00:00:00+08:00",
+  "author": { "@type": "Person", "name": "Shionyori" }
+  
+}
+</script>
+
+<meta name="theme-color" content="#6b7eb5">
+<link rel="icon" type="image/png" href="/images/shion/favicon.png">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+
+
+<script>
+  (function() {
+    var mode = 'auto';
+    var saved = localStorage.getItem('shion-theme');
+    if (saved) { mode = saved; }
+    else if (mode === 'auto') {
+      mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    if (mode === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+    (function() {
+      var fonts = {"heading":"'Noto Serif SC', 'Source Han Serif SC', Georgia, serif","body":"'Noto Sans SC', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif","code":"'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace","size_root":"15px"};
+      var legacySize = '';
+      var sizeRoot = fonts.size_root || legacySize;
+
+      if (fonts.heading) {
+        document.documentElement.style.setProperty('--font-heading', fonts.heading);
+      }
+      if (fonts.body) {
+        document.documentElement.style.setProperty('--font-body', fonts.body);
+      }
+      if (fonts.code) {
+        document.documentElement.style.setProperty('--font-code', fonts.code);
+      }
+      if (sizeRoot) {
+        document.documentElement.style.setProperty('--font-size-root', sizeRoot);
+      }
+    })();
+  })();
+</script>
+
+
+<noscript>
+  <style>
+    .sidebar-inner,
+    .content-card,
+    .post,
+    .page,
+    .archive-item,
+    .category-item,
+    .pagination,
+    .comments,
+    .not-found-content,
+    .widget,
+    .tag-cloud-item,
+    .post-card-wrapper,
+    .post-content,
+    .post-tags-footer,
+    .post-share,
+    .post-copyright,
+    .post-nav {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  </style>
+</noscript>
+
+  <script>
+    window.__shionConfig = {
+      katexCDN: 'https://cdn.jsdelivr.net/npm/katex@0',
+      katexDelimiters: [{"left":"$$","right":"$$","display":true},{"left":"$","right":"$","display":false}]
+    };
+  </script>
+<meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a class="site-logo" href="/">
+      
+        <span class="logo-text">Shionyori&#39;s Blog</span>
+      
+    </a>
+
+    <nav class="site-nav" id="site-nav">
+      
+        <a class="nav-item" href="/">首页</a>
+      
+        <a class="nav-item" href="/archives/">归档</a>
+      
+        <a class="nav-item" href="/tags/">标签</a>
+      
+        <a class="nav-item" href="/categories/">分类</a>
+      
+        <a class="nav-item" href="/friends/">友链</a>
+      
+        <a class="nav-item" href="/about/">关于</a>
+      
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn-icon search-toggle" id="search-toggle" aria-label="搜索">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon theme-toggle" id="theme-toggle" aria-label="深色模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon sidebar-toggle" id="sidebar-toggle" aria-label="sidebar_toggle">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+
+  
+<div class="reading-progress" id="reading-progress">
+  <div class="reading-progress-bar" id="reading-progress-bar"></div>
+</div>
+
+
+
+<div id="pjax-container">
+  
+  
+  
+  <div class="page-bg">
+  
+    <img src="/images/posts/RPC%20%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/cover.png" alt="">
+  </div>
+  
+
+  
+  
+  
+  <section class="page-hero">
+    <h1 class="hero-title">RPC 与分布式系统</h1>
+    <div class="hero-subtitle">
+      <div class="post-meta">
+    
+    <time class="post-date" datetime="2026-08-21T00:00:00+08:00">
+      2026-08-21
+    </time>
+    
+
+    
+    <time class="post-updated" datetime="2026-08-21T00:00:00+08:00">
+      更新于 2026-08-21
+    </time>
+    
+
+    
+    <span class="post-word-count">2530 words</span>
+    
+
+    
+    <span class="post-reading-time">9 min read</span>
+    
+
+    
+    <span class="post-categories">
+      
+        <a class="category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a>
+      
+    </span>
+    
+
+</div>
+
+    </div>
+    
+    <div class="hero-tags">
+      
+        <a class="tag-link" href="/tags/RPC/">RPC</a>
+      
+        <a class="tag-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/">分布式系统</a>
+      
+        <a class="tag-link" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+      
+        <a class="tag-link" href="/tags/%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83/">注册中心</a>
+      
+        <a class="tag-link" href="/tags/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86/">服务治理</a>
+      
+    </div>
+    
+  </section>
+  
+  
+
+  
+<div class="container">
+    <div class="content-wrapper">
+      
+      
+<aside class="site-sidebar sidebar-post" id="site-sidebar" data-position="left">
+
+  
+  
+
+  <div class="sidebar-sticky-group">
+    
+    <section class="sidebar-card sidebar-music">
+      
+<div class="music-player" data-playlist='[{"name":"奏穹のラプソディア (狂想曲)","artist":"瑶山百霊","url":"/music/瑶山百霊 - 奏穹のラプソディア (狂想曲).ogg","cover":"/music/covers/soukyuu-no-rhapsody.jpg"},{"name":"Graveyard Memory","artist":"GET IN THE RING","url":"/music/GET IN THE RING - Graveyard Memory.ogg","cover":"/music/covers/graveyard-memory.jpg"},{"name":"ポラリス (北极星)","artist":"GET IN THE RING","url":"/music/GET IN THE RING - ポラリス (北极星).ogg","cover":"/music/covers/polaris.jpg"},{"name":"その唄の名は…","artist":"yukina / GET IN THE RING","url":"/music/yukina _ GET IN THE RING - その唄の名は….ogg","cover":"/music/covers/sono-uta-no-na-wa.jpg"},{"name":"over the moon","artist":"Forest306","url":"/music/Forest306 - over the moon.ogg","cover":"/music/covers/over-the-moon.jpg"},{"name":"21時の探しモノ (21时寻找的东西)","artist":"minimum electric design","url":"/music/minimum electric design - 21時の探しモノ (21时寻找的东西).ogg","cover":"/music/covers/21ji-no-sagashimono.jpg"},{"name":"Freak Report 01 ~他愛も無い二人の博物誌~","artist":"凛","url":"/music/凛 - Freak Report 01 ~他愛も無い二人の博物誌~.ogg","cover":"/music/covers/freak-report-01.jpg"},{"name":"かぜのいろ (カゼノイロ)","artist":"森羅万象","url":"/music/森羅万象 - かぜのいろ (カゼノイロ).ogg","cover":"/music/covers/kaze-no-iro.jpg"},{"name":"Onisan Dochira!","artist":"狐の工作室","url":"/music/狐の工作室 - Onisan Dochira!.ogg","cover":"/music/covers/onisan-dochira.jpg"},{"name":"Skip in the byway","artist":"神乃木製作所","url":"/music/神乃木製作所 - Skip in the byway.ogg","cover":"/music/covers/skip-in-the-byway.jpg"}]'>
+  
+  <div class="music-body">
+    <div class="music-cover">
+      
+      
+      <img src="/music/covers/soukyuu-no-rhapsody.jpg" alt="cover" class="music-cover-img" onerror="if(!this.dataset.failed){this.dataset.failed='1';this.src='/images/shion/404.png'}">
+      
+    </div>
+    <div class="music-info">
+      <div class="music-title-row">
+        <span class="music-title">奏穹のラプソディア (狂想曲)</span>
+        <span class="music-counter">1 / 10</span>
+      </div>
+      <span class="music-artist">瑶山百霊</span>
+      <div class="music-progress">
+        <div class="music-progress-bar">
+          <div class="music-progress-fill"></div>
+        </div>
+        <div class="music-time">
+          <span class="music-time-current">0:00</span>
+          <span class="music-time-total">0:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="music-controls">
+    <button class="music-btn music-btn-mode" aria-label="Play mode" data-mode="sequential" title="Sequential">
+      <svg class="music-mode-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+    <button class="music-btn music-btn-prev" aria-label="Previous track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+    </button>
+    <button class="music-btn music-btn-play" aria-label="Play">
+      <svg class="music-icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <svg class="music-icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="6" height="16"/><rect x="14" y="4" width="6" height="16"/></svg>
+    </button>
+    <button class="music-btn music-btn-next" aria-label="Next track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+    </button>
+    <button class="music-btn music-btn-list" aria-label="Playlist">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="music-playlist">
+    
+    <button class="music-playlist-item active" data-index="0">
+      <span class="music-playlist-name">奏穹のラプソディア (狂想曲)</span>
+      <span class="music-playlist-artist">瑶山百霊</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="1">
+      <span class="music-playlist-name">Graveyard Memory</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="2">
+      <span class="music-playlist-name">ポラリス (北极星)</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="3">
+      <span class="music-playlist-name">その唄の名は…</span>
+      <span class="music-playlist-artist">yukina / GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="4">
+      <span class="music-playlist-name">over the moon</span>
+      <span class="music-playlist-artist">Forest306</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="5">
+      <span class="music-playlist-name">21時の探しモノ (21时寻找的东西)</span>
+      <span class="music-playlist-artist">minimum electric design</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="6">
+      <span class="music-playlist-name">Freak Report 01 ~他愛も無い二人の博物誌~</span>
+      <span class="music-playlist-artist">凛</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="7">
+      <span class="music-playlist-name">かぜのいろ (カゼノイロ)</span>
+      <span class="music-playlist-artist">森羅万象</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="8">
+      <span class="music-playlist-name">Onisan Dochira!</span>
+      <span class="music-playlist-artist">狐の工作室</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="9">
+      <span class="music-playlist-name">Skip in the byway</span>
+      <span class="music-playlist-artist">神乃木製作所</span>
+    </button>
+    
+  </div>
+  
+</div>
+
+    </section>
+    
+
+    <section class="sidebar-card sidebar-toc">
+      <div class="sidebar-toc-header">
+        <a class="sidebar-back-home" href="/" title="首页">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </a>
+        <span class="sidebar-toc-label">RPC 与分布式系统</span>
+      </div>
+      <div class="sidebar-scroll">
+      
+      
+      <nav class="sidebar-toc">
+        <ol class="toc-list"><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#RPC-%E7%9A%84%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6"><span class="toc-list-text">RPC 的核心机制</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-RPC"><span class="toc-list-text">什么是 RPC</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%A5%91%E7%BA%A6%E4%B8%8E%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90"><span class="toc-list-text">契约与代码生成</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#RPC-%E4%B8%8E-HTTP-%E6%8E%A5%E5%8F%A3%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-list-text">RPC 与 HTTP 接口的区别</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E4%B8%8E%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83"><span class="toc-list-text">服务发现与注册中心</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%E7%9A%84%E8%A7%92%E8%89%B2"><span class="toc-list-text">注册中心的角色</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%E7%9A%84%E9%83%A8%E7%BD%B2%E5%BD%A2%E6%80%81"><span class="toc-list-text">注册中心的部署形态</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#RPC-%E6%A1%86%E6%9E%B6%E7%9A%84%E6%B2%BB%E7%90%86%E8%83%BD%E5%8A%9B"><span class="toc-list-text">RPC 框架的治理能力</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E7%9A%84%E9%83%A8%E7%BD%B2%E4%B8%8E%E4%BB%A3%E7%A0%81%E7%BB%84%E7%BB%87"><span class="toc-list-text">分布式系统的部署与代码组织</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%A5%BD%E5%A4%84"><span class="toc-list-text">分布式系统的好处</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E9%83%A8%E7%BD%B2%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%83%85%E5%86%B5"><span class="toc-list-text">部署的两种情况</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#%E4%BB%A3%E7%A0%81%E7%BB%84%E7%BB%87%E6%96%B9%E5%BC%8F"><span class="toc-list-text">代码组织方式</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%8D%8F%E4%BD%9C%E6%96%B9%E5%BC%8F"><span class="toc-list-text">分布式系统的协作方式</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#RPC-%E4%B9%8B%E5%A4%96%E7%9A%84%E5%8D%8F%E4%BD%9C%E6%89%8B%E6%AE%B5"><span class="toc-list-text">RPC 之外的协作手段</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#RPC-%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-list-text">RPC 与分布式系统的关系</span></a></li></ol></li></ol>
+      </nav>
+      
+      </div>
+      <a class="sidebar-back-home-bottom" href="/">← 首页</a>
+    </section>
+  </div>
+
+  
+</aside>
+
+      
+
+      <main class="site-main">
+        <article class="post">
+
+  <div class="post-content">
+    
+  
+  
+  
+
+
+    <p>RPC（远程过程调用）允许程序以调用本地函数的方式调用另一台机器上的函数，是分布式系统中机器间通信的基础方式。本文按 RPC 的组成部分（契约、存根、注册中心、治理能力）逐一说明，再介绍分布式系统的部署与协作方式。</p>
+<hr>
+<h1 id="RPC-的核心机制"><a href="#RPC-的核心机制" class="headerlink" title="RPC 的核心机制"></a>RPC 的核心机制</h1><h2 id="什么是-RPC"><a href="#什么是-RPC" class="headerlink" title="什么是 RPC"></a>什么是 RPC</h2><p><strong>RPC（Remote Procedure Call，远程过程调用）</strong> 让调用方像调用本地函数一样调用另一台服务器上的函数。调用方代码中不直接出现 <code>socket()</code>、<code>connect()</code>、<code>send()</code>、<code>recv()</code>，也不处理序列化格式和 HTTP 请求头，这些工作由 RPC 框架完成。</p>
+<p>一次 RPC 调用的处理过程：</p>
+<ol>
+<li><strong>客户端存根（Client Stub）</strong>：调用方实际调用的是框架生成的代理对象，它把方法名和参数打包。</li>
+<li><strong>序列化</strong>：把内存中的对象转换成字节流（如 Protobuf）。</li>
+<li><strong>网络传输</strong>：通过 socket 把字节流发送到目标服务器。</li>
+<li><strong>服务端存根（Server Stub）</strong>：接收字节流并反序列化，调用真正的业务逻辑，再把返回值序列化后传回。</li>
+</ol>
+<h2 id="契约与代码生成"><a href="#契约与代码生成" class="headerlink" title="契约与代码生成"></a>契约与代码生成</h2><p>两个独立进程要互相调用，必须先约定接口。以用户服务调用支付服务为例：用户服务需要确认支付服务提供了 <code>DeductBalance()</code>、该方法接受哪些参数，这一约定通过**契约（Contract）**实现：</p>
+<ul>
+<li>用中立语言（Protobuf &#x2F; Thrift）编写接口定义文件 <code>.proto</code>，只声明方法名和参数类型，不写实现。</li>
+<li>客户端和服务端依赖同一份契约，分别生成代码：<ul>
+<li><strong>服务端</strong>生成骨架（Skeleton），在其中填入业务逻辑。</li>
+<li><strong>客户端</strong>生成存根（Stub）：方法签名与远端一致，内部只做参数打包与网络发送，不含业务实现。</li>
+</ul>
+</li>
+</ul>
+<div class="note note-info"><p>方法签名在编译期由契约确定（生成的 Stub 代码），服务实例的地址在运行期由注册中心提供。这两件事相互独立。</p>
+</div>
+
+<h2 id="RPC-与-HTTP-接口的区别"><a href="#RPC-与-HTTP-接口的区别" class="headerlink" title="RPC 与 HTTP 接口的区别"></a>RPC 与 HTTP 接口的区别</h2><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>RPC（如 gRPC）</th>
+<th>HTTP + JSON</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>序列化</td>
+<td>Protobuf（二进制，体积小、解析快）</td>
+<td>JSON（文本，体积大、解析慢）</td>
+</tr>
+<tr>
+<td>连接方式</td>
+<td>长连接 + 多路复用</td>
+<td>短连接或复用连接</td>
+</tr>
+<tr>
+<td>关注点</td>
+<td>动作 &#x2F; 行为（执行某个计算）</td>
+<td>资源（对实体的增删改查）</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>内部微服务之间的高频调用（东西向流量）</td>
+<td>对外接口、前端直连（南北向流量）</td>
+</tr>
+</tbody></table>
+<h1 id="服务发现与注册中心"><a href="#服务发现与注册中心" class="headerlink" title="服务发现与注册中心"></a>服务发现与注册中心</h1><h2 id="注册中心的角色"><a href="#注册中心的角色" class="headerlink" title="注册中心的角色"></a>注册中心的角色</h2><p>注册中心（Nacos &#x2F; Consul &#x2F; Etcd）保存各服务实例的 IP 与端口列表，不参与业务数据的转发：</p>
+<ol>
+<li>服务启动时，向注册中心注册自己的 IP 和端口。</li>
+<li>调用方启动时，从注册中心拉取目标服务的 IP 列表，缓存在本地内存。</li>
+<li>实际调用时，存根从本地缓存选择一个 IP，直接把请求发给目标服务器——请求不经过注册中心。</li>
+</ol>
+<div class="note note-info"><p>注册中心只在服务注册、注销和地址列表定时刷新时被访问。业务请求由客户端直接发送到业务服务器，服务发现走独立的管理通道，两者互不影响。</p>
+</div>
+
+<h2 id="注册中心的部署形态"><a href="#注册中心的部署形态" class="headerlink" title="注册中心的部署形态"></a>注册中心的部署形态</h2><p>注册中心需要用 3 或 5 台独立服务器组成集群（取奇数台，通过分布式共识算法选主），并与承载业务的服务隔离部署。只部署一台时，注册中心本身会成为单点故障。</p>
+<p>注册中心全部宕机时，已建立的调用仍可继续：调用方内存中缓存了服务地址列表；但新注册的服务无法被发现，扩容的节点收不到流量，直到注册中心恢复。</p>
+<h1 id="RPC-框架的治理能力"><a href="#RPC-框架的治理能力" class="headerlink" title="RPC 框架的治理能力"></a>RPC 框架的治理能力</h1><p>代码生成只是 RPC 框架功能的一部分。生成存根解决“如何调用”，框架还需要在运行时处理调用过程中出现的问题：</p>
+<ul>
+<li><strong>负载均衡</strong>：从缓存的地址列表中选择目标节点（轮询 &#x2F; 随机 &#x2F; 按权重）。</li>
+<li><strong>熔断降级</strong>：连续调用某节点失败达到阈值后，暂时停止向该节点发送请求，防止故障扩散到其他节点；节点恢复后自动放行。</li>
+<li><strong>超时控制</strong>：为每次调用设置超时，超时后快速失败，或重试其他节点。</li>
+<li><strong>链路追踪</strong>：每次调用生成全局 TraceID 并在调用链各节点间传递，用于定位慢节点和错误点。</li>
+</ul>
+<div class="note note-info"><p>通信层负责完成一次调用的网络收发，治理层负责在节点宕机、超时、网络异常时保证调用可用。调用规模小时这些能力可以不配置；在线上环境中没有负载均衡、超时与熔断，任一节点故障都会直接造成部分调用失败。</p>
+</div>
+
+<p>手写存根无法替代 RPC 框架的原因在于：自行实现存根只能处理序列化和收发，负载均衡、重试、熔断等逻辑需要逐个写进业务代码（例如在 <code>placeOrder()</code> 内部处理重试与降级），业务代码会因此混杂大量与业务无关的分支。框架将这些能力以拦截器形式挂在存根外层，业务代码保持为普通方法调用。</p>
+<div class="note note-info"><p>RPC 框架的价值在于把服务发现、负载均衡、故障容错这些分布式问题集中到框架内部处理，业务代码不需要感知远端调用的网络细节。因此 RPC 框架不仅是协议实现，同时承担运行时治理。</p>
+</div>
+
+<h1 id="分布式系统的部署与代码组织"><a href="#分布式系统的部署与代码组织" class="headerlink" title="分布式系统的部署与代码组织"></a>分布式系统的部署与代码组织</h1><h2 id="分布式系统的好处"><a href="#分布式系统的好处" class="headerlink" title="分布式系统的好处"></a>分布式系统的好处</h2><ul>
+<li><strong>水平扩展</strong>：流量增大时增加机器数量，性能随机器数近似线性提升，而不是更换更强的单机。</li>
+<li><strong>高可用</strong>：部分机器宕机时，负载均衡把流量切换到其余节点，调用不中断（故障转移）。</li>
+<li><strong>独立部署</strong>：各服务独立发布，团队之间以接口契约为边界协作，互不阻塞。</li>
+<li><strong>异地容灾</strong>：数据在多个机房备份，单个机房故障不至于导致服务整体不可用。</li>
+</ul>
+<blockquote>
+<p>分布式系统通过多台服务器协同工作获得更高的扩展能力与可用性。代价同样明确：网络不可靠、数据一致性需要取舍（CAP 理论）、运维复杂度明显高于单机。</p>
+</blockquote>
+<h2 id="部署的两种情况"><a href="#部署的两种情况" class="headerlink" title="部署的两种情况"></a>部署的两种情况</h2><p>多台服务器上运行的程序是否相同，取决于部署目标，分两种情况：</p>
+<ul>
+<li><strong>水平扩展</strong>：同一服务部署到多台机器，程序完全相同，共享同一个数据库，前端由负载均衡分发流量。</li>
+<li><strong>微服务拆分</strong>：不同服务部署在不同机器，程序各不相同，通过 RPC 框架互相调用。</li>
+</ul>
+<p>部署时需要区分服务是否有状态：无状态服务（用户、订单服务）可以复制到任意数量的机器；有状态服务（数据库、Redis）各实例数据不同，需要分片规则和主从同步，不能简单复制代码。</p>
+<p>生产环境的部署是一条自动化流水线（CI&#x2F;CD）：提交代码 → 自动编译 → 打成 Docker 镜像 → 推送到镜像仓库 → 由 Kubernetes 调度到多台服务器启动。流量增大时自动扩容，回落时自动缩容。</p>
+<h2 id="代码组织方式"><a href="#代码组织方式" class="headerlink" title="代码组织方式"></a>代码组织方式</h2><p>微服务拆分后，代码按<strong>业务边界</strong>组织（用户模块、订单模块、支付模块），而不是按技术层次组织。常见的两种方式：</p>
+<ul>
+<li><strong>多仓库（Multi-Repo）</strong>：每个微服务一个独立 Git 仓库，权限隔离、独立发版、技术栈自由。</li>
+<li><strong>单仓库（Monorepo）</strong>：所有服务放在同一仓库中按目录划分，修改可原子提交、版本统一。</li>
+</ul>
+<p>无论哪种方式，<strong>公共契约（.proto 文件）和公共工具库需要独立管理并打版本</strong>：服务端升级契约后，客户端可以继续用旧版本调用，互不影响（依赖版本解耦）。</p>
+<p>单个微服务内部也按职责分层（如 DDD 的 api &#x2F; domain &#x2F; infra）：<code>domain</code> 层只包含业务逻辑，不依赖具体的数据库和缓存实现；需要替换基础设施组件时，只改动 <code>infra</code> 层。</p>
+<h1 id="分布式系统的协作方式"><a href="#分布式系统的协作方式" class="headerlink" title="分布式系统的协作方式"></a>分布式系统的协作方式</h1><h2 id="RPC-之外的协作手段"><a href="#RPC-之外的协作手段" class="headerlink" title="RPC 之外的协作手段"></a>RPC 之外的协作手段</h2><p>分布式系统的节点之间需要通信，RPC 是其中一种方式，不是唯一方式：</p>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>特点</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>消息队列（MQ）</td>
+<td>异步、解耦、非阻塞</td>
+<td>削峰填谷、不需要立即返回结果的场景（发邮件、扣库存）</td>
+</tr>
+<tr>
+<td>共享存储 &#x2F; 数据库轮询</td>
+<td>实现简单，延迟高</td>
+<td>简单或遗留系统</td>
+</tr>
+<tr>
+<td>HTTP REST API</td>
+<td>本质也是一种远程调用</td>
+<td>对外接口、跨语言简单调用</td>
+</tr>
+</tbody></table>
+<p>实际系统中两种方式经常并用：需要同步等待结果的调用用 RPC，可以延迟处理的操作（发邮件、扣库存等）用消息队列。</p>
+<h2 id="RPC-与分布式系统的关系"><a href="#RPC-与分布式系统的关系" class="headerlink" title="RPC 与分布式系统的关系"></a>RPC 与分布式系统的关系</h2><div class="note note-info"><p>RPC 不改变网络传输本身，只改变程序调用远端功能时的编程方式。无论用 gRPC 还是直接写 socket，线路上传输的都是协议定义好的字节流。RPC 框架把序列化、寻址、超时、重试等处理集中到框架内部，业务代码不直接接触这些细节。</p>
+</div>
+
+<p>区分两层含义：</p>
+<ul>
+<li><strong>广义 RPC（远程调用）</strong>：通过网络调用远端程序提供的能力。HTTP 调用、数据库客户端协议都属于这一类，是分布式系统节点间交互的基本形式。</li>
+<li><strong>狭义 RPC 框架（gRPC &#x2F; Dubbo）</strong>：提供接口定义、代码生成与运行时治理的完整实现，统一处理服务寻址、序列化、超时与错误码，使业务代码可以用本地调用方式完成跨网络调用。</li>
+</ul>
+
+  </div>
+
+  
+  <div class="post-copyright">
+    <p><strong>Shionyori</strong></p>
+    <p>/2026/08/20/RPC%20%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/</p>
+    <p>&amp;copy; 2026 Shionyori. 保留所有权利。</p>
+  </div>
+  
+
+  <footer class="post-footer">
+    
+    <div class="post-tags-footer">
+      
+        <a class="tag-link" href="/tags/RPC/">RPC</a>
+      
+        <a class="tag-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/">分布式系统</a>
+      
+        <a class="tag-link" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+      
+        <a class="tag-link" href="/tags/%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83/">注册中心</a>
+      
+        <a class="tag-link" href="/tags/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86/">服务治理</a>
+      
+    </div>
+    
+
+    
+<div class="post-share">
+  <div class="share-buttons">
+    
+    
+    
+
+    
+    <a class="share-btn share-twitter" href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fshionyori.github.io%2F2026%2F08%2F20%2FRPC%20%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%2F&text=RPC%20%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F" target="_blank" rel="noopener" aria-label="分享到 Twitter">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fshionyori.github.io%2F2026%2F08%2F20%2FRPC%20%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fshionyori.github.io%2F2026%2F08%2F20%2FRPC%20%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%2F" target="_blank" rel="noopener" aria-label="分享到 LinkedIn">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    
+
+    
+    <button class="share-btn share-copy" aria-label="复制链接" data-url="https://shionyori.github.io/2026/08/20/RPC 与分布式系统/">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    </button>
+    
+  </div>
+</div>
+
+
+  </footer>
+</article>
+
+
+
+<nav class="post-nav">
+  
+    <span class="post-nav-item post-nav-placeholder"></span>
+  
+  
+    <a class="post-nav-item post-nav-next has-cover" href="/2026/08/20/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E5%8E%9F%E7%90%86%EF%BC%9A%E4%BB%8E%E5%B1%80%E5%9F%9F%E7%BD%91%E5%88%B0%E9%AA%A8%E5%B9%B2%E7%BD%91/" style='background-image: url(/images/posts/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E5%8E%9F%E7%90%86%EF%BC%9A%E4%BB%8E%E5%B1%80%E5%9F%9F%E7%BD%91%E5%88%B0%E9%AA%A8%E5%B9%B2%E7%BD%91/cover.png)'>
+      <span class="nav-label">下一篇</span>
+      <span class="nav-title">网络通信原理：从局域网到骨干网</span>
+    </a>
+  
+</nav>
+
+
+
+
+
+      </main>
+
+      
+    </div>
+  </div>
+</div>
+
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+
+<nav class="mobile-nav" id="mobile-nav">
+  <div class="mobile-nav-inner">
+    <div class="mobile-nav-header">
+      <span class="mobile-nav-title">首页</span>
+      <button class="btn-icon mobile-nav-close" id="mobile-nav-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <ul class="mobile-nav-menu">
+      
+        <li>
+          <a class="mobile-nav-link" href="/">首页</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/archives/">归档</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/tags/">标签</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/categories/">分类</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/friends/">友链</a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/about/">关于</a>
+        </li>
+      
+    </ul>
+
+    
+    <div class="mobile-nav-social">
+      
+        <a class="social-icon" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+  </div>
+</nav>
+
+  <footer class="site-footer">
+  <div class="footer-inner">
+    
+    <div class="footer-social">
+      
+        <a class="social-link" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+
+    <div class="footer-info">
+      <span class="copyright">
+        &copy;
+        
+          2025 &ndash;
+        
+        2026
+        Shionyori
+      </span>
+
+      
+        <span class="powered-by">由 <a href="https://hexo.io/" target="_blank">Hexo</a> 驱动</span>
+      
+
+      
+        <span class="theme-by">主题 Shion</span>
+      
+
+      
+    </div>
+
+    
+
+  </div>
+</footer>
+
+
+
+  
+<div class="search-overlay" id="search-overlay"
+     data-i18n-found="关于「{query}」，找到了 {count} 条记录"
+     data-i18n-not-found="关于「{query}」，没有找到任何记录呢">
+  <div class="search-container">
+    <img class="search-decoration" src="/images/shion/search.png" alt="">
+    <div class="search-header">
+      <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" class="search-input" id="search-input" placeholder="输入关键词搜索..." autocomplete="off">
+      <button class="search-close" id="search-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="search-info" id="search-info"></div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+
+
+  
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/contrib/auto-render.min.js"></script>
+
+
+  <script src="/js/main.js"></script>
+</body>
+</html>
