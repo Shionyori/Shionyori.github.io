@@ -8,9 +8,9 @@ friends:
     avatar: /images/friends/maxqian.png
     description: 老曼波 / C++ / 全栈大神
   - name: s3loy
-    url: https://blog.s3loy.tech/
+    url: https://blog.s3loy.top/
     avatar: /images/friends/s3loy.png
-    description: 运维&后端大神
+    description: 运维 & 后端大神
   - name: SeanDictionary
     url: https://seandictionary.top/
     avatar: /images/friends/sean.png
@@ -28,7 +28,11 @@ friends:
     avatar: /images/friends/futurefe.png
     description: 前端大神 / 生而逆风执炬，落笔即成绝句
   - name: Symb0x76
-    url: https://blog0x76.vercel.app/
+    url: https://blog.symb0x76.top
     avatar: /images/friends/symb0x76.png
     description: Python大神 / 一点技术和小巧思
+  - name: BTXL
+    url: https://btxl11.github.io/
+    avatar: /images/friends/btxl.png
+    description: 数学专业的怪猎领域大神
 ---
