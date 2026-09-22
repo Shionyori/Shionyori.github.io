@@ -24,7 +24,7 @@ Reactor 的核心思想是**事件驱动**，它将 I/O 事件的监听、分发
 ---
 
 # 1. 核心组件的实现
-## 1.1 `Poller`（多路复用器）
+## 1.1 Poller（多路复用器）
 
 `Epoll` 类是对 Linux `epoll` API 的封装，用于管理所有 fd 的事件监听。
 
@@ -49,7 +49,7 @@ public:
 };
 ```
 
-## 1.2 `Channel`（事件通道）
+## 1.2 Channel（事件通道）
 
 `Channel` 表示一个 fd 的事件对象，每个 socket 对应一个 Channel，它负责记录事件、保存回调函数。
 
@@ -99,7 +99,7 @@ public:
 };
 ```
 
-## 1.3 `EventLoop`（事件循环）
+## 1.3 EventLoop（事件循环）
 
 `EventLoop` 是 Reactor 的核心组件，负责事件循环、事件分发、任务调度。
 
@@ -148,7 +148,7 @@ private:
 };
 ```
 
-## 1.4 `Handler`（事件处理器）
+## 1.4 Handler（事件处理器）
 
 负责执行具体的任务，在该案例中并没有将其专门抽象出来，而是直接 **以回调函数（`std::function<void()>`）的形式嵌入在 `Channel` 类中**。
 
@@ -182,7 +182,7 @@ void handleEvent() {
 ---
 
 # 2. 其他组件
-## 2.1 `Buffer`
+## 2.1 Buffer
 
 TCP是流式协议，无消息边界，因此可能会出现以下情况：
 - 拆包：一个完整信息分多次 `read` 到达
@@ -222,7 +222,7 @@ private:
 ```
 
 
-## 2.2 `Connection`
+## 2.2 Connection
 
 ```cpp
 class Connection {
@@ -290,7 +290,7 @@ private:
 
 传统的多线程服务器的思路是给每个客户端请求都分配一个线程，这样的好处是结构简单，在低并发情况下可以有效利用CPU，但是由于会占用过多资源，所以并不适合高并发环境。更好的思路是与前面的I/O多路复用相结合，每个线程负责一个 `epoll`，同时管理多个客户端请求，这样就可以大大提高并发处理能力。
 
-## 3.1 `EventLoopThread`
+## 3.1 EventLoopThread
  
 在Reactor模型中，`Poller (epoll)` 是由一个 `EventLoop` 实例所管理的。因此，我们可以让每个线程各自维护一个 `EventLoop` 实例，负责分别处理来自客户端的请求。为了方便使用，我们将线程这一概念封装为 `EventLoopThread`。
 
@@ -318,7 +318,7 @@ public:
 需要注意的是，每个 `EventLoop` 只属于一个线程，且它只能在其所属线程中执行，这种约束可以避免多线程竞争 `epoll`（否则就需要加锁，但是这更麻烦且有性能损耗）。
 {% endnote %}
 
-## 3.2 `EventLoopThreadPool`
+## 3.2 EventLoopThreadPool
 
 为了更方便地调用线程并减少反复创建新线程导致的资源消耗，我们可以创建一个线程池 `EventLoopThreadPool`。
 
