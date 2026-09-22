@@ -12,21 +12,30 @@ tags:
   - 网络编程
 ---
 
-{% note info %}
 由于不同操作系统对网络的实现方式不同，**C++ 标准库并没有提供统一的网络接口**。因此在进行网络编程时，通常直接调用操作系统提供的 API。在 Linux 下最常见的方式是使用 **Socket API** 进行网络通信。
-{% endnote %}
 
 ---
 
-# TCP 服务端
+# 1. 基于 Socket 的 TCP 通信
 
-## 1. 创建 socket
+TCP 是面向连接的协议，通信双方需要先建立连接才能进行数据传输。因此 TCP 通信的服务端需要先调用 `listen()` 进入监听状态，然后使用 `accept()` 接受客户端的连接请求；而客户端则需要调用 `connect()` 连接服务端。连接建立后，双方就可以使用 `send()` 和 `recv()` 进行数据的发送和接收。
+
+## 1.1 TCP 服务端
+
+1. 创建 socket
+
+使用 `socket()` 函数创建一个 socket，返回一个文件描述符（`fd`），用于后续的网络通信。
+- `AF_INET` 表示使用 IPv4 地址族
+- `SOCK_STREAM` 表示使用面向连接的 TCP 协议
+- `IPPROTO_TCP` 表示使用 TCP 协议
 
 ```cpp
 int sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 ```
 
-## 2. 绑定 socket
+2. 绑定 socket
+
+先创建一个 `sockaddr_in` 结构体，设置 IP 地址和端口号，然后使用 `bind()` 函数将 socket 绑定到指定的地址和端口。
 
 ```cpp
 std::string ip = "127.0.0.1";
@@ -45,7 +54,9 @@ if (bind(sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr)) < 0)
 }
 ```
 
-## 3. 监听 socket
+3. 监听 socket
+
+使用 `listen()` 函数使 socket 进入监听状态，等待客户端的连接请求。
 
 ```cpp
 if (listen(sockfd, 1024) < 0)
@@ -55,7 +66,9 @@ if (listen(sockfd, 1024) < 0)
 }
 ```
 
-## 4. 接受客户端连接
+4. 接受客户端连接
+
+使用 `accept()` 函数接受客户端的连接请求，返回一个新的 socket（用于与客户端通信）。
 
 ```cpp
 int confd = accept(sockfd, nullptr, nullptr); // 连接成功返回一个新的socket（用于与客户端通信）
@@ -66,26 +79,30 @@ if (confd < 0)
 }
 ```
 
-## 5. 接收客户端的数据
+5. 接收客户端的数据
+
+使用 `recv()` 函数接收客户端发送的数据。
 
 ```cpp
 char buf[1024] = {0};
 size_t len = recv(confd, buf, sizeof(buf), 0);
 ```
 
-## 6. 向客户端发送数据
+6. 向客户端发送数据
+
+使用 `send()` 函数向客户端发送数据。
 
 ```cpp
 send(confd, buf, strlen(buf), 0);
 ```
 
-## 7. 关闭 socket
+7. 关闭 socket
 
 ```cpp
 close(sockfd);
 ```
 
-## 8. 代码示例
+完整的代码如下：
 
 ```cpp
 #include <iostream>
@@ -165,17 +182,17 @@ int main()
 }
 ```
 
----
+## 1.2 TCP 客户端
 
-# TCP 客户端
-
-## 1. 创建 socket
+1. 创建 socket
 
 ```cpp
 int sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 ```
 
-## 2. 连接服务端
+2. 连接服务端
+
+先创建一个 `sockaddr_in` 结构体，设置目标（服务端）的 IP 地址和端口号，然后使用 `connect()` 函数连接服务端。
 
 ```cpp
 // 设置目标服务端的地址与端口
@@ -196,27 +213,31 @@ if (connect(sockfd, (struct sockaddr*)&sockaddr, sizeof(sockaddr)) < 0)
 }
 ```
 
-## 3. 向服务端发送数据
+3. 向服务端发送数据
+
+使用 `send()` 函数向服务端发送数据。
 
 ```cpp
 std::string data = "test content";
 send(sockfd, data.c_str(), data.size(), 0);
 ```
 
-## 4. 接收服务端的数据
+4. 接收服务端的数据
+
+使用 `recv()` 函数接收服务端发送的数据。
 
 ```cpp
 char buf[1024] = {0};
 recv(sockfd, buf, sizeof(buf), 0);
 ```
 
-## 5. 关闭 socket
+5. 关闭 socket
 
 ```cpp
 close(sockfd);
 ```
 
-## 6. 代码示例
+完整的代码如下：
 
 ```cpp
 #include <iostream>
@@ -278,17 +299,26 @@ int main()
 }
 ```
 
----
+# 2. 基于 Socket 的 UDP 通信
 
-# UDP 服务端
+UDP 是无连接的协议，通信双方不需要建立连接即可发送数据。因此 UDP 没有 `listen()` 和 `accept()` 这两个步骤，可以直接使用 `sendto()` 和 `recvfrom()` 函数进行数据的发送和接收。`sendto()` 需要指定目标地址，而 `recvfrom()` 会返回发送方的地址信息。
 
-## 1. 创建 socket
+## 2.1 UDP 服务端
+
+1. 创建 socket
+
+使用 `socket()` 函数创建一个 UDP socket，返回一个文件描述符（`fd`），用于后续的网络通信。
+- `AF_INET` 表示使用 IPv4 地址族
+- `SOCK_DGRAM` 表示使用无连接的 UDP 协议
+- `IPPROTO_UDP` 表示使用 UDP 协议
 
 ```cpp
 int sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 ```
 
-## 2. 绑定 socket
+2. 绑定 socket
+
+先创建一个 `sockaddr_in` 结构体，设置 IP 地址和端口号，然后使用 `bind()` 函数将 socket 绑定到指定的地址和端口。
 
 ```cpp
 std::string ip = "127.0.0.1";
@@ -307,7 +337,9 @@ if (bind(sockfd, (struct sockaddr*)&sockaddr, sizeof(sockaddr)) < 0)
 }
 ```
 
-## 3. 接收客户端的数据
+3. 接收客户端的数据
+
+使用 `recvfrom()` 函数接收客户端发送的数据，并获取客户端的地址信息。
 
 ```cpp
 char buf[1024] = {0};
@@ -318,20 +350,22 @@ socklen_t client_addr_len = sizeof(client_addr);
 ssize_t recv_len = recvfrom(sockfd, buf, sizeof(buf), 0, (struct sockaddr*)&client_addr, &client_addr_len);
 ```
 
-## 4. 向客户端发送数据
+4. 向客户端发送数据
+
+使用 `sendto()` 函数向指定的客户端发送数据。
 
 ```cpp
 std::string data = "test content";
 ssize_t send_len = sendto(sockfd, data.c_str(), data.size(), 0, (struct sockaddr*)&client_addr, client_addr_len);
 ```
 
-## 5. 关闭 socket
+5. 关闭 socket
 
 ```cpp
 close(sockfd);
 ```
 
-## 6. 代码示例
+完整的代码如下：
 
 ```cpp
 #include <iostream>
@@ -408,17 +442,17 @@ int main()
 }
 ```
 
----
+## 2.2 UDP 客户端
 
-# UDP 客户端
-
-## 1. 创建 socket
+1. 创建 socket
 
 ```cpp
 int sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 ```
 
-## 2. 向服务端发送数据
+2. 向服务端发送数据
+
+先创建一个 `sockaddr_in` 结构体，设置目标（服务端）的 IP 地址和端口号，然后使用 `sendto()` 函数向服务端发送数据。
 
 ```cpp
 // 设置目标服务端的地址与端口
@@ -436,7 +470,9 @@ std::string data = "test content";
 ssize_t send_len = sendto(sockfd, data.c_str(), data.size(), 0, (struct sockaddr*)&sockaddr, sizeof(sockaddr));
 ```
 
-## 3. 接收服务端的数据
+3. 接收服务端的数据
+
+使用 `recvfrom()` 函数接收服务端发送的数据，并获取服务端的地址信息。
 
 ```cpp
 char buf[1024] = {0};
@@ -445,13 +481,13 @@ socklen_t server_addr_len = sizeof(server_addr);
 ssize_t recv_len = recvfrom(sockfd, buf, sizeof(buf), 0, (struct sockaddr*)&server_addr, &server_addr_len);
 ```
 
-## 4. 关闭 socket
+4. 关闭 socket
 
 ```cpp
 close(sockfd);
 ```
 
-## 5. 代码示例
+完整的代码如下：
 
 ```cpp
 #include <iostream>

@@ -1,7 +1,7 @@
 ---
 title: 从零实现 C++ 智能指针
 date: 2026-02-25
-updated: 2026-02-25
+updated: 2026-09-22
 cover: /images/posts/从零实现 C++ 智能指针/cover.png
 categories: C++
 tags:
@@ -11,7 +11,7 @@ tags:
   - C++
 ---
 
-# 1. 实现基本的 `unique_ptr` 和 `shared_ptr`
+# 1. 初步实现 unique_ptr / shared_ptr
 
 智能指针的本质是 裸指针 + RAII 对象封装，我们通过将裸指针封装成一个类对象，利用对象的 RAII 机制实现资源的自动释放。
 
@@ -204,9 +204,7 @@ private:
 };
 ```
 
----
-
-# 2. 添加 `weak_ptr` 并完善 `shared_ptr`
+# 2. 实现 weak_ptr（完善 shared_ptr）
 
 之前实现的 `shared_ptr` 并不完美，其中一个问题是，当两个 `shared_ptr` 相互引用彼此时会导致引用计数永远无法归零，导致资源无法被释放。
 
@@ -473,9 +471,8 @@ public:
     explicit operator bool() const { return ptr != nullptr; }
 };
 ```
----
 
-# 3. 为 `unique_ptr` 和 `shared_ptr` 添加数组支持
+# 3. 实现智能指针对数组的支持
 
 目前我们的智能指针只能接受类对象，无法像这样 `unique_ptr<int[]>(new int[3]{1, 2, 4})` 来创建新的智能指针。关键在于我们需要提供 `operator[]` 而非 `operator*`，析构时调用 `delete[]` 而非 `delete`。
 
@@ -641,13 +638,12 @@ public:
     explicit operator bool() const { return ptr != nullptr; }
 };
 ```
----
 
-# 4. 添加 `make_unique` 和 `make_shared` 方法
+# 4. 实现 make_unique / make_shared
 
 直接使用 `new` 来构造智能指针，一旦发生异常，容易导致内存泄漏。
 ```cpp
-    std::unique_ptr<A>(new A())
+std::unique_ptr<A>(new A())
 ```
 默认编译器从右向左执行，如果在 `new A()` 执行后发生异常，此时 `A` 对应内存已经被分配，但是`unique_ptr` 尚未被创建，从而导致这块内存无人负责释放。
 
@@ -704,9 +700,8 @@ shared_ptr<T> make_shared(size_t size)
     return shared_ptr<T>(new ElementType[size]());
 }
 ```
----
 
-# 5. 添加默认删除器和自定义删除器
+# 5. 实现默认删除器和自定义删除器
 
 智能指针的基本功能已经初具雏形，但是我们前面只考虑了 需要管理的资源为堆内存 这一种情况，实际上的资源还可能是 文件句柄、互斥量、套接字等其他需要显示管理生命周期的东西。
 

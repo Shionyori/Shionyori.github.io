@@ -15,19 +15,25 @@ tags:
 
 在实际开发中，通常不会直接在业务代码中频繁调用底层的 Linux Socket API，而是对其进行**封装**。
 
-{% note info %}
 封装的好处有：
 - 统一接口，减少重复代码
 - 更安全的资源管理（RAII 自动关闭 `socket`）
 - 更好的代码可读性
 - 更方便扩展（如支持 `epoll`、超时等）
-{% endnote %}
 
 ---
 
-# 1. `Socket`
+# 1. Socket 封装
 
-`Socket` 类的定义：
+首先，我们需要对 `Socket` 进行封装，提供一个类来管理 `socket` 的生命周期，并提供常用的操作接口。
+
+Socket 封装的基本思路是：
+1. 封装 `socket` 的创建、绑定、监听、连接、发送、接收等操作
+2. 使用 RAII 原则管理 `socket` 的生命周期，确保在对象销毁时自动关闭 `socket`
+3. 提供异常安全的接口，避免资源泄漏
+
+在 `socket.h` 中定义 `Socket` 类：
+
 ```cpp
 class Socket {
 private:
@@ -82,7 +88,8 @@ public:
 };
 ```
 
-具体的方法实现：
+在 `socket.cpp` 中实现 `Socket` 类的成员函数：
+
 ```cpp
 bool Socket::create(int domain, int type, int protocol) 
 {
@@ -149,11 +156,14 @@ std::string Socket::recv(size_t max_len, int flags)
 }
 ```
 
----
+# 2. TCP 封装
 
-# 2. `TcpServer`
+完成了 `Socket` 的封装后，我们可以进一步封装 TCP 服务端和客户端，提供更高层次的接口。只需要用 `Socket` 类的方法代替原来的 Socket API 调用即可，其他逻辑基本保持不变。
 
-`TcpServer` 类的定义：
+## 2.1 TcpServer
+
+在 `tcpserver.h` 中定义 `TcpServer` 类：
+
 ```cpp
 class TcpServer {
 private:
@@ -168,7 +178,8 @@ public:
 };
 ```
 
-具体的方法实现：
+在 `tcpserver.cpp` 中实现 `TcpServer` 类的成员函数：
+
 ```cpp
 TcpServer::~TcpServer()
 {
@@ -206,11 +217,10 @@ void TcpServer::run(std::function<void(Socket)> handler)
 }
 ```
 
----
+## 2.2 TcpClient
 
-# 3. `TcpClient`
+在 `tcpclient.h` 中定义 `TcpClient` 类：
 
-`TcpClient` 类的定义:
 ```cpp
 class TcpClient {
 private:
@@ -226,7 +236,8 @@ public:
 };
 ```
 
-具体的方法实现：
+在 `tcpclient.cpp` 中实现 `TcpClient` 类的成员函数：
+
 ```cpp
 TcpClient::~TcpClient()
 {
@@ -254,5 +265,137 @@ ssize_t TcpClient::send(const std::string& data)
 std::string TcpClient::recv(size_t max_len)
 {
     return client.recv(max_len);
+}
+```
+
+# 3. UDP 封装
+
+同样地，我们可以封装 UDP 服务端和客户端，提供更高层次的接口。
+
+## 3.1 UdpServer
+
+在 `udpserver.h` 中定义 `UdpServer` 类：
+
+```cpp
+#include "socket.h"
+
+using namespace nl;
+
+class UdpServer {
+private:
+    Socket server;
+
+public:
+    UdpServer() = default;
+    ~UdpServer();
+
+    UdpServer(const UdpServer&) = delete;
+    UdpServer& operator=(const UdpServer&) = delete;
+
+    void start(const std::string &ip, int port);
+    void run();
+};
+```
+
+在 `udpserver.cpp` 中实现 `UdpServer` 类的成员函数：
+
+```cpp
+#include "udpserver.h"
+#include <iostream>
+
+UdpServer::~UdpServer() {
+    server.close();
+}
+
+void UdpServer::start(const std::string &ip, int port)
+{
+    if (!server.create(AF_INET, SOCK_DGRAM, IPPROTO_UDP))
+    {
+        std::cerr << "Server create failed\n";
+        return;
+    }
+
+    if (!server.bind(ip, port))
+    {
+        std::cerr << "Server bind failed\n";
+        return;
+    }
+
+    std::cout << "Server listening on " << ip << ":" << port << std::endl;
+}
+
+void UdpServer::run()
+{
+    while (true)
+    {
+        std::string client_ip;
+        int client_port;
+        
+        std::string data = server.recvFrom(1024, client_ip, client_port);
+        if (!data.empty())
+        {
+            std::cout << "Received from " << client_ip << ":" << client_port << " - " << data << std::endl;
+
+            // 回显数据
+            server.sendTo(data, client_ip, client_port);
+        }
+    }
+}
+```
+
+## 3.2 UdpClient
+
+在 `udpclient.h` 中定义 `UdpClient` 类：
+
+```cpp
+#include "socket.h"
+
+using namespace nl;
+
+class UdpClient {
+private:
+    Socket client;
+    
+public:
+    UdpClient() = default;
+    ~UdpClient();
+
+    UdpClient(const UdpClient&) = delete;
+    UdpClient& operator=(const UdpClient&) = delete;
+
+    void init();
+    
+    ssize_t sendTo(const std::string& data, const std::string &ip, int port);
+    std::string recvFrom(size_t max_len, std::string &ip, int &port);
+};
+```
+
+在 `udpclient.cpp` 中实现 `UdpClient` 类的成员函数：
+
+```cpp
+#include "udpclient.h"
+#include <iostream>
+
+UdpClient::~UdpClient() {
+    client.close();
+}
+
+void UdpClient::init()
+{
+    if (!client.create(AF_INET, SOCK_DGRAM, IPPROTO_UDP))
+    {
+        std::cerr << "Client create failed\n";
+        return;
+    }
+}
+
+ssize_t UdpClient::sendTo(const std::string& data, const std::string &ip, int port)
+{
+    return client.sendTo(data, ip, port);
+}
+
+std::string UdpClient::recvFrom(size_t max_len, std::string &ip, int &port)
+{
+    return client.recvFrom(max_len, ip, port);
 }
 ```
