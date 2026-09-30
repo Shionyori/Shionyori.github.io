@@ -1,7 +1,7 @@
 ---
 title: 对 Socket 进行封装
 date: 2025-04-18
-updated: 2026-09-22
+updated: 2026-09-30
 cover: /images/posts/对 Socket 进行封装/cover.png
 categories: 网络编程
 tags:
@@ -32,6 +32,8 @@ Socket 封装的基本思路是：
 2. 使用 RAII 原则管理 `socket` 的生命周期，确保在对象销毁时自动关闭 `socket`
 3. 提供异常安全的接口，避免资源泄漏
 
+## 1.1 类定义
+
 在 `socket.h` 中定义 `Socket` 类：
 
 ```cpp
@@ -40,39 +42,32 @@ private:
     int sockfd;
 
 public:
-    Socket() : sockfd(-1) {}
-    Socket(int fd) : sockfd(fd) {}
+    Socket();
+    Socket(int fd);
 
-    // 禁止拷贝
+    ~Socket();
+
+    // 禁止拷贝，只允许移动
     Socket(const Socket&) = delete;
     Socket& operator=(const Socket&) = delete;
-
-    // 允许拷贝
-    Socket(Socket && other) : sockfd(other.sockfd) { other.sockfd = -1; }
-    Socket& operator=(Socket&& other) {
-        if (this != &other) {
-            close();
-            sockfd = other.sockfd;
-            other.sockfd = -1;
-        }
-        return *this;
-    }
-
-    ~Socket() { close(); }
+    Socket(Socket && other) noexcept;
+    Socket& operator=(Socket&& other) noexcept;
 
     bool create(int domain, int type, int protocol);
-
     bool bind(const std::string &ip, int port);
     bool listen(int backlog);
     Socket accept();
-
     bool connect(const std::string &ip, int port);
 
     ssize_t send(const void* data, size_t len, int flags = 0);
     ssize_t send(const std::string& data, int flags = 0);
-
     ssize_t recv(void* buf, size_t len, int flags = 0);
     std::string recv(size_t max_len = 1024, int flags = 0);
+
+    ssize_t sendTo(const void* data, size_t len, const std::string &ip, int port, int flags = 0);
+    ssize_t sendTo(const std::string& data, const std::string &ip, int port, int flags = 0);
+    ssize_t recvFrom(void* buf, size_t len, std::string &ip, int &port, int flags = 0);
+    std::string recvFrom(size_t max_len, std::string &ip, int &port, int flags = 0);
 
     // 工具函数
     void close() {
@@ -83,18 +78,62 @@ public:
     }
 
     bool isValid() const { return sockfd >= 0; }
-
     int getFd() const { return sockfd; }
 };
 ```
 
+## 1.2 类实现
+
 在 `socket.cpp` 中实现 `Socket` 类的成员函数：
 
 ```cpp
-bool Socket::create(int domain, int type, int protocol) 
+#include "socket.h"
+
+#include <cerrno>
+#include <cstring>
+#include <iostream>
+
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+
+Socket::Socket() : sockfd(-1) {}
+
+Socket::Socket(int fd) : sockfd(fd) {}
+
+Socket::~Socket() { close(); }
+
+Socket::Socket(Socket&& other) noexcept : sockfd(other.sockfd) {
+    other.sockfd = -1;
+}
+
+Socket& Socket::operator=(Socket&& other) noexcept {
+    if (this != &other) {
+        close();
+        sockfd = other.sockfd;
+        other.sockfd = -1;
+    }
+    return *this;
+}
+
+bool Socket::create(int domain, int type, int protocol)
 {
-    sockfd = socket(domain, type, protocol);
-    return sockfd >= 0;
+    sockfd = ::socket(domain, type, protocol);
+    if (sockfd < 0)
+    {
+        std::cerr << "socket() failed: " << std::strerror(errno) << std::endl;
+        return false;
+    }
+
+    // 允许绑定处于 TIME_WAIT 的地址，避免服务器重启时 bind 失败
+    int opt = 1;
+    if (::setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
+    {
+        std::cerr << "setsockopt(SO_REUSEADDR) failed: " << std::strerror(errno) << std::endl;
+        // 设置失败不致命，继续使用该套接字
+    }
+    return true;
 }
 
 bool Socket::bind(const std::string& ip, int port)
@@ -154,7 +193,94 @@ std::string Socket::recv(size_t max_len, int flags)
     }
     return buf;
 }
+
+ssize_t Socket::sendTo(const void* data, size_t len, const std::string &ip, int port, int flags)
+{
+    struct sockaddr_in addr{};
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = inet_addr(ip.c_str());
+    addr.sin_port = htons(port);
+    return ::sendto(sockfd, data, len, flags, (struct sockaddr*)&addr, sizeof(addr));
+}
+
+ssize_t Socket::sendTo(const std::string& data, const std::string &ip, int port, int flags)
+{
+    return sendTo(data.c_str(), data.size(), ip, port, flags);
+}
+
+ssize_t Socket::recvFrom(void* buf, size_t len, std::string &ip, int &port, int flags)
+{
+    struct sockaddr_in addr{};
+    socklen_t addr_len = sizeof(addr);
+    ssize_t n = ::recvfrom(sockfd, buf, len, flags, (struct sockaddr*)&addr, &addr_len);
+    if (n >= 0) {
+        ip = inet_ntoa(addr.sin_addr);
+        port = ntohs(addr.sin_port);
+    }
+    return n;
+}
+
+std::string Socket::recvFrom(size_t max_len, std::string &ip, int &port, int flags)
+{
+    std::string buf(max_len, '\0');
+    ssize_t n = recvFrom(&buf[0], max_len, ip, port, flags);
+    if (n > 0) {
+        buf.resize(n);
+    } else {
+        buf.clear();
+    }
+    return buf;
+}
 ```
+
+## 1.3 为什么必须是 ::bind 而不是 bind
+
+可以发现，代码中的系统调用都带上了 `::` 前缀，比如 `::bind`、`::listen`、`::connect`、`::send`、`::recv`、`::close`、`::accept`。
+
+这是因为**类里恰好有同名的成员函数**。在 `Socket` 的成员函数内部写一个不带限定的 `bind(...)`，编译器会先在类作用域里查找，找到 `Socket::bind` 这个成员。于是这行代码变成了递归调用自己，而不是调用系统的 `bind`。结果是栈溢出或者死循环，而且不会报任何编译错误。
+
+`::bind` 表示从全局作用域中查找，明确指向 `<sys/socket.h>` 里的那个函数。
+
+## 1.4 移动语义在这里做了什么
+
+使用移动语义的主要目的是**避免不必要的拷贝**。
+
+回头看 `accept()`：
+
+```cpp
+Socket Socket::accept()
+{
+    ...
+    return Socket(fd);   // 返回一个临时 Socket
+}
+```
+
+这个临时对象需要交给调用方。返回值优化（RVO）通常会直接把对象构造在调用方的栈上，一次构造、零次拷贝；即使编译器不做优化，也会走**移动构造**，同样不会发生拷贝。`fd` 的所有权从临时对象转移到调用方的对象，临时对象的 `fd` 被置为 `-1`（即无效），析构时不会关闭 `fd`，也就不会造成资源泄漏。
+
+移动构造函数上的 `noexcept` 不是可选的装饰：
+
+```cpp
+Socket(Socket&& other) noexcept;
+```
+
+标准库用 `std::move_if_noexcept` 判断“该移动还是该拷贝”：**只有移动构造被标记为 `noexcept`，容器在扩容时才会放心地选择移动，否则会退化成拷贝**，`std::vector<Socket>` 就是典型场景。
+
+这里拷贝构造已经被 `= delete`，所以即使漏掉 `noexcept` 也仍然能编译通过（`move_if_noexcept` 会退而使用移动），但那样就失去了 `noexcept` 才能提供的强异常安全保证——扩容过程中一旦抛出异常，容器无法回滚到原来的状态。所以移动构造/赋值一律加 `noexcept`。
+
+移动赋值里那句 `close()` 也很关键：
+
+```cpp
+Socket& Socket::operator=(Socket&& other) noexcept
+{
+    if (this != &other)
+    {
+        close();   // 先释放自己原来持有的 fd
+        ...
+    }
+}
+```
+
+如果这里没有 `close()`，`a = std::move(b)` 就会导致 `a` 原来的 `fd` 没有被关闭，造成资源泄漏。
 
 # 2. TCP 封装
 
@@ -162,7 +288,7 @@ std::string Socket::recv(size_t max_len, int flags)
 
 ## 2.1 TcpServer
 
-在 `tcpserver.h` 中定义 `TcpServer` 类：
+在 `tcpserver.h` 中定义：
 
 ```cpp
 class TcpServer {
@@ -178,7 +304,7 @@ public:
 };
 ```
 
-在 `tcpserver.cpp` 中实现 `TcpServer` 类的成员函数：
+在 `tcpserver.cpp` 中实现：
 
 ```cpp
 TcpServer::~TcpServer()
@@ -209,9 +335,19 @@ bool TcpServer::start(const std::string& ip, int port)
 
 void TcpServer::run(std::function<void(Socket)> handler)
 {
-    while(true)
+    while (true)
     {
         Socket client = server.accept();
+        if (!client.isValid())
+        {
+            // accept 失败时返回的是无效对象，不能交给业务处理
+            if (errno == EINTR)
+            {
+                continue; // 被信号打断，重试即可
+            }
+            std::cerr << "accept failed: " << std::strerror(errno) << std::endl;
+            continue;
+        }
         handler(std::move(client));
     }
 }
@@ -219,7 +355,7 @@ void TcpServer::run(std::function<void(Socket)> handler)
 
 ## 2.2 TcpClient
 
-在 `tcpclient.h` 中定义 `TcpClient` 类：
+在 `tcpclient.h` 中定义：
 
 ```cpp
 class TcpClient {
@@ -236,7 +372,7 @@ public:
 };
 ```
 
-在 `tcpclient.cpp` 中实现 `TcpClient` 类的成员函数：
+在 `tcpclient.cpp` 中实现：
 
 ```cpp
 TcpClient::~TcpClient()
@@ -274,12 +410,10 @@ std::string TcpClient::recv(size_t max_len)
 
 ## 3.1 UdpServer
 
-在 `udpserver.h` 中定义 `UdpServer` 类：
+在 `udpserver.h` 中定义：
 
 ```cpp
 #include "socket.h"
-
-using namespace nl;
 
 class UdpServer {
 private:
@@ -297,7 +431,7 @@ public:
 };
 ```
 
-在 `udpserver.cpp` 中实现 `UdpServer` 类的成员函数：
+在 `udpserver.cpp` 中实现：
 
 ```cpp
 #include "udpserver.h"
@@ -329,8 +463,8 @@ void UdpServer::run()
     while (true)
     {
         std::string client_ip;
-        int client_port;
-        
+        int client_port = 0;
+
         std::string data = server.recvFrom(1024, client_ip, client_port);
         if (!data.empty())
         {
@@ -345,17 +479,15 @@ void UdpServer::run()
 
 ## 3.2 UdpClient
 
-在 `udpclient.h` 中定义 `UdpClient` 类：
+在 `udpclient.h` 中定义：
 
 ```cpp
 #include "socket.h"
 
-using namespace nl;
-
 class UdpClient {
 private:
     Socket client;
-    
+
 public:
     UdpClient() = default;
     ~UdpClient();
@@ -364,13 +496,13 @@ public:
     UdpClient& operator=(const UdpClient&) = delete;
 
     void init();
-    
+
     ssize_t sendTo(const std::string& data, const std::string &ip, int port);
     std::string recvFrom(size_t max_len, std::string &ip, int &port);
 };
 ```
 
-在 `udpclient.cpp` 中实现 `UdpClient` 类的成员函数：
+在 `udpclient.cpp` 中实现：
 
 ```cpp
 #include "udpclient.h"
