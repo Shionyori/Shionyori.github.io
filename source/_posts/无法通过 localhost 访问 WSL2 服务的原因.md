@@ -1,14 +1,16 @@
 ---
-title: WSL2 的 localhost 访问机制
+title: 无法通过 localhost 访问 WSL2 服务的原因
 date: 2026-08-12
 updated: 2026-08-12
-cover: /images/posts/WSL2 的 localhost 访问机制/cover.png
+cover: /images/posts/无法通过 localhost 访问 WSL2 服务的原因/cover.png
 categories: 其他
 tags:
   - WSL2
   - localhost
   - Mirrored 模式
   - NAT 模式
+  - 回环短路优化
+  - 源地址校验
 ---
 
 在 WSL2 中起 Vite 服务时，发现在宿主机的浏览器上无法通过 `localhost:5173` 进行访问。为了弄清楚原因，先后了解了 Windows 的回环短路优化机制、WSL2 在 Mirrored 模式和 NAT 模式下的通信机制。
