@@ -87,3 +87,14 @@ music:
       artist: "神乃木製作所"
       url: "/music/神乃木製作所 - Skip in the byway.ogg"
       cover: "/music/covers/skip-in-the-byway.jpg"
+
+# --- Comments ---
+# Waline first: deploy a Waline server, then set serverURL below and enable.
+#   https://waline.js.org/guide/get-started/
+comments:
+  enable: false
+  type: waline
+  lazy: true
+  waline:
+    serverURL: '' # e.g. https://waline.example.com
+    lang: auto
