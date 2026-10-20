@@ -2,7 +2,7 @@
 title: LangChain 的基本使用
 date: 2026-08-18
 updated: 2026-08-29
-cover: /images/posts/LangChain 的基本使用/cover.png
+cover: /images/posts/LangChain的基本使用/cover.png
 categories: 
   - LangChain
 tags:

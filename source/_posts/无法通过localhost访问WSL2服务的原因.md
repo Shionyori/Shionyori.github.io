@@ -2,7 +2,7 @@
 title: 无法通过 localhost 访问 WSL2 服务的原因
 date: 2026-08-12
 updated: 2026-08-12
-cover: /images/posts/无法通过 localhost 访问 WSL2 服务的原因/cover.png
+cover: /images/posts/无法通过localhost访问WSL2服务的原因/cover.png
 categories: 杂谈
 tags:
   - WSL2

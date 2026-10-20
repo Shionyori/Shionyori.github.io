@@ -2,7 +2,7 @@
 title: Reactor 网络模型
 date: 2025-10-03
 updated: 2026-10-05
-cover: /images/posts/Reactor 网络模型/cover.png
+cover: /images/posts/Reactor网络模型/cover.png
 categories: 网络编程
 tags:
   - Reactor

@@ -2,7 +2,7 @@
 title: HTTP 服务器的实现
 date: 2026-10-06
 updated: 2026-10-06
-cover: /images/posts/HTTP 服务器的实现/cover.png
+cover: /images/posts/HTTP服务器的实现/cover.png
 categories: 网络编程
 tags:
   - HTTP
