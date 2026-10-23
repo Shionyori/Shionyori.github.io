@@ -15,8 +15,8 @@ sidebar:
   social:
     GitHub: https://github.com/Shionyori
   widgets:  # 全局默认（所有页面未单独配置时使用）
-    - categories-widget
     - tags-widget
+    - categories-widget
   layouts:
     # index: 主页，未设置时使用全局默认
     archive:
