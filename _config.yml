@@ -105,3 +105,14 @@ deploy:
   repo: https://github.com/Shionyori/shionyori.github.io.git
   branch: gh-pages
   message: "Site updated: {{ now('YYYY-MM-DD HH:mm:ss') }}"
+
+# --- Feed ---
+# hexo-generator-feed：生成 atom.xml 与 rss2.xml
+feed:
+  type: [atom, rss2]
+  path: [atom.xml, rss2.xml]
+  limit: 20 # 最多收录多少篇（0 = 全部）
+  content: true # 全文输出，阅读器里可直接读完
+  content_limit: 0 # 0 = 不截断
+  order_by: -date
+  icon: /images/avatar.png

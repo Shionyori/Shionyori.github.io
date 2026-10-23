@@ -15,7 +15,6 @@ sidebar:
   social:
     GitHub: https://github.com/Shionyori
   widgets:  # 全局默认（所有页面未单独配置时使用）
-    - recent-posts
     - categories-widget
     - tags-widget
   layouts:
@@ -34,6 +33,25 @@ sidebar:
 # --- Footer ---
 footer:
   since: 2025
+  social: false # 页脚不再重复侧边栏的 GitHub 等社交链接
+
+# --- Statistics ---
+# 站点访问统计（busuanzi）：页脚显示访客数 / 浏览量，文章头显示单篇阅读量
+busuanzi:
+  enable: true
+  site_uv: true
+  site_pv: true
+  page_pv: true
+
+# --- Site Uptime ---
+# 页脚“本站已运行”计数器，从 since 开始计算（浏览器可解析的任意时间字符串）
+runtime:
+  enable: true
+  since: '2026-06-10T00:00:00'
+  precision: day # day | hour | minute | second（显示到哪一级）
+  label: true # 显示“本站已运行”前缀
+  icon: true # 显示时钟图标
+  refresh: null # 刷新间隔（秒）；null = 按 precision 对齐刷新
 
 # --- Music Player ---
 music:
