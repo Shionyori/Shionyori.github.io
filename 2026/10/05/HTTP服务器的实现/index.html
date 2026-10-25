@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>HTTP 服务器的实现 - Shionyori&#39;s Blog</title>
+
+
+<meta name="description" content="Gorgeous blooming flowers will eventually elegantly scattered.">
+
+
+<meta property="og:title" content="HTTP 服务器的实现">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://shionyori.github.io/2026/10/05/HTTP服务器的实现/">
+<meta property="og:site_name" content="Shionyori&#39;s Blog">
+
+
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="HTTP 服务器的实现">
+
+
+<link rel="canonical" href="https://shionyori.github.io/2026/10/05/HTTP服务器的实现/">
+
+
+<link rel="alternate" href="/atom.xml" type="application/atom+xml" title="Shionyori&#39;s Blog">
+
+<link rel="alternate" href="/rss2.xml" type="application/rss+xml" title="Shionyori&#39;s Blog">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "name": "HTTP 服务器的实现",
+  "url": "https://shionyori.github.io/2026/10/05/HTTP服务器的实现/",
+  "datePublished": "2026-10-06T00:00:00+08:00",
+  "author": { "@type": "Person", "name": "Shionyori" }
+  
+}
+</script>
+
+<meta name="theme-color" content="#6b7eb5">
+<link rel="icon" type="image/png" href="/images/shion/favicon.png">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1/dist/medium-zoom.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+
+
+<script>
+  (function() {
+    var mode = 'auto';
+    var saved = localStorage.getItem('shion-theme');
+    if (saved) { mode = saved; }
+    else if (mode === 'auto') {
+      mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    if (mode === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+    (function() {
+      var fonts = {"heading":"'Noto Serif SC', 'Source Han Serif SC', Georgia, serif","body":"'Noto Sans SC', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif","code":"'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace","size_root":"15px"};
+      var legacySize = '';
+      var sizeRoot = fonts.size_root || legacySize;
+
+      if (fonts.heading) {
+        document.documentElement.style.setProperty('--font-heading', fonts.heading);
+      }
+      if (fonts.body) {
+        document.documentElement.style.setProperty('--font-body', fonts.body);
+      }
+      if (fonts.code) {
+        document.documentElement.style.setProperty('--font-code', fonts.code);
+      }
+      if (sizeRoot) {
+        document.documentElement.style.setProperty('--font-size-root', sizeRoot);
+      }
+    })();
+  })();
+</script>
+
+
+<noscript>
+  <style>
+    .sidebar-inner,
+    .content-card,
+    .post,
+    .page,
+    .archive-item,
+    .category-item,
+    .pagination,
+    .comments,
+    .not-found-content,
+    .widget,
+    .tag-cloud-item,
+    .post-card-wrapper,
+    .post-content,
+    .post-tags-footer,
+    .post-share,
+    .post-copyright,
+    .post-nav {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  </style>
+</noscript>
+
+  <script>
+    window.__shionConfig = {
+      comments: {"enable":false,"type":"waline","lazy":true,"placeholder":"","waline":{"serverURL":"","lang":"auto"},"giscus":{"repo":"","repo_id":"","category":"","category_id":"","mapping":"pathname","strict":false,"reactions_enabled":"1","emit_metadata":"0","input_position":"top","lang":"auto"},"disqus":{"shortname":""},"twikoo":{"envId":""},"valine":{"appId":"","appKey":""},"gitalk":{"clientID":"","clientSecret":"","repo":"","owner":"","admin":[]},"utterances":{"repo":"","issue_term":"pathname"}},
+      katexCDN: 'https://cdn.jsdelivr.net/npm/katex@0',
+      katexDelimiters: [{"left":"$$","right":"$$","display":true},{"left":"$","right":"$","display":false}]
+    };
+  </script>
+<meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a class="site-logo" href="/">
+      
+        <span class="logo-text">Shionyori&#39;s Blog</span>
+      
+    </a>
+
+    
+    <nav class="site-nav" id="site-nav">
+      
+        <a class="nav-item" href="/">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g transform="translate(0 -0.30)"><path d="M3.6 10.3 12 3.6l8.4 6.7V20a1 1 0 0 1-1 1h-4.7v-6.2H9.3V21H4.6a1 1 0 0 1-1-1z"/></g></svg></span>
+          <span class="nav-text">首页</span>
+        </a>
+      
+        <a class="nav-item" href="/archives/">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g transform="translate(0 -0.50)"><rect x="3" y="4" width="18" height="4.2" rx="1"/><path d="M5.2 8.2V20a1 1 0 0 0 1 1h11.6a1 1 0 0 0 1-1V8.2"/><path d="M9.8 12.4h4.4"/></g></svg></span>
+          <span class="nav-text">归档</span>
+        </a>
+      
+        <a class="nav-item" href="/tags/">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g transform="translate(0 -0.15)"><path d="M20.6 13.2 13.2 20.6a1.8 1.8 0 0 1-2.5 0l-7.3-7.3a1.8 1.8 0 0 1-.5-1.3V5a1.8 1.8 0 0 1 1.8-1.8h7a1.8 1.8 0 0 1 1.3.5l7.6 7.6a1.8 1.8 0 0 1 0 2.5z"/><circle cx="7.6" cy="7.6" r="1.1"/></g></svg></span>
+          <span class="nav-text">标签</span>
+        </a>
+      
+        <a class="nav-item" href="/categories/">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g transform="translate(0 -0.70)"><path d="M3.4 7.4a1.8 1.8 0 0 1 1.8-1.8h3.9l1.8 2h7.9a1.8 1.8 0 0 1 1.8 1.8v8.6a1.8 1.8 0 0 1-1.8 1.8H5.2a1.8 1.8 0 0 1-1.8-1.8z"/></g></svg></span>
+          <span class="nav-text">分类</span>
+        </a>
+      
+        <a class="nav-item" href="/friends/">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g transform="translate(0 -0.50)"><circle cx="9.2" cy="8.2" r="3.2"/><path d="M2.8 20a6.4 6.4 0 0 1 12.8 0"/><path d="M16.4 5.4a3.2 3.2 0 0 1 0 5.6"/><path d="M17.8 14.4a6.4 6.4 0 0 1 3.4 5.6"/></g></svg></span>
+          <span class="nav-text">友链</span>
+        </a>
+      
+        <a class="nav-item" href="/about/">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g transform="translate(0 0.00)"><circle cx="12" cy="12" r="8.6"/><path d="M12 11.2v5.2"/><path d="M12 7.9h.01"/></g></svg></span>
+          <span class="nav-text">关于</span>
+        </a>
+      
+    </nav>
+
+    
+    <div class="header-actions">
+      
+      <a class="btn-icon header-rss" href="/atom.xml" aria-label="RSS" title="RSS">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M4 11a9 9 0 0 1 9 9"/>
+          <path d="M4 4a16 16 0 0 1 16 16"/>
+          <circle cx="5" cy="19" r="1"/>
+        </svg>
+      </a>
+      
+
+      <button class="btn-icon search-toggle" id="search-toggle" aria-label="搜索">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon theme-toggle" id="theme-toggle" aria-label="深色模式">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+
+      <button class="btn-icon sidebar-toggle" id="sidebar-toggle" aria-label="sidebar_toggle">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+
+  
+<div class="reading-progress" id="reading-progress">
+  <div class="reading-progress-bar" id="reading-progress-bar"></div>
+</div>
+
+
+
+<div id="pjax-container">
+  
+
+  
+  
+  
+  <div class="page-bg">
+    <img src="/images/posts/HTTP%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0/cover.png" alt="">
+  </div>
+  
+  
+
+  
+  
+  <div class="hero-zone">
+  
+  
+  <section class="page-hero">
+    <h1 class="hero-title">HTTP 服务器的实现</h1>
+    <div class="hero-subtitle">
+      <div class="post-meta">
+    
+    <time class="post-date" datetime="2026-10-06T00:00:00+08:00">
+      2026-10-06
+    </time>
+    
+
+    
+    <time class="post-updated" datetime="2026-10-06T00:00:00+08:00">
+      更新于 2026-10-06
+    </time>
+    
+
+    
+    <span class="post-word-count">6598 字</span>
+    
+
+    
+    <span class="post-reading-time">约 26 分钟</span>
+    
+
+    
+    <span class="post-visits" data-busuanzi>
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      <span class="post-visits-label">浏览</span>
+      <span id="busuanzi_value_page_pv" data-busuanzi-value>-</span>
+    </span>
+    
+
+    
+    <span class="post-categories">
+      
+        <a class="category-link" href="/categories/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/">网络编程</a>
+      
+    </span>
+    
+
+</div>
+
+    </div>
+    
+    <div class="hero-tags">
+      
+        <a class="tag-link" href="/tags/C/">C++</a>
+      
+        <a class="tag-link" href="/tags/HTTP/">HTTP</a>
+      
+        <a class="tag-link" href="/tags/%E5%BA%8F%E5%88%97%E5%8C%96/">序列化</a>
+      
+        <a class="tag-link" href="/tags/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">反序列化</a>
+      
+        <a class="tag-link" href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/">网络编程</a>
+      
+    </div>
+    
+  </section>
+  
+  
+  </div>
+  
+
+  
+<div class="container">
+    <div class="content-wrapper">
+      
+      
+<aside class="site-sidebar sidebar-post" id="site-sidebar" data-position="left">
+
+  
+  
+
+  <div class="sidebar-sticky-group">
+    
+    <section class="sidebar-card sidebar-music">
+      
+<div class="music-player" data-playlist='[{"name":"奏穹のラプソディア (狂想曲)","artist":"瑶山百霊","url":"/music/瑶山百霊 - 奏穹のラプソディア (狂想曲).ogg","cover":"/music/covers/soukyuu-no-rhapsody.jpg"},{"name":"Graveyard Memory","artist":"GET IN THE RING","url":"/music/GET IN THE RING - Graveyard Memory.ogg","cover":"/music/covers/graveyard-memory.jpg"},{"name":"ポラリス (北极星)","artist":"GET IN THE RING","url":"/music/GET IN THE RING - ポラリス (北极星).ogg","cover":"/music/covers/polaris.jpg"},{"name":"その唄の名は…","artist":"yukina / GET IN THE RING","url":"/music/yukina _ GET IN THE RING - その唄の名は….ogg","cover":"/music/covers/sono-uta-no-na-wa.jpg"},{"name":"over the moon","artist":"Forest306","url":"/music/Forest306 - over the moon.ogg","cover":"/music/covers/over-the-moon.jpg"},{"name":"21時の探しモノ (21时寻找的东西)","artist":"minimum electric design","url":"/music/minimum electric design - 21時の探しモノ (21时寻找的东西).ogg","cover":"/music/covers/21ji-no-sagashimono.jpg"},{"name":"Freak Report 01 ~他愛も無い二人の博物誌~","artist":"凛","url":"/music/凛 - Freak Report 01 ~他愛も無い二人の博物誌~.ogg","cover":"/music/covers/freak-report-01.jpg"},{"name":"かぜのいろ (カゼノイロ)","artist":"森羅万象","url":"/music/森羅万象 - かぜのいろ (カゼノイロ).ogg","cover":"/music/covers/kaze-no-iro.jpg"},{"name":"Onisan Dochira!","artist":"狐の工作室","url":"/music/狐の工作室 - Onisan Dochira!.ogg","cover":"/music/covers/onisan-dochira.jpg"},{"name":"Skip in the byway","artist":"神乃木製作所","url":"/music/神乃木製作所 - Skip in the byway.ogg","cover":"/music/covers/skip-in-the-byway.jpg"}]'>
+  
+  <div class="music-body">
+    <div class="music-cover">
+      
+      
+      <img src="/music/covers/soukyuu-no-rhapsody.jpg" alt="cover" class="music-cover-img" onerror="if(!this.dataset.failed){this.dataset.failed='1';this.src='/images/shion/404.png'}">
+      
+    </div>
+    <div class="music-info">
+      <div class="music-title-row">
+        <span class="music-title">奏穹のラプソディア (狂想曲)</span>
+        <span class="music-counter">1 / 10</span>
+      </div>
+      <span class="music-artist">瑶山百霊</span>
+      <div class="music-progress">
+        <div class="music-progress-bar">
+          <div class="music-progress-fill"></div>
+        </div>
+        <div class="music-time">
+          <span class="music-time-current">0:00</span>
+          <span class="music-time-total">0:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="music-controls">
+    <button class="music-btn music-btn-mode" aria-label="Play mode" data-mode="sequential" title="Sequential">
+      <svg class="music-mode-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+    <button class="music-btn music-btn-prev" aria-label="Previous track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+    </button>
+    <button class="music-btn music-btn-play" aria-label="Play">
+      <svg class="music-icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <svg class="music-icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="6" height="16"/><rect x="14" y="4" width="6" height="16"/></svg>
+    </button>
+    <button class="music-btn music-btn-next" aria-label="Next track">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+    </button>
+    <button class="music-btn music-btn-list" aria-label="Playlist">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="music-playlist">
+    
+    <button class="music-playlist-item active" data-index="0">
+      <span class="music-playlist-name">奏穹のラプソディア (狂想曲)</span>
+      <span class="music-playlist-artist">瑶山百霊</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="1">
+      <span class="music-playlist-name">Graveyard Memory</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="2">
+      <span class="music-playlist-name">ポラリス (北极星)</span>
+      <span class="music-playlist-artist">GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="3">
+      <span class="music-playlist-name">その唄の名は…</span>
+      <span class="music-playlist-artist">yukina / GET IN THE RING</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="4">
+      <span class="music-playlist-name">over the moon</span>
+      <span class="music-playlist-artist">Forest306</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="5">
+      <span class="music-playlist-name">21時の探しモノ (21时寻找的东西)</span>
+      <span class="music-playlist-artist">minimum electric design</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="6">
+      <span class="music-playlist-name">Freak Report 01 ~他愛も無い二人の博物誌~</span>
+      <span class="music-playlist-artist">凛</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="7">
+      <span class="music-playlist-name">かぜのいろ (カゼノイロ)</span>
+      <span class="music-playlist-artist">森羅万象</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="8">
+      <span class="music-playlist-name">Onisan Dochira!</span>
+      <span class="music-playlist-artist">狐の工作室</span>
+    </button>
+    
+    <button class="music-playlist-item" data-index="9">
+      <span class="music-playlist-name">Skip in the byway</span>
+      <span class="music-playlist-artist">神乃木製作所</span>
+    </button>
+    
+  </div>
+  
+</div>
+
+    </section>
+    
+
+    <section class="sidebar-card sidebar-toc">
+      <div class="sidebar-toc-header">
+        <a class="sidebar-back-home" href="/" title="首页">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </a>
+        <span class="sidebar-toc-label">HTTP 服务器的实现</span>
+      </div>
+      <div class="sidebar-scroll">
+      
+      
+      <nav class="sidebar-toc">
+        <ol class="toc-list"><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#1-HttpRequest"><span class="toc-list-text">1. HttpRequest</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#2-HttpResponse"><span class="toc-list-text">2. HttpResponse</span></a></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#3-HttpContext"><span class="toc-list-text">3. HttpContext</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#3-1-%E8%A7%A3%E6%9E%90%E7%8A%B6%E6%80%81"><span class="toc-list-text">3.1 解析状态</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#3-2-%E8%AF%B7%E6%B1%82%E8%A1%8C"><span class="toc-list-text">3.2 请求行</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#3-3-%E5%A4%B4%E9%83%A8"><span class="toc-list-text">3.3 头部</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#3-4-%E8%AF%B7%E6%B1%82%E4%BD%93"><span class="toc-list-text">3.4 请求体</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#3-5-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="toc-list-text">3.5 错误处理</span></a></li></ol></li><li class="toc-list-item toc-list-level-1"><a class="toc-list-link" href="#4-HttpServer"><span class="toc-list-text">4. HttpServer</span></a><ol class="toc-list-child"><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#4-1-%E8%BF%9E%E6%8E%A5%E4%B8%8A%E4%B8%8B%E6%96%87"><span class="toc-list-text">4.1 连接上下文</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#4-2-%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%BE%AA%E7%8E%AF"><span class="toc-list-text">4.2 请求处理循环</span></a></li><li class="toc-list-item toc-list-level-2"><a class="toc-list-link" href="#4-3-%E8%B7%AF%E7%94%B1%E4%B8%8E%E9%94%99%E8%AF%AF%E5%93%8D%E5%BA%94"><span class="toc-list-text">4.3 路由与错误响应</span></a></li></ol></li></ol>
+      </nav>
+      
+      </div>
+      <a class="sidebar-back-home-bottom" href="/">← 首页</a>
+    </section>
+  </div>
+
+  
+</aside>
+
+      
+
+      <main class="site-main">
+        <article class="post">
+
+  <div class="post-content">
+    
+  
+  
+  
+
+
+    <p>前面我们已经实现了一个 TCP 服务器，它能接收客户端发来的数据包，并把它们原封不动地返回给客户端。现在我们要在这个基础上实现一个 HTTP 服务器，它能解析客户端发来的 HTTP 请求，提取请求行、请求头和请求体，并根据请求的内容返回相应的 HTTP 响应。</p>
+<hr>
+<h1 id="1-HttpRequest"><a href="#1-HttpRequest" class="headerlink" title="1. HttpRequest"></a>1. HttpRequest</h1><p>要表示一条请求，先看它长什么样。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs text">POST /echo?from=cli HTTP/1.1\r\n      1. 请求行<br>Host: example.com\r\n                 2. 请求头，若干行<br>Content-Type: text/plain\r\n<br>Content-Length: 11\r\n<br>\r\n                                  3. 空行<br>hello world                           4. 请求体<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>请求行：由三部分用空格隔开。<ul>
+<li>方法（<code>GET</code> &#x2F; <code>POST</code> &#x2F; <code>PUT</code> &#x2F; <code>DELETE</code> &#x2F; <code>HEAD</code> 等）</li>
+<li>路径（请求的资源路径，路径里如果带 <code>?</code> 就把它后面的部分叫查询串）</li>
+<li>协议版本（<code>HTTP/1.0</code>、<code>HTTP/1.1</code>等）</li>
+</ul>
+</li>
+<li>请求头：是一行一个的键值对，键和值之间用冒号分隔。字段名大小写不敏感，<code>Content-Length</code> 和 <code>content-length</code> 是同一个东西</li>
+<li>空行：是一个单独的 <code>\r\n</code>，它标记头部到此结束。注意别把它和普通的换行搞混，只有读到行首就是 CRLF 才算空行</li>
+<li>请求体：是可选的一段，<code>GET</code> 一般没有，<code>POST</code> 用来携带表单或 JSON</li>
+</ul>
+<p>每一行都以 <code>\r\n</code> 结尾，不是 <code>\n</code>，这两个字符是协议规定的。</p>
+<p><code>HttpRequest</code> 这个类要做的就是把上面这四段存下来，供业务代码读取。它不碰 IO，也不关心数据是怎么解析出来的。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> once</span><br><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;cstddef&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;map&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string&gt;</span></span><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">HttpRequest</span> &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-keyword">enum class</span> <span class="hljs-title class_">Method</span> &#123;<br>        Invalid,<br>        GET,<br>        POST,<br>        PUT,<br>        DELETE,<br>        HEAD,<br>    &#125;;<br><br>    <span class="hljs-keyword">enum class</span> <span class="hljs-title class_">Version</span> &#123;<br>        Unknown,<br>        HTTP_1_0,<br>        HTTP_1_1,<br>    &#125;;<br><br>    <span class="hljs-comment">// 单个请求体的最大字节数，用于防御超大 Content-Length，避免 OOM 或长时间等待</span><br>    <span class="hljs-type">static</span> <span class="hljs-keyword">constexpr</span> <span class="hljs-type">size_t</span> kMaxBodySize = <span class="hljs-number">64</span> * <span class="hljs-number">1024</span> * <span class="hljs-number">1024</span>; <span class="hljs-comment">// 64 MiB</span><br><br><span class="hljs-keyword">private</span>:<br>    <span class="hljs-comment">// 成员一律显式初始化，避免默认构造时出现未定义行为</span><br>    Method method_ = Method::Invalid;<br>    Version version_ = Version::Unknown;<br>    std::string path_;<br>    std::string query_;<br>    std::map&lt;std::string, std::string&gt; headers_; <span class="hljs-comment">// key 统一转小写存储，实现大小写不敏感</span><br>    std::string body_;<br><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setMethod</span><span class="hljs-params">(Method method)</span> </span>&#123; method_ = method; &#125;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setVersion</span><span class="hljs-params">(Version version)</span> </span>&#123; version_ = version; &#125;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setPath</span><span class="hljs-params">(<span class="hljs-type">const</span> std::string&amp; path)</span> </span>&#123; path_ = path; &#125;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setQuery</span><span class="hljs-params">(<span class="hljs-type">const</span> std::string&amp; query)</span> </span>&#123; query_ = query; &#125;<br><br>    <span class="hljs-comment">// 用指针区间表示 field/value，避免为整行构造临时 std::string</span><br>    <span class="hljs-comment">// 内部会把 field 去尾空白并转小写、value 去首尾空白</span><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">addHeader</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">char</span>* start, <span class="hljs-type">const</span> <span class="hljs-type">char</span>* colon, <span class="hljs-type">const</span> <span class="hljs-type">char</span>* end)</span></span>;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setBody</span><span class="hljs-params">(<span class="hljs-type">const</span> std::string&amp; body)</span> </span>&#123; body_ = body; &#125;<br><br>    <span class="hljs-function">Method <span class="hljs-title">method</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> method_; &#125;<br>    <span class="hljs-function">Version <span class="hljs-title">version</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> version_; &#125;<br>    <span class="hljs-function"><span class="hljs-type">const</span> std::string&amp; <span class="hljs-title">path</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> path_; &#125;<br>    <span class="hljs-function"><span class="hljs-type">const</span> std::string&amp; <span class="hljs-title">query</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> query_; &#125;<br>    <span class="hljs-function"><span class="hljs-type">const</span> std::string&amp; <span class="hljs-title">body</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> body_; &#125;<br><br>    <span class="hljs-comment">// 取不到时返回空串而不是抛异常，HTTP 头都是可选的，缺失是常态</span><br>    <span class="hljs-function">std::string <span class="hljs-title">header</span><span class="hljs-params">(<span class="hljs-type">const</span> std::string&amp; field)</span> <span class="hljs-type">const</span></span>;<br><br>    <span class="hljs-comment">// 解析 Content-Length，绝不抛异常，非法值返回 0，超过上限返回 kMaxBodySize + 1</span><br>    <span class="hljs-function"><span class="hljs-type">size_t</span> <span class="hljs-title">contentLength</span><span class="hljs-params">()</span> <span class="hljs-type">const</span></span>;<br><br>    <span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">isKeepAlive</span><span class="hljs-params">()</span> <span class="hljs-type">const</span></span>;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">swap</span><span class="hljs-params">(HttpRequest&amp; other)</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">reset</span><span class="hljs-params">()</span></span>;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;httprequest.h&quot;</span></span><br><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;cctype&gt;</span></span><br><br><span class="hljs-keyword">namespace</span> &#123;<br><br><span class="hljs-comment">// HTTP 头字段名大小写不敏感，统一转小写</span><br><span class="hljs-function">std::string <span class="hljs-title">toLower</span><span class="hljs-params">(<span class="hljs-type">const</span> std::string&amp; s)</span> </span>&#123;<br>    std::string result = s;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">char</span>&amp; c : result) &#123;<br>        c = <span class="hljs-built_in">static_cast</span>&lt;<span class="hljs-type">char</span>&gt;(std::<span class="hljs-built_in">tolower</span>(<span class="hljs-built_in">static_cast</span>&lt;<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span>&gt;(c)));<br>    &#125;<br>    <span class="hljs-keyword">return</span> result;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">isSpace</span><span class="hljs-params">(<span class="hljs-type">char</span> c)</span> </span>&#123;<br>    <span class="hljs-keyword">return</span> c == <span class="hljs-string">&#x27; &#x27;</span> || c == <span class="hljs-string">&#x27;\t&#x27;</span>;<br>&#125;<br><br>&#125; <span class="hljs-comment">// namespace</span><br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">HttpRequest::addHeader</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">char</span>* start, <span class="hljs-type">const</span> <span class="hljs-type">char</span>* colon, <span class="hljs-type">const</span> <span class="hljs-type">char</span>* end)</span> </span>&#123;<br>    <span class="hljs-comment">// field 是 [start, colon)，去掉尾部空白后统一转小写</span><br>    <span class="hljs-type">const</span> <span class="hljs-type">char</span>* fieldEnd = colon;<br>    <span class="hljs-keyword">while</span> (fieldEnd &gt; start &amp;&amp; <span class="hljs-built_in">isSpace</span>(fieldEnd[<span class="hljs-number">-1</span>])) &#123;<br>        --fieldEnd;<br>    &#125;<br>    std::string field = <span class="hljs-built_in">toLower</span>(std::<span class="hljs-built_in">string</span>(start, fieldEnd));<br><br>    <span class="hljs-comment">// value 是 colon 之后到行尾，跳过前导空白，再去掉尾部空白</span><br>    <span class="hljs-type">const</span> <span class="hljs-type">char</span>* valueBegin = colon + <span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">while</span> (valueBegin &lt; end &amp;&amp; <span class="hljs-built_in">isSpace</span>(*valueBegin)) &#123;<br>        ++valueBegin;<br>    &#125;<br>    <span class="hljs-type">const</span> <span class="hljs-type">char</span>* valueEnd = end;<br>    <span class="hljs-keyword">while</span> (valueEnd &gt; valueBegin &amp;&amp; <span class="hljs-built_in">isSpace</span>(valueEnd[<span class="hljs-number">-1</span>])) &#123;<br>        --valueEnd;<br>    &#125;<br>    <span class="hljs-function">std::string <span class="hljs-title">value</span><span class="hljs-params">(valueBegin, valueEnd)</span></span>;<br><br>    <span class="hljs-keyword">if</span> (field.<span class="hljs-built_in">empty</span>()) &#123;<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br><br>    <span class="hljs-comment">// 同名头在请求里是合法的，Accept、Cookie 都可能出现多次</span><br>    <span class="hljs-comment">// 按 RFC 7230，它们等价于把这些值用逗号连接之后的单个头</span><br>    <span class="hljs-keyword">auto</span> it = headers_.<span class="hljs-built_in">find</span>(field);<br>    <span class="hljs-keyword">if</span> (it == headers_.<span class="hljs-built_in">end</span>()) &#123;<br>        headers_[field] = value;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        it-&gt;second += <span class="hljs-string">&quot;, &quot;</span> + value;<br>    &#125;<br>&#125;<br><br><span class="hljs-function">std::string <span class="hljs-title">HttpRequest::header</span><span class="hljs-params">(<span class="hljs-type">const</span> std::string&amp; field)</span> <span class="hljs-type">const</span> </span>&#123;<br>    <span class="hljs-keyword">auto</span> it = headers_.<span class="hljs-built_in">find</span>(<span class="hljs-built_in">toLower</span>(field));<br>    <span class="hljs-keyword">return</span> it == headers_.<span class="hljs-built_in">end</span>() ? std::<span class="hljs-built_in">string</span>() : it-&gt;second;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">size_t</span> <span class="hljs-title">HttpRequest::contentLength</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123;<br>    <span class="hljs-comment">// 手动解析，绝不抛异常，非法值一律视为 0（没有 body）</span><br>    <span class="hljs-keyword">auto</span> it = headers_.<span class="hljs-built_in">find</span>(<span class="hljs-string">&quot;content-length&quot;</span>);<br>    <span class="hljs-keyword">if</span> (it == headers_.<span class="hljs-built_in">end</span>()) &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>    &#125;<br>    <span class="hljs-type">const</span> std::string&amp; value = it-&gt;second;<br>    <span class="hljs-keyword">if</span> (value.<span class="hljs-built_in">empty</span>()) &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>    &#125;<br><br>    <span class="hljs-type">size_t</span> n = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">char</span> c : value) &#123;<br>        <span class="hljs-keyword">if</span> (c &lt; <span class="hljs-string">&#x27;0&#x27;</span> || c &gt; <span class="hljs-string">&#x27;9&#x27;</span>) &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>        &#125;<br>        n = n * <span class="hljs-number">10</span> + <span class="hljs-built_in">static_cast</span>&lt;<span class="hljs-type">size_t</span>&gt;(c - <span class="hljs-string">&#x27;0&#x27;</span>);<br>        <span class="hljs-keyword">if</span> (n &gt; kMaxBodySize) &#123;<br>            <span class="hljs-comment">// 返回一个必定大于上限的值，交给解析器判为非法请求</span><br>            <span class="hljs-keyword">return</span> kMaxBodySize + <span class="hljs-number">1</span>;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> n;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">HttpRequest::isKeepAlive</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123;<br>    <span class="hljs-keyword">auto</span> it = headers_.<span class="hljs-built_in">find</span>(<span class="hljs-string">&quot;connection&quot;</span>);<br>    <span class="hljs-keyword">if</span> (it != headers_.<span class="hljs-built_in">end</span>()) &#123;<br>        <span class="hljs-type">const</span> std::string value = <span class="hljs-built_in">toLower</span>(it-&gt;second);<br>        <span class="hljs-keyword">if</span> (value.<span class="hljs-built_in">find</span>(<span class="hljs-string">&quot;close&quot;</span>) != std::string::npos) &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>        &#125;<br>        <span class="hljs-keyword">if</span> (value.<span class="hljs-built_in">find</span>(<span class="hljs-string">&quot;keep-alive&quot;</span>) != std::string::npos) &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>        &#125;<br>    &#125;<br>    <span class="hljs-comment">// HTTP/1.1 默认长连接，HTTP/1.0 默认短连接</span><br>    <span class="hljs-keyword">return</span> version_ == Version::HTTP_1_1;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">HttpRequest::swap</span><span class="hljs-params">(HttpRequest&amp; other)</span> </span>&#123;<br>    std::<span class="hljs-built_in">swap</span>(method_, other.method_);<br>    std::<span class="hljs-built_in">swap</span>(version_, other.version_);<br>    std::<span class="hljs-built_in">swap</span>(path_, other.path_);<br>    std::<span class="hljs-built_in">swap</span>(query_, other.query_);<br>    std::<span class="hljs-built_in">swap</span>(headers_, other.headers_);<br>    std::<span class="hljs-built_in">swap</span>(body_, other.body_);<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">HttpRequest::reset</span><span class="hljs-params">()</span> </span>&#123;<br>    method_ = Method::Invalid;<br>    version_ = Version::Unknown;<br>    path_.<span class="hljs-built_in">clear</span>();<br>    query_.<span class="hljs-built_in">clear</span>();<br>    headers_.<span class="hljs-built_in">clear</span>();<br>    body_.<span class="hljs-built_in">clear</span>();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>HttpRequest</code> 是一个纯数据容器，方法全是 getter 和 setter，没有什么逻辑。有几处设计值得说一下。</p>
+<p>方法和版本用的是 <code>enum class</code>，不是字符串。它们的取值固定就那么几种，用枚举能在编译期挡掉拼写错误，解析时也只有认识的方法和版本才会被设成有效值，其他一律落到 <code>Invalid</code> 和 <code>Unknown</code>。</p>
+<p>路径和查询串是分开存的。因为查询串里可能有 <code>?</code> 和 <code>&amp;</code> 需要单独处理，把它们混在一条字符串里，业务代码每次用都要自己切一遍。解析请求行的时候一次切好，后面就省事了。</p>
+<p>头字段存在 <code>std::map</code> 里，键统一转小写。HTTP 规定字段名大小写不敏感，与其每次查询都做一次大小写无关的比较，不如存的时候就转成小写，查的时候也转一次，这样 <code>map</code> 的默认比较规则就够了。<code>addHeader</code> 收到的是一段指针区间而不是 <code>std::string</code>，是为了避免为整行构造临时对象。</p>
+<p>同名头是按逗号合并的，不是后者覆盖前者。<code>Accept</code>、<code>Cookie</code> 这些头在请求里出现多次是合法的，RFC 7230 规定它们等价于把这些值用逗号连接之后的单个头。直接覆盖会丢掉前面的值。</p>
+<p>请求体前面那三段都有明确的分隔符，请求行和头部行靠 <code>\r\n</code> 断行，头部结束靠空行。但请求体本身没有任何分隔符，它后面直接就是下一个请求的开始，或者连接关闭。</p>
+<p>所以服务器不可能靠读到某个字符就停来判断 body 到哪结束，只能用 <code>Content-Length</code> 给出的字节数，读满这么多字节，body 就完了。<code>contentLength()</code> 读的就是这个数。</p>
+<p>它是手写解析的，用的不是 <code>std::stoul</code>。因为 <code>std::stoul</code> 遇到非法输入会抛异常，而这个值完全由客户端控制，一个 <code>Content-Length: abc</code> 就能让服务器抛异常。这个函数的约定是任何情况下都返回 <code>size_t</code>，非法值返回 0 当成没有 body，超过上限的返回一个必定大于上限的哨兵值，由调用方去判断合法性。</p>
+<p><code>kMaxBodySize</code> 定在 64 MiB。没有这个上限的话，客户端只要发一行 <code>Content-Length: 99999999999</code>，服务器就会一直等着收 body，连接和内存都被它占着。</p>
+<p>HTTP 允许在一个连接上连续发多个请求，也就是常说的 keep-alive。这对服务器提出了一个硬要求，必须能准确切出每一条请求。假如第一条请求的 body 长度算错了，第二条请求的前半截就会被当成第一条的 body，整个连接上后续的解析都会错位。这也是上面那个用字节数定边界必须做对的原因。</p>
+<p>客户端用 <code>Connection</code> 头来协商，<code>Connection: close</code> 表示这个请求处理完就断开，<code>Connection: keep-alive</code> 表示希望复用。默认值取决于版本，HTTP&#x2F;1.1 默认复用，HTTP&#x2F;1.0 默认断开，所以一个不写任何 <code>Connection</code> 头的 HTTP&#x2F;1.0 请求，处理完就该关连接。</p>
+<p><code>isKeepAlive()</code> 就是读这个头，优先看它有没有被显式设置，没有时才按版本给出默认值。</p>
+<hr>
+<h1 id="2-HttpResponse"><a href="#2-HttpResponse" class="headerlink" title="2. HttpResponse"></a>2. HttpResponse</h1><p>响应报文的结构和请求一样，只是第一行换成了状态行。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs text">HTTP/1.1 200 OK\r\n<br>Content-Type: text/plain\r\n<br>Content-Length: 12\r\n<br>\r\n<br>hello world<br></code></pre></td></tr></table></figure>
+
+<p><code>HttpResponse</code> 和 <code>HttpRequest</code> 对称，存一条响应的内容，另外多一个职责，把自己序列化成字节。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> once</span><br><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;map&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string&gt;</span></span><br><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;buffer.h&quot;</span></span><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">HttpResponse</span> &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-keyword">enum class</span> <span class="hljs-title class_">HttpStatusCode</span> &#123;<br>        Unknown,<br>        OK = <span class="hljs-number">200</span>,<br>        MovedPermanently = <span class="hljs-number">301</span>,<br>        BadRequest = <span class="hljs-number">400</span>,<br>        NotFound = <span class="hljs-number">404</span>,<br>    &#125;;<br><br><span class="hljs-keyword">private</span>:<br>    <span class="hljs-type">bool</span> closeConnection_;<br>    HttpStatusCode statusCode_;<br>    std::string statusMessage_;<br>    std::map&lt;std::string, std::string&gt; headers_;<br>    std::string contentType_;<br>    std::string body_;<br><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-keyword">explicit</span> <span class="hljs-title">HttpResponse</span><span class="hljs-params">(<span class="hljs-type">bool</span> close)</span></span><br><span class="hljs-function">        : closeConnection_(close), statusCode_(HttpStatusCode::Unknown) &#123;</span>&#125;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setStatusCode</span><span class="hljs-params">(HttpStatusCode code)</span> </span>&#123; statusCode_ = code; &#125;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setStatusMessage</span><span class="hljs-params">(<span class="hljs-type">const</span> std::string&amp; message)</span> </span>&#123; statusMessage_ = message; &#125;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setCloseConnection</span><span class="hljs-params">(<span class="hljs-type">bool</span> on)</span> </span>&#123; closeConnection_ = on; &#125;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setContentType</span><span class="hljs-params">(<span class="hljs-type">const</span> std::string&amp; contentType)</span> </span>&#123; contentType_ = contentType; &#125;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setBody</span><span class="hljs-params">(<span class="hljs-type">const</span> std::string&amp; body)</span> </span>&#123; body_ = body; &#125;<br><br>    <span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">closeConnection</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> closeConnection_; &#125;<br>    <span class="hljs-function">std::string <span class="hljs-title">statusMessage</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> statusMessage_; &#125;<br>    <span class="hljs-function">HttpStatusCode <span class="hljs-title">statusCode</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> statusCode_; &#125;<br>    <span class="hljs-function"><span class="hljs-type">const</span> std::string&amp; <span class="hljs-title">body</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> body_; &#125;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">addHeader</span><span class="hljs-params">(<span class="hljs-type">const</span> std::string&amp; field, <span class="hljs-type">const</span> std::string&amp; value)</span> </span>&#123;<br>        headers_[field] = value;<br>    &#125;<br><br>    <span class="hljs-comment">// 把 response 写进输出缓冲区，isHead 为 true 时只发头部</span><br>    <span class="hljs-comment">// 但 Content-Length 仍然按 body 的真实长度给，这是 HEAD 的语义</span><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">appendToBuffer</span><span class="hljs-params">(Buffer* output, <span class="hljs-type">bool</span> isHead = <span class="hljs-literal">false</span>)</span> <span class="hljs-type">const</span></span>;<br><br><span class="hljs-keyword">private</span>:<br>    <span class="hljs-function">std::string <span class="hljs-title">reasonPhrase</span><span class="hljs-params">()</span> <span class="hljs-type">const</span></span>;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;httpresponse.h&quot;</span></span><br><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;cctype&gt;</span></span><br><br><span class="hljs-keyword">namespace</span> &#123;<br><br><span class="hljs-comment">// HTTP 头字段名大小写不敏感，统一转小写</span><br><span class="hljs-function">std::string <span class="hljs-title">toLower</span><span class="hljs-params">(<span class="hljs-type">const</span> std::string&amp; s)</span> </span>&#123;<br>    std::string result = s;<br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">char</span>&amp; c : result) &#123;<br>        c = <span class="hljs-built_in">static_cast</span>&lt;<span class="hljs-type">char</span>&gt;(std::<span class="hljs-built_in">tolower</span>(<span class="hljs-built_in">static_cast</span>&lt;<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span>&gt;(c)));<br>    &#125;<br>    <span class="hljs-keyword">return</span> result;<br>&#125;<br><br><span class="hljs-comment">// Content-Length 由 appendToBuffer 按 body_ 自动计算</span><br><span class="hljs-comment">// 用户手动设置的会被忽略，避免出现两个 Content-Length</span><br><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">isContentLength</span><span class="hljs-params">(<span class="hljs-type">const</span> std::string&amp; field)</span> </span>&#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">toLower</span>(field) == <span class="hljs-string">&quot;content-length&quot;</span>;<br>&#125;<br><br>&#125; <span class="hljs-comment">// namespace</span><br><br><span class="hljs-function">std::string <span class="hljs-title">HttpResponse::reasonPhrase</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123;<br>    <span class="hljs-keyword">if</span> (!statusMessage_.<span class="hljs-built_in">empty</span>()) &#123;<br>        <span class="hljs-keyword">return</span> statusMessage_;<br>    &#125;<br>    <span class="hljs-keyword">switch</span> (statusCode_) &#123;<br>        <span class="hljs-keyword">case</span> HttpStatusCode::OK:                <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;OK&quot;</span>;<br>        <span class="hljs-keyword">case</span> HttpStatusCode::MovedPermanently:  <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Moved Permanently&quot;</span>;<br>        <span class="hljs-keyword">case</span> HttpStatusCode::BadRequest:        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Bad Request&quot;</span>;<br>        <span class="hljs-keyword">case</span> HttpStatusCode::NotFound:          <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Not Found&quot;</span>;<br>        <span class="hljs-keyword">default</span>:                                <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Unknown&quot;</span>;<br>    &#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">HttpResponse::appendToBuffer</span><span class="hljs-params">(Buffer* output, <span class="hljs-type">bool</span> isHead)</span> <span class="hljs-type">const</span> </span>&#123;<br>    output-&gt;<span class="hljs-built_in">append</span>(<span class="hljs-string">&quot;HTTP/1.1 &quot;</span> + std::<span class="hljs-built_in">to_string</span>(<span class="hljs-built_in">static_cast</span>&lt;<span class="hljs-type">int</span>&gt;(statusCode_)) +<br>                   <span class="hljs-string">&quot; &quot;</span> + <span class="hljs-built_in">reasonPhrase</span>() + <span class="hljs-string">&quot;\r\n&quot;</span>);<br><br>    <span class="hljs-keyword">for</span> (<span class="hljs-type">const</span> <span class="hljs-keyword">auto</span>&amp; header : headers_) &#123;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">isContentLength</span>(header.first)) &#123;<br>            <span class="hljs-keyword">continue</span>;<br>        &#125;<br>        output-&gt;<span class="hljs-built_in">append</span>(header.first + <span class="hljs-string">&quot;: &quot;</span> + header.second + <span class="hljs-string">&quot;\r\n&quot;</span>);<br>    &#125;<br><br>    <span class="hljs-keyword">if</span> (!contentType_.<span class="hljs-built_in">empty</span>()) &#123;<br>        output-&gt;<span class="hljs-built_in">append</span>(<span class="hljs-string">&quot;Content-Type: &quot;</span> + contentType_ + <span class="hljs-string">&quot;\r\n&quot;</span>);<br>    &#125;<br><br>    <span class="hljs-comment">// Content-Length 必须按字节数输出，keep-alive 下客户端靠它判断 body 何时结束</span><br>    output-&gt;<span class="hljs-built_in">append</span>(<span class="hljs-string">&quot;Content-Length: &quot;</span> + std::<span class="hljs-built_in">to_string</span>(body_.<span class="hljs-built_in">size</span>()) + <span class="hljs-string">&quot;\r\n&quot;</span>);<br><br>    output-&gt;<span class="hljs-built_in">append</span>(std::<span class="hljs-built_in">string</span>(<span class="hljs-string">&quot;Connection: &quot;</span>) +<br>                   (closeConnection_ ? <span class="hljs-string">&quot;close&quot;</span> : <span class="hljs-string">&quot;keep-alive&quot;</span>) + <span class="hljs-string">&quot;\r\n&quot;</span>);<br><br>    output-&gt;<span class="hljs-built_in">append</span>(<span class="hljs-string">&quot;\r\n&quot;</span>);<br><br>    <span class="hljs-comment">// HEAD 请求的响应不带 body，但上面的 Content-Length 照给</span><br>    <span class="hljs-keyword">if</span> (!isHead) &#123;<br>        output-&gt;<span class="hljs-built_in">append</span>(body_);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>Content-Length</code> 和 <code>Connection</code> 这两个头是自动补齐的，用户在 <code>headers_</code> 里设置的会被忽略。</p>
+<p><code>Content-Length</code> 必须由框架算，因为它是按 <code>body_</code> 的字节数定出来的。用户如果自己写了一个对不上的值，在 keep-alive 场景下客户端就会按错误的长度去切分下一条响应，连接直接乱掉。所以 <code>appendToBuffer</code> 遇到用户设置的 <code>Content-Length</code> 会跳过。</p>
+<p><code>Connection</code> 也是同样的道理，它的值由 <code>closeConnection_</code> 决定，而这个标志的默认值来自请求的 keep-alive 语义，不是随便填的。</p>
+<p>状态码用一个 enum 加一个可选的 <code>statusMessage_</code>。原因短语在 HTTP 里本来就可以自定义，所以先看用户有没有设置，没设置才按状态码查一个默认值。</p>
+<p><code>appendToBuffer</code> 的写入顺序是定死的，状态行、用户自定义头、<code>Content-Type</code>、<code>Content-Length</code>、<code>Connection</code>、空行、body。其中 <code>Content-Length</code> 的位置不能随便改，它必须在空行之前。</p>
+<p><code>isHead</code> 参数是为了 HEAD 请求。按规范，HEAD 的响应不能带 body，但 <code>Content-Length</code> 要按 GET 时会返回的长度给。所以这里跳过 <code>body_</code> 的输出，但长度照算。</p>
+<hr>
+<h1 id="3-HttpContext"><a href="#3-HttpContext" class="headerlink" title="3. HttpContext"></a>3. HttpContext</h1><p>前面两个类是纯数据，真正有状态的是这个类。它负责从 <code>Buffer</code> 里把一条请求解析出来。</p>
+<h2 id="3-1-解析状态"><a href="#3-1-解析状态" class="headerlink" title="3.1 解析状态"></a>3.1 解析状态</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> once</span><br><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;buffer.h&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;httprequest.h&quot;</span></span><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">HttpContext</span> &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-keyword">enum class</span> <span class="hljs-title class_">HttpRequestParseState</span> &#123;<br>        ExpectRequestLine,<br>        ExpectHeaders,<br>        ExpectBody,<br>        GotAll,<br>    &#125;;<br><br><span class="hljs-keyword">private</span>:<br>    <span class="hljs-comment">// 必须显式初始化，栈上默认构造时成员是未定义的</span><br>    <span class="hljs-comment">// HttpServer 里用 make_shared 只是碰巧把它 value-initialize 成 0，不能依赖</span><br>    HttpRequestParseState state_ = HttpRequestParseState::ExpectRequestLine;<br>    HttpRequest request_;<br><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">parseRequest</span><span class="hljs-params">(Buffer* buf)</span></span>;<br><br>    <span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">getAll</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> state_ == HttpRequestParseState::GotAll; &#125;<br>    <span class="hljs-function"><span class="hljs-type">const</span> HttpRequest&amp; <span class="hljs-title">request</span><span class="hljs-params">()</span> <span class="hljs-type">const</span> </span>&#123; <span class="hljs-keyword">return</span> request_; &#125;<br>    <span class="hljs-function">HttpRequest&amp; <span class="hljs-title">request</span><span class="hljs-params">()</span> </span>&#123; <span class="hljs-keyword">return</span> request_; &#125;<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">reset</span><span class="hljs-params">()</span></span>;<br><br><span class="hljs-keyword">private</span>:<br>    <span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">processHeadersEnd</span><span class="hljs-params">()</span></span>;   <span class="hljs-comment">// 空行之后的收尾，决定进 body 还是直接完成</span><br>    <span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">processRequestLine</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">char</span>* begin, <span class="hljs-type">const</span> <span class="hljs-type">char</span>* end)</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">processHeaders</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">char</span>* begin, <span class="hljs-type">const</span> <span class="hljs-type">char</span>* end)</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">processBody</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">char</span>* begin, <span class="hljs-type">const</span> <span class="hljs-type">char</span>* end)</span></span>;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>为什么要有一个状态位，是因为解析器不可能一次就把请求拿到手。</p>
+<p>客户端发来的字节是被 TCP 切开的，服务器这边第一次 <code>read</code> 到的可能只有 <code>POST /echo HTTP/1.1\r\nContent-Len</code>，连请求行都没收全。下一次 <code>read</code> 补上一截，再下一次可能一次来三条完整请求。所以解析器必须能记住上次读到哪了，这次接着往下走。</p>
+<p>最直接的想法是记住一个下标，表示已经解析到缓冲区里的第几个字节。但这样不够，因为头部是逐行处理的，行数不定，而且已经被解析掉的部分会从缓冲区里消费掉，下标就失去意义了。真正要记的不是下标，而是当前处在报文的哪一段。</p>
+<p>所以状态位有四个。请求行、头部、请求体是报文的三段，<code>GotAll</code> 表示这一条已经完整了。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">HttpContext::parseRequest</span><span class="hljs-params">(Buffer* buf)</span> </span>&#123;<br>    <span class="hljs-type">bool</span> ok = <span class="hljs-literal">true</span>;<br>    <span class="hljs-type">bool</span> hasMore = <span class="hljs-literal">true</span>;<br><br>    <span class="hljs-comment">// 状态驱动，而不是 buf 里有 CRLF 就整体解析</span><br>    <span class="hljs-comment">// body 阶段跟 CRLF 完全无关，必须能在没有 CRLF 的情况下把请求解析完</span><br>    <span class="hljs-comment">// 每次循环只前进一步，收到半包时通过 !crlf 或数据不够来退出等待</span><br>    <span class="hljs-keyword">while</span> (hasMore) &#123;<br>        <span class="hljs-keyword">switch</span> (state_) &#123;<br>            <span class="hljs-keyword">case</span> HttpRequestParseState::ExpectRequestLine: &#123;<br>                <span class="hljs-type">const</span> <span class="hljs-type">char</span>* crlf = buf-&gt;<span class="hljs-built_in">findCRLF</span>();<br>                <span class="hljs-keyword">if</span> (!crlf) &#123;<br>                    hasMore = <span class="hljs-literal">false</span>; <span class="hljs-comment">// 请求行还没收全，等下次数据</span><br>                    <span class="hljs-keyword">break</span>;<br>                &#125;<br>                ok = <span class="hljs-built_in">processRequestLine</span>(buf-&gt;<span class="hljs-built_in">peek</span>(), crlf);<br>                <span class="hljs-keyword">if</span> (ok) &#123;<br>                    buf-&gt;<span class="hljs-built_in">retrieveUntil</span>(crlf + <span class="hljs-number">2</span>); <span class="hljs-comment">// 消费掉请求行和它的 CRLF</span><br>                    state_ = HttpRequestParseState::ExpectHeaders;<br>                &#125; <span class="hljs-keyword">else</span> &#123;<br>                    hasMore = <span class="hljs-literal">false</span>;<br>                &#125;<br>                <span class="hljs-keyword">break</span>;<br>            &#125;<br><br>            <span class="hljs-keyword">case</span> HttpRequestParseState::ExpectHeaders: &#123;<br>                <span class="hljs-type">const</span> <span class="hljs-type">char</span>* crlf = buf-&gt;<span class="hljs-built_in">findCRLF</span>();<br>                <span class="hljs-keyword">if</span> (!crlf) &#123;<br>                    hasMore = <span class="hljs-literal">false</span>; <span class="hljs-comment">// 头部行没收全</span><br>                    <span class="hljs-keyword">break</span>;<br>                &#125;<br>                <span class="hljs-keyword">if</span> (crlf == buf-&gt;<span class="hljs-built_in">peek</span>()) &#123;<br>                    <span class="hljs-comment">// CRLF 落在行首，说明这是个空行，头部结束了</span><br>                    buf-&gt;<span class="hljs-built_in">retrieveUntil</span>(crlf + <span class="hljs-number">2</span>);<br>                    ok = <span class="hljs-built_in">processHeadersEnd</span>();<br>                    hasMore = <span class="hljs-literal">false</span>;<br>                &#125; <span class="hljs-keyword">else</span> &#123;<br>                    <span class="hljs-built_in">processHeaders</span>(buf-&gt;<span class="hljs-built_in">peek</span>(), crlf);<br>                    buf-&gt;<span class="hljs-built_in">retrieveUntil</span>(crlf + <span class="hljs-number">2</span>);<br>                &#125;<br>                <span class="hljs-keyword">break</span>;<br>            &#125;<br><br>            <span class="hljs-keyword">case</span> HttpRequestParseState::ExpectBody: &#123;<br>                <span class="hljs-type">const</span> <span class="hljs-type">size_t</span> len = request_.<span class="hljs-built_in">contentLength</span>();<br>                <span class="hljs-keyword">if</span> (buf-&gt;<span class="hljs-built_in">readableBytes</span>() &gt;= len) &#123;<br>                    <span class="hljs-built_in">processBody</span>(buf-&gt;<span class="hljs-built_in">peek</span>(), buf-&gt;<span class="hljs-built_in">peek</span>() + len);<br>                    buf-&gt;<span class="hljs-built_in">retrieve</span>(len);<br>                    state_ = HttpRequestParseState::GotAll;<br>                &#125;<br>                <span class="hljs-comment">// 两种情况都退出内层循环，数据不够就等下一次数据</span><br>                <span class="hljs-comment">// body 解析完了则交给外层去处理这个已经完整的请求</span><br>                hasMore = <span class="hljs-literal">false</span>;<br>                <span class="hljs-keyword">break</span>;<br>            &#125;<br><br>            <span class="hljs-keyword">case</span> HttpRequestParseState::GotAll:<br>                hasMore = <span class="hljs-literal">false</span>;<br>                <span class="hljs-keyword">break</span>;<br>        &#125;<br>    &#125;<br>    <span class="hljs-keyword">return</span> ok;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">HttpContext::reset</span><span class="hljs-params">()</span> </span>&#123;<br>    state_ = HttpRequestParseState::ExpectRequestLine;<br>    request_.<span class="hljs-built_in">reset</span>();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这个循环的形状值得说一下。每一轮只处理一个状态，处理完要么改变状态、要么退出循环。收到半包时把 <code>hasMore</code> 置为 <code>false</code> 就退出了，<code>Buffer</code> 里剩下的数据原样留着，等下一次 <code>read</code> 追加进来再继续。已经解析出来的字段都留在 <code>HttpRequest</code> 里，不会因为退出循环而丢掉。</p>
+<p>这么做还避免了重复劳动。如果每收到一批数据就把整个 <code>Buffer</code> 从头扫一遍，那么一个分成十次到达的请求，每次都要重新找请求行、重新解析已经解析过的头部。状态机只处理新到的那部分。</p>
+<p><code>parseRequest</code> 返回 <code>bool</code> 而不是抛异常，是因为它有三种结果。解析成功但还没收全、解析成功且收全了、解析失败。前两种是正常情况，用返回值 <code>true</code> 加 <code>getAll()</code> 区分，只有第三种报文畸形才返回 <code>false</code>。报文畸形完全由客户端控制，用异常处理会很难看。</p>
+<h2 id="3-2-请求行"><a href="#3-2-请求行" class="headerlink" title="3.2 请求行"></a>3.2 请求行</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">HttpContext::processRequestLine</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">char</span>* begin, <span class="hljs-type">const</span> <span class="hljs-type">char</span>* end)</span> </span>&#123;<br>    <span class="hljs-type">const</span> <span class="hljs-type">char</span>* space1 = std::<span class="hljs-built_in">find</span>(begin, end, <span class="hljs-string">&#x27; &#x27;</span>);<br>    <span class="hljs-keyword">if</span> (space1 == end) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>    <span class="hljs-type">const</span> <span class="hljs-type">char</span>* space2 = std::<span class="hljs-built_in">find</span>(space1 + <span class="hljs-number">1</span>, end, <span class="hljs-string">&#x27; &#x27;</span>);<br>    <span class="hljs-keyword">if</span> (space2 == end) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br><br>    <span class="hljs-function">std::string <span class="hljs-title">methodStr</span><span class="hljs-params">(begin, space1)</span></span>;<br>    <span class="hljs-keyword">if</span> (methodStr == <span class="hljs-string">&quot;GET&quot;</span>) &#123;<br>        request_.<span class="hljs-built_in">setMethod</span>(HttpRequest::Method::GET);<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (methodStr == <span class="hljs-string">&quot;POST&quot;</span>) &#123;<br>        request_.<span class="hljs-built_in">setMethod</span>(HttpRequest::Method::POST);<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (methodStr == <span class="hljs-string">&quot;PUT&quot;</span>) &#123;<br>        request_.<span class="hljs-built_in">setMethod</span>(HttpRequest::Method::PUT);<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (methodStr == <span class="hljs-string">&quot;DELETE&quot;</span>) &#123;<br>        request_.<span class="hljs-built_in">setMethod</span>(HttpRequest::Method::DELETE);<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (methodStr == <span class="hljs-string">&quot;HEAD&quot;</span>) &#123;<br>        request_.<span class="hljs-built_in">setMethod</span>(HttpRequest::Method::HEAD);<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        request_.<span class="hljs-built_in">setMethod</span>(HttpRequest::Method::Invalid);<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>    &#125;<br><br>    <span class="hljs-function">std::string <span class="hljs-title">pathAndQuery</span><span class="hljs-params">(space1 + <span class="hljs-number">1</span>, space2)</span></span>;<br>    <span class="hljs-type">size_t</span> queryPos = pathAndQuery.<span class="hljs-built_in">find</span>(<span class="hljs-string">&#x27;?&#x27;</span>);<br>    <span class="hljs-keyword">if</span> (queryPos != std::string::npos) &#123;<br>        request_.<span class="hljs-built_in">setPath</span>(pathAndQuery.<span class="hljs-built_in">substr</span>(<span class="hljs-number">0</span>, queryPos));<br>        request_.<span class="hljs-built_in">setQuery</span>(pathAndQuery.<span class="hljs-built_in">substr</span>(queryPos + <span class="hljs-number">1</span>));<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        request_.<span class="hljs-built_in">setPath</span>(pathAndQuery);<br>        request_.<span class="hljs-built_in">setQuery</span>(<span class="hljs-string">&quot;&quot;</span>);<br>    &#125;<br><br>    <span class="hljs-function">std::string <span class="hljs-title">versionStr</span><span class="hljs-params">(space2 + <span class="hljs-number">1</span>, end)</span></span>;<br>    <span class="hljs-keyword">if</span> (versionStr == <span class="hljs-string">&quot;HTTP/1.0&quot;</span>) &#123;<br>        request_.<span class="hljs-built_in">setVersion</span>(HttpRequest::Version::HTTP_1_0);<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (versionStr == <span class="hljs-string">&quot;HTTP/1.1&quot;</span>) &#123;<br>        request_.<span class="hljs-built_in">setVersion</span>(HttpRequest::Version::HTTP_1_1);<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        request_.<span class="hljs-built_in">setVersion</span>(HttpRequest::Version::Unknown);<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>请求行靠两个空格切成三段，所以找两个空格就够了。</p>
+<p>找不到第二个空格说明这一行根本不是请求行，返回 <code>false</code>。方法或者版本不认识也返回 <code>false</code>，因为后面没法处理。路径和查询串按第一个 <code>?</code> 拆开，没有 <code>?</code> 就把整段当路径，查询串设成空串。</p>
+<h2 id="3-3-头部"><a href="#3-3-头部" class="headerlink" title="3.3 头部"></a>3.3 头部</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">HttpContext::processHeaders</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">char</span>* begin, <span class="hljs-type">const</span> <span class="hljs-type">char</span>* end)</span> </span>&#123;<br>    <span class="hljs-type">const</span> <span class="hljs-type">char</span>* colon = std::<span class="hljs-built_in">find</span>(begin, end, <span class="hljs-string">&#x27;:&#x27;</span>);<br>    <span class="hljs-keyword">if</span> (colon != end) &#123;<br>        request_.<span class="hljs-built_in">addHeader</span>(begin, colon, end);<br>    &#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">HttpContext::processHeadersEnd</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-type">const</span> <span class="hljs-type">size_t</span> len = request_.<span class="hljs-built_in">contentLength</span>();<br><br>    <span class="hljs-keyword">if</span> (!request_.<span class="hljs-built_in">header</span>(<span class="hljs-string">&quot;transfer-encoding&quot;</span>).<span class="hljs-built_in">empty</span>()) &#123;<br>        <span class="hljs-comment">// 只支持 Content-Length，遇到 chunked 明确判为非法请求</span><br>        <span class="hljs-comment">// 否则它会被当成没有 body，静默地解析出一个错误的请求</span><br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>    &#125;<br>    <span class="hljs-keyword">if</span> (len &gt; HttpRequest::kMaxBodySize) &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>; <span class="hljs-comment">// 超大或非法的 Content-Length</span><br>    &#125;<br>    <span class="hljs-keyword">if</span> (len &gt; <span class="hljs-number">0</span>) &#123;<br>        state_ = HttpRequestParseState::ExpectBody;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        state_ = HttpRequestParseState::GotAll;<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>每一行头就是一次 <code>processHeaders</code>。它只在行里找冒号，找到就交给 <code>addHeader</code> 去切字段名和值，找不到就跳过这一行。畸形头属于能容忍的一类，不值得为它终止整个请求。</p>
+<p>头部什么时候结束，是靠 CRLF 落在行首来判定的，这个判断在 <code>parseRequest</code> 的 <code>ExpectHeaders</code> 分支里。空行本身要从缓冲区里消费掉，然后进入 <code>processHeadersEnd</code>。</p>
+<p><code>processHeadersEnd</code> 决定这条请求有没有 body。正常情况下看 <code>Content-Length</code>，大于 0 就进 <code>ExpectBody</code>，否则直接进 <code>GotAll</code>。</p>
+<p>这里有一个额外检查，<code>transfer-encoding</code> 存在就直接返回 <code>false</code>。HTTP 还有另一种定 body 长度的方法叫分块传输，它不用 <code>Content-Length</code>，而是每段前面写十六进制长度。本实现没有做这个，如果只是单纯地忽略这个头，那么一个 chunked 请求会被当成没有 body 来处理，解析出来的请求内容是错的，而且不会报错。所以这里选择明确地判为非法请求，宁可给客户端一个 400，也不要静默地出错。</p>
+<h2 id="3-4-请求体"><a href="#3-4-请求体" class="headerlink" title="3.4 请求体"></a>3.4 请求体</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">HttpContext::processBody</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">char</span>* begin, <span class="hljs-type">const</span> <span class="hljs-type">char</span>* end)</span> </span>&#123;<br>    request_.<span class="hljs-built_in">setBody</span>(std::<span class="hljs-built_in">string</span>(begin, end));<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>请求体的处理是整个解析器里最简单的一段，它只做一次拷贝。</p>
+<p>关键在于它前面的判断条件，<code>buf-&gt;readableBytes() &gt;= len</code>。数据不够就什么都不做，<code>state_</code> 保持不变，等下一次数据到了重新进这个分支。因为状态位还停在 <code>ExpectBody</code>，下次会接着数，不会跑偏。</p>
+<p>这一段里没有出现 <code>findCRLF</code>。请求体没有分隔符，只能靠字数。如果这里也去找 CRLF，那么当 body 里恰好包含 <code>\r\n</code>（比如上传一个二进制文件）时，解析就会跑偏。</p>
+<h2 id="3-5-错误处理"><a href="#3-5-错误处理" class="headerlink" title="3.5 错误处理"></a>3.5 错误处理</h2><p>解析器对错误的容忍度是分级的。</p>
+<p><strong>必须返回 <code>false</code> 的</strong>，是那些会让后续无法继续的错误。方法不认识、版本不认识、<code>Content-Length</code> 非法或超限、用了不支持的 <code>transfer-encoding</code>。这些情况下就算硬着头皮往下解析，解析出来的东西也没有意义。</p>
+<p><strong>可以跳过的</strong>，是单个头字段里没有冒号这种。它只影响这一个头，不影响整条请求的结构。</p>
+<p><code>parseRequest</code> 返回 <code>false</code> 之后，<code>HttpServer</code> 会发一个 400 然后关掉连接。之所以要关连接，是因为报文已经乱了，缓冲区里剩下的字节是什么完全不可知，继续解析只会越错越离谱。</p>
+<hr>
+<h1 id="4-HttpServer"><a href="#4-HttpServer" class="headerlink" title="4. HttpServer"></a>4. HttpServer</h1><p>最后一个类负责把所有东西接起来。</p>
+<h2 id="4-1-连接上下文"><a href="#4-1-连接上下文" class="headerlink" title="4.1 连接上下文"></a>4.1 连接上下文</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">pragma</span> once</span><br><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;cstddef&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;functional&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;memory&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;mutex&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unordered_map&gt;</span></span><br><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;httpcontext.h&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;httprequest.h&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;httpresponse.h&quot;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;tcpserver.h&quot;</span></span><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">HttpServer</span> &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-keyword">using</span> HttpCallback = std::function&lt;<span class="hljs-built_in">void</span>(<span class="hljs-type">const</span> HttpRequest&amp;, HttpResponse&amp;)&gt;;<br><br><span class="hljs-keyword">private</span>:<br>    TcpServer server_;<br>    HttpCallback httpCallback_;<br>    std::unordered_map&lt;std::string, HttpCallback&gt; routeCallbacks_; <span class="hljs-comment">// 路由回调，key 为路径</span><br><br>    <span class="hljs-comment">// 连接上下文映射，key 为连接指针，value 为该连接对应的解析状态</span><br>    std::unordered_map&lt;Connection*, std::shared_ptr&lt;HttpContext&gt;&gt; connectionContexts_;<br>    <span class="hljs-comment">// 不同连接跑在各自的 ioLoop 线程，会并发访问上面这张 map，必须加锁</span><br>    std::mutex contextMutex_;<br><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-built_in">HttpServer</span>(<span class="hljs-type">size_t</span> threadNum = <span class="hljs-number">0</span>);<br>    ~<span class="hljs-built_in">HttpServer</span>();<br><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setHttpCallback</span><span class="hljs-params">(<span class="hljs-type">const</span> HttpCallback&amp; cb)</span> </span>&#123;<br>        httpCallback_ = cb;<br>    &#125;<br><br>    <span class="hljs-comment">// 约定在 start() 之前注册路由，避免运行时并发修改</span><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">addRouteCallback</span><span class="hljs-params">(<span class="hljs-type">const</span> std::string&amp; route, <span class="hljs-type">const</span> HttpCallback&amp; cb)</span> </span>&#123;<br>        routeCallbacks_[route] = cb;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">start</span><span class="hljs-params">(<span class="hljs-type">const</span> std::string&amp; ip, <span class="hljs-type">int</span> port)</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">run</span><span class="hljs-params">()</span></span>;<br><br><span class="hljs-keyword">private</span>:<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">onConnection</span><span class="hljs-params">(Connection* conn)</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">onMessage</span><span class="hljs-params">(Connection* conn, Buffer* buf)</span></span>;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">onClose</span><span class="hljs-params">(Connection* conn)</span></span>;<br><br>    <span class="hljs-comment">// 处理一个连接上缓冲区里所有已完整的请求，支持 pipelining</span><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">handleRequest</span><span class="hljs-params">(Connection* conn, <span class="hljs-type">const</span> std::shared_ptr&lt;HttpContext&gt;&amp; context, Buffer* buffer)</span></span>;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;httpserver.h&quot;</span></span><br><br>HttpServer::<span class="hljs-built_in">HttpServer</span>(<span class="hljs-type">size_t</span> threadNum) : <span class="hljs-built_in">server_</span>(threadNum) &#123;<br>    server_.<span class="hljs-built_in">setConnectionCallback</span>([<span class="hljs-keyword">this</span>](Connection* conn) &#123; <span class="hljs-built_in">onConnection</span>(conn); &#125;);<br>    server_.<span class="hljs-built_in">setMessageCallback</span>([<span class="hljs-keyword">this</span>](Connection* conn, Buffer* buf) &#123; <span class="hljs-built_in">onMessage</span>(conn, buf); &#125;);<br>    server_.<span class="hljs-built_in">setCloseCallback</span>([<span class="hljs-keyword">this</span>](Connection* conn) &#123; <span class="hljs-built_in">onClose</span>(conn); &#125;);<br>&#125;<br><br>HttpServer::~<span class="hljs-built_in">HttpServer</span>() &#123;<br>    <span class="hljs-function">std::lock_guard&lt;std::mutex&gt; <span class="hljs-title">lock</span><span class="hljs-params">(contextMutex_)</span></span>;<br>    connectionContexts_.<span class="hljs-built_in">clear</span>();<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">HttpServer::start</span><span class="hljs-params">(<span class="hljs-type">const</span> std::string&amp; ip, <span class="hljs-type">int</span> port)</span> </span>&#123;<br>    <span class="hljs-keyword">return</span> server_.<span class="hljs-built_in">start</span>(ip, port);<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">HttpServer::run</span><span class="hljs-params">()</span> </span>&#123;<br>    server_.<span class="hljs-built_in">run</span>();<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">HttpServer::onConnection</span><span class="hljs-params">(Connection* conn)</span> </span>&#123;<br>    <span class="hljs-comment">// 连接建立时创建一个新的 HttpContext，断开时在 onClose 里清理</span><br>    <span class="hljs-keyword">if</span> (conn-&gt;<span class="hljs-built_in">connected</span>()) &#123;<br>        <span class="hljs-function">std::lock_guard&lt;std::mutex&gt; <span class="hljs-title">lock</span><span class="hljs-params">(contextMutex_)</span></span>;<br>        connectionContexts_[conn] = std::<span class="hljs-built_in">make_shared</span>&lt;HttpContext&gt;();<br>    &#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">HttpServer::onMessage</span><span class="hljs-params">(Connection* conn, Buffer* buf)</span> </span>&#123;<br>    <span class="hljs-comment">// 只在锁内取 shared_ptr，解析和业务处理放到锁外，避免长时间持锁</span><br>    std::shared_ptr&lt;HttpContext&gt; context;<br>    &#123;<br>        <span class="hljs-function">std::lock_guard&lt;std::mutex&gt; <span class="hljs-title">lock</span><span class="hljs-params">(contextMutex_)</span></span>;<br>        <span class="hljs-keyword">auto</span> it = connectionContexts_.<span class="hljs-built_in">find</span>(conn);<br>        <span class="hljs-keyword">if</span> (it == connectionContexts_.<span class="hljs-built_in">end</span>()) &#123;<br>            <span class="hljs-keyword">return</span>;<br>        &#125;<br>        context = it-&gt;second;<br>    &#125;<br><br>    <span class="hljs-built_in">handleRequest</span>(conn, context, buf);<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">HttpServer::onClose</span><span class="hljs-params">(Connection* conn)</span> </span>&#123;<br>    <span class="hljs-function">std::lock_guard&lt;std::mutex&gt; <span class="hljs-title">lock</span><span class="hljs-params">(contextMutex_)</span></span>;<br>    connectionContexts_.<span class="hljs-built_in">erase</span>(conn); <span class="hljs-comment">// 必须清理，否则内存泄漏</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>HttpServer</code> 本身不继承也不包装 <code>TcpServer</code>，只是持有一个作为成员，然后把三个回调转发进来。这个是组装的关系，服务器该有的能力还是 <code>TcpServer</code> 提供的。</p>
+<p><code>onConnection</code> 里只处理 <code>connected()</code> 为真的一侧。连接建立时创建一个 <code>HttpContext</code> 挂上去，连接关闭时由 <code>onClose</code> 擦除。这里必须有个地方做清理，忘了擦除就是内存泄漏，因为 map 的 key 是一个裸指针，连接对象销毁之后那个 key 就永远悬在那里了。</p>
+<p>解析状态必须挂在连接上，而不是跟着某一批数据走。<code>onMessage</code> 每次收到数据时，要能找回这条连接上次解析到哪了。</p>
+<p><code>connectionContexts_</code> 这张表是所有连接共用的，而连接被轮询分配到不同的 ioLoop 上，每条连接跑在自己的线程里，所以多个线程会同时查它、插入它、删除它。这就是 <code>contextMutex_</code> 存在的理由。</p>
+<p>加锁的位置只有三处，都在 <code>onConnection</code>、<code>onMessage</code>、<code>onClose</code> 里，每次都是查一下或改一下就出来。真正耗时的解析和业务处理放在锁外，<code>onMessage</code> 先把 <code>shared_ptr</code> 拷出来再放开锁，就是为了这个。</p>
+<p>用 <code>shared_ptr</code> 而不是直接存 <code>HttpContext</code> 对象，也是同一个考虑。即使在锁外拿到了 <code>shared_ptr</code>，也能保证这个对象在解析期间不会被别的线程删掉。</p>
+<p><code>HttpContext</code> 自己不需要额外加锁。虽然多个连接的 <code>HttpContext</code> 存在同一张 map 里，但每条连接的 <code>HttpContext</code> 只会被它自己那条连接的 ioLoop 线程使用，天然是单线程访问的。需要保护的只是那张共享的 map。</p>
+<h2 id="4-2-请求处理循环"><a href="#4-2-请求处理循环" class="headerlink" title="4.2 请求处理循环"></a>4.2 请求处理循环</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">HttpServer::handleRequest</span><span class="hljs-params">(Connection* conn, <span class="hljs-type">const</span> std::shared_ptr&lt;HttpContext&gt;&amp; context, Buffer* buffer)</span> </span>&#123;<br>    <span class="hljs-comment">// 整条连接上的响应复用一个输出缓冲，避免每个请求都新建一个</span><br>    Buffer output;<br><br>    <span class="hljs-comment">// 一次 read 可能包含多个请求（pipelining），循环处理到缓冲区里没有完整请求为止</span><br>    <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) &#123;<br>        <span class="hljs-keyword">if</span> (!context-&gt;<span class="hljs-built_in">parseRequest</span>(buffer)) &#123;<br>            <span class="hljs-comment">// 解析失败，发送 400 并关闭连接</span><br>            <span class="hljs-function">HttpResponse <span class="hljs-title">response</span><span class="hljs-params">(<span class="hljs-literal">true</span>)</span></span>;<br>            response.<span class="hljs-built_in">setStatusCode</span>(HttpResponse::HttpStatusCode::BadRequest);<br>            response.<span class="hljs-built_in">setStatusMessage</span>(<span class="hljs-string">&quot;Bad Request&quot;</span>);<br>            response.<span class="hljs-built_in">setContentType</span>(<span class="hljs-string">&quot;text/plain; charset=utf-8&quot;</span>);<br>            response.<span class="hljs-built_in">setBody</span>(<span class="hljs-string">&quot;400 Bad Request\n&quot;</span>);<br><br>            response.<span class="hljs-built_in">appendToBuffer</span>(&amp;output);<br>            conn-&gt;<span class="hljs-built_in">send</span>(output.<span class="hljs-built_in">retrieveAsString</span>(output.<span class="hljs-built_in">readableBytes</span>()));<br>            conn-&gt;<span class="hljs-built_in">shutdown</span>();<br>            <span class="hljs-keyword">return</span>;<br>        &#125;<br><br>        <span class="hljs-keyword">if</span> (!context-&gt;<span class="hljs-built_in">getAll</span>()) &#123;<br>            <span class="hljs-keyword">return</span>; <span class="hljs-comment">// 请求还不完整，等下一次数据到来</span><br>        &#125;<br><br>        <span class="hljs-type">const</span> HttpRequest&amp; request = context-&gt;<span class="hljs-built_in">request</span>();<br>        <span class="hljs-comment">// 默认是否关闭由请求的 keep-alive 语义决定，handler 可以通过 setCloseConnection 覆盖</span><br>        <span class="hljs-function">HttpResponse <span class="hljs-title">response</span><span class="hljs-params">(!request.isKeepAlive())</span></span>;<br><br>        <span class="hljs-comment">// 先找精确匹配的路由，找不到再退回到全局回调</span><br>        <span class="hljs-keyword">auto</span> routeIt = routeCallbacks_.<span class="hljs-built_in">find</span>(request.<span class="hljs-built_in">path</span>());<br>        <span class="hljs-keyword">if</span> (routeIt != routeCallbacks_.<span class="hljs-built_in">end</span>()) &#123;<br>            routeIt-&gt;<span class="hljs-built_in">second</span>(request, response);<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (httpCallback_) &#123;<br>            <span class="hljs-built_in">httpCallback_</span>(request, response);<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            response.<span class="hljs-built_in">setStatusCode</span>(HttpResponse::HttpStatusCode::NotFound);<br>            response.<span class="hljs-built_in">setStatusMessage</span>(<span class="hljs-string">&quot;Not Found&quot;</span>);<br>            response.<span class="hljs-built_in">setContentType</span>(<span class="hljs-string">&quot;text/plain; charset=utf-8&quot;</span>);<br>            response.<span class="hljs-built_in">setBody</span>(<span class="hljs-string">&quot;404 Not Found\n&quot;</span>);<br>            response.<span class="hljs-built_in">setCloseConnection</span>(<span class="hljs-literal">true</span>);<br>        &#125;<br><br>        <span class="hljs-comment">// 是否关闭连接统一以 response 为准，而不是再看一次 request.isKeepAlive()</span><br>        <span class="hljs-type">const</span> <span class="hljs-type">bool</span> close = response.<span class="hljs-built_in">closeConnection</span>();<br><br>        <span class="hljs-comment">// HEAD 请求只回头部，Content-Length 仍然按 body 的真实长度给</span><br>        response.<span class="hljs-built_in">appendToBuffer</span>(&amp;output, request.<span class="hljs-built_in">method</span>() == HttpRequest::Method::HEAD);<br>        conn-&gt;<span class="hljs-built_in">send</span>(output.<span class="hljs-built_in">retrieveAsString</span>(output.<span class="hljs-built_in">readableBytes</span>()));<br><br>        context-&gt;<span class="hljs-built_in">reset</span>(); <span class="hljs-comment">// 重置上下文，准备解析下一个请求</span><br><br>        <span class="hljs-keyword">if</span> (close) &#123;<br>            conn-&gt;<span class="hljs-built_in">shutdown</span>();<br>            <span class="hljs-keyword">return</span>;<br>        &#125;<br>        <span class="hljs-comment">// 不关闭就继续循环，处理缓冲区里可能残留的下一个请求</span><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这个 <code>while (true)</code> 是整层里唯一一个循环，它的存在是为了处理一次 <code>read</code> 里有多个请求的情况。</p>
+<p>假设一次 <code>read</code> 收到了两个完整的 GET 请求，这里应该把它们都处理掉，而不是处理完第一个就返回、等下一次可读事件再来处理第二个。因为第二个请求的数据已经在缓冲区里了，内核不会再为它触发一次可读事件，如果这里不处理，它就永远卡在缓冲区里。</p>
+<p>循环的出口有三个。解析失败，发 400 后返回。请求不完整，直接返回等下次数据。响应要求关闭连接，发完就 <code>shutdown</code>。</p>
+<p><code>context-&gt;reset()</code> 放在循环末尾而不是开头，这样每次循环开始时 <code>HttpContext</code> 都是干净的状态，可以解析下一个请求。</p>
+<p>输出缓冲提到循环外面声明，是为了让整条连接复用一个 <code>Buffer</code>。每次 <code>retrieveAsString</code> 都会把内容取走，所以下一轮开始时它是空的。</p>
+<h2 id="4-3-路由与错误响应"><a href="#4-3-路由与错误响应" class="headerlink" title="4.3 路由与错误响应"></a>4.3 路由与错误响应</h2><p>路由查找是一个 <code>unordered_map</code> 的直接命中，注册了 <code>/hello</code> 就只能命中 <code>/hello</code>。</p>
+<p>找不到精确匹配时，先退到全局回调 <code>httpCallback_</code>。只有它也没设置，才返回 404。所以一个设置了全局回调的服务器，即使某个路径没有注册路由，也不会返回 404，而是会落到全局回调里由业务自己决定。</p>
+<p>本来这个全局回调是给用户设置默认处理逻辑用的，实际用起来更常见的是直接在路由回调里处理所有路径。</p>
+<p>400 和 404 这两条路径都默认关闭连接，但原因不同。400 是因为报文已经乱了，没法继续解析。404 是因为这条路径没人管，继续留着连接也没有意义，不过如果业务代码在回调里显式改了 <code>closeConnection</code>，还是以业务为准。</p>
+<p>响应是否关闭连接，统一以 <code>HttpResponse::closeConnection()</code> 为准，代码里没有再看一次 <code>request.isKeepAlive()</code>。这样业务代码才有机会覆盖默认值。</p>
+
+  </div>
+
+  
+  <div class="post-copyright">
+    <p><strong>Shionyori</strong></p>
+    <p>/2026/10/05/HTTP%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0/</p>
+    <p>&amp;copy; 2026 Shionyori. 保留所有权利。</p>
+  </div>
+  
+
+  <footer class="post-footer">
+    
+    <div class="post-tags-footer">
+      
+        <a class="tag-link" href="/tags/C/">C++</a>
+      
+        <a class="tag-link" href="/tags/HTTP/">HTTP</a>
+      
+        <a class="tag-link" href="/tags/%E5%BA%8F%E5%88%97%E5%8C%96/">序列化</a>
+      
+        <a class="tag-link" href="/tags/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">反序列化</a>
+      
+        <a class="tag-link" href="/tags/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/">网络编程</a>
+      
+    </div>
+    
+
+    
+<div class="post-share">
+  <div class="share-buttons">
+    
+    
+    
+
+    
+    <a class="share-btn share-twitter" href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fshionyori.github.io%2F2026%2F10%2F05%2FHTTP%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0%2F&text=HTTP%20%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0" target="_blank" rel="noopener" aria-label="分享到 Twitter">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fshionyori.github.io%2F2026%2F10%2F05%2FHTTP%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0%2F" target="_blank" rel="noopener" aria-label="分享到 Facebook">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+    </a>
+    
+
+    
+    <a class="share-btn share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fshionyori.github.io%2F2026%2F10%2F05%2FHTTP%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0%2F" target="_blank" rel="noopener" aria-label="分享到 LinkedIn">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    
+
+    
+    <button class="share-btn share-copy" aria-label="复制链接" data-url="https://shionyori.github.io/2026/10/05/HTTP服务器的实现/">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    </button>
+    
+  </div>
+</div>
+
+
+  </footer>
+</article>
+
+
+
+<nav class="post-nav">
+  
+    <a class="post-nav-item post-nav-prev has-cover" href="/2026/10/19/Powershell%E6%9B%B4%E6%96%B0%E9%80%9A%E7%9F%A5%E5%8A%A0%E8%BD%BD%E5%A4%B1%E8%B4%A5%E5%AF%BC%E8%87%B4%E7%9A%84%E5%B4%A9%E6%BA%83/" style='background-image: url(/images/shion/default-cover.png)'>
+      <span class="nav-label">上一篇</span>
+      <span class="nav-title">Powershell 更新通知加载失败导致的崩溃</span>
+    </a>
+  
+  
+    <a class="post-nav-item post-nav-next has-cover" href="/2026/08/20/RPC%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" style='background-image: url(/images/posts/RPC%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/cover.png)'>
+      <span class="nav-label">下一篇</span>
+      <span class="nav-title">RPC 与分布式系统</span>
+    </a>
+  
+</nav>
+
+
+
+
+
+
+      </main>
+
+      
+    </div>
+  </div>
+</div>
+
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+
+<nav class="mobile-nav" id="mobile-nav">
+  <div class="mobile-nav-inner">
+    <div class="mobile-nav-header">
+      <span class="mobile-nav-title">首页</span>
+      <button class="btn-icon mobile-nav-close" id="mobile-nav-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    
+    <ul class="mobile-nav-menu">
+      
+        <li>
+          <a class="mobile-nav-link" href="/">
+            <span class="nav-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g transform="translate(0 -0.30)"><path d="M3.6 10.3 12 3.6l8.4 6.7V20a1 1 0 0 1-1 1h-4.7v-6.2H9.3V21H4.6a1 1 0 0 1-1-1z"/></g></svg></span>
+            <span class="nav-text">首页</span>
+          </a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/archives/">
+            <span class="nav-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g transform="translate(0 -0.50)"><rect x="3" y="4" width="18" height="4.2" rx="1"/><path d="M5.2 8.2V20a1 1 0 0 0 1 1h11.6a1 1 0 0 0 1-1V8.2"/><path d="M9.8 12.4h4.4"/></g></svg></span>
+            <span class="nav-text">归档</span>
+          </a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/tags/">
+            <span class="nav-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g transform="translate(0 -0.15)"><path d="M20.6 13.2 13.2 20.6a1.8 1.8 0 0 1-2.5 0l-7.3-7.3a1.8 1.8 0 0 1-.5-1.3V5a1.8 1.8 0 0 1 1.8-1.8h7a1.8 1.8 0 0 1 1.3.5l7.6 7.6a1.8 1.8 0 0 1 0 2.5z"/><circle cx="7.6" cy="7.6" r="1.1"/></g></svg></span>
+            <span class="nav-text">标签</span>
+          </a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/categories/">
+            <span class="nav-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g transform="translate(0 -0.70)"><path d="M3.4 7.4a1.8 1.8 0 0 1 1.8-1.8h3.9l1.8 2h7.9a1.8 1.8 0 0 1 1.8 1.8v8.6a1.8 1.8 0 0 1-1.8 1.8H5.2a1.8 1.8 0 0 1-1.8-1.8z"/></g></svg></span>
+            <span class="nav-text">分类</span>
+          </a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/friends/">
+            <span class="nav-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g transform="translate(0 -0.50)"><circle cx="9.2" cy="8.2" r="3.2"/><path d="M2.8 20a6.4 6.4 0 0 1 12.8 0"/><path d="M16.4 5.4a3.2 3.2 0 0 1 0 5.6"/><path d="M17.8 14.4a6.4 6.4 0 0 1 3.4 5.6"/></g></svg></span>
+            <span class="nav-text">友链</span>
+          </a>
+        </li>
+      
+        <li>
+          <a class="mobile-nav-link" href="/about/">
+            <span class="nav-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g transform="translate(0 0.00)"><circle cx="12" cy="12" r="8.6"/><path d="M12 11.2v5.2"/><path d="M12 7.9h.01"/></g></svg></span>
+            <span class="nav-text">关于</span>
+          </a>
+        </li>
+      
+    </ul>
+
+    
+    <div class="mobile-nav-social">
+      
+        <a class="social-icon" href="https://github.com/Shionyori" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="social-name">GitHub</span>
+        </a>
+      
+    </div>
+    
+  </div>
+</nav>
+
+  <footer class="site-footer">
+  <div class="footer-inner">
+    
+
+    <div class="footer-info">
+      <span class="copyright">
+        <span class="copyright-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M15.4 9.3a4 4 0 1 0 0 5.4"/></svg>
+        </span>
+        <span class="sr-only">Copyright</span>
+        2025 &ndash; 2026 Shionyori
+      </span>
+
+      
+    </div>
+
+    
+    <div class="footer-credits">
+      
+        <span class="powered-by">由 <a href="https://hexo.io/" target="_blank">Hexo</a> 驱动</span>
+      
+
+      
+        <span class="footer-sep" aria-hidden="true">|</span>
+      
+
+      
+        <span class="theme-by">主题 <a href="https://github.com/Shionyori/hexo-theme-shion" target="_blank" rel="noopener">Shion</a></span>
+      
+    </div>
+    
+
+    
+
+<div class="site-runtime" data-uptime data-since="2026-06-10T00:00:00.000Z" data-uptime-format="%s 天">
+  
+  <span class="site-runtime-icon" aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+  </span>
+  
+  
+  <span class="site-runtime-label">本站已运行</span>
+  
+  <span class="site-runtime-value" data-uptime-value>137 天</span>
+</div>
+
+
+
+    
+<div class="busuanzi" data-busuanzi>
+  
+  <span class="busuanzi-item">
+    <span class="busuanzi-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+    </span>
+    <span class="busuanzi-label">访客</span>
+    <span id="busuanzi_value_site_uv" data-busuanzi-value>-</span>
+  </span>
+  
+  
+  <span class="footer-sep" aria-hidden="true">|</span>
+  
+  
+  <span class="busuanzi-item">
+    <span class="busuanzi-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+    </span>
+    <span class="busuanzi-label">浏览</span>
+    <span id="busuanzi_value_site_pv" data-busuanzi-value>-</span>
+  </span>
+  
+</div>
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" data-busuanzi-script></script>
+
+
+  </div>
+</footer>
+
+
+
+  
+<div class="search-overlay" id="search-overlay"
+     data-index-url="/search.json"
+     data-i18n-found="关于「{query}」，找到了 {count} 条记录"
+     data-i18n-not-found="关于「{query}」，没有找到任何记录呢">
+  <div class="search-container">
+    <img class="search-decoration" src="/images/shion/search.png" alt="">
+    <div class="search-header">
+      <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" class="search-input" id="search-input" placeholder="输入关键词搜索..." autocomplete="off">
+      <button class="search-close" id="search-close" aria-label="关闭">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="search-info" id="search-info"></div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+
+
+  
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0/dist/contrib/auto-render.min.js"></script>
+
+
+  <script src="/js/main.js"></script>
+</body>
+</html>
