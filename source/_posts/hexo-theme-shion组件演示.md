@@ -216,9 +216,9 @@ def load_config():
 
 ## PostLinkCard 文章内链卡片
 
-{% postLinkCard "hexo-theme-shion-setup" %}
+{% postLinkCard "hexo-theme-shion配置指南" %}
 
-参数为文章的文件名（不含日期前缀和 `.md` 后缀）。渲染效果为可点击的卡片，包含标题和日期。
+参数为文章的文件名（不含日期前缀和 `.md` 后缀）。渲染效果为可点击的卡片，包含标题和简介（取文章 `description`、`<!-- more -->` 摘要或正文首段），左侧自动使用该文章的封面图。
 
 语法：
 
